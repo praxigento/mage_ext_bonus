@@ -73,7 +73,7 @@ class Installer {
             "--db_prefix",
             "magento_",
             "--url",
-            "http:/bonus.mage.test.prxgt.com",
+            "http://bonus.mage.test.prxgt.com",
             "--use_rewrites",
             "yes",
             "--use_secure",
