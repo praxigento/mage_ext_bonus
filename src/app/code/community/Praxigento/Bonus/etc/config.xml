@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+-->
+<config>
+	<modules>
+		<Praxigento_Bonus>
+			<version>0.0.1</version>
+		</Praxigento_Bonus>
+	</modules>
+	<adminhtml>
+		<translate>
+			<modules>
+				<Praxigento_Bonus>
+					<files>
+						<default>Praxigento_Bonus.csv</default>
+					</files>
+				</Praxigento_Bonus>
+			</modules>
+		</translate>
+	</adminhtml>
+</config>

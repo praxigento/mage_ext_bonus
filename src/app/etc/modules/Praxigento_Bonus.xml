@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Bonus calculation module to be used in Praxigento projects. -->
+<config>
+	<modules>
+		<Praxigento_Bonus>
+			<active>true</active>
+			<codePool>community</codePool>
+		</Praxigento_Bonus>
+	</modules>
+</config>
