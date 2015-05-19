@@ -17,10 +17,14 @@ class Praxigento_Bonus_Logger
 
     function __construct($name)
     {
-        if (is_null(self::$_isLog4phpUsed)) {
-            $isClassExists = class_exists('Praxigento_Log_Logger', true);
-            self::$_isLog4phpUsed = filter_var($isClassExists, FILTER_VALIDATE_BOOLEAN);
-        }
+        /**
+         * switch off/on error reporting to prevent messages like
+         * "ERR (3): Warning: include(Praxigento\Log\Logger.php): failed to open stream: No such file or directory"
+         * in case of Praxigento_Log module is not used.
+         */
+        $level = error_reporting(0);
+        self::$_isLog4phpUsed = class_exists('Praxigento_Log_Logger', true);
+        error_reporting($level);
         if (self::$_isLog4phpUsed) {
             $this->_loggerLog4php = Praxigento_Log_Logger::getLogger($name);
         } else {
@@ -29,13 +33,13 @@ class Praxigento_Bonus_Logger
     }
 
     /**
-     * @return bool
+     * Override getter to use '$log = Praxigento_Log_Logger::getLogger($this)' form in Mage classes.
+     * @static
+     *
+     * @param string $name
+     *
+     * @return Namespace_Module_Logger
      */
-    public static function isLog4phpUsed()
-    {
-        return self::$_isLog4phpUsed;
-    }
-
     public static function getLogger($name)
     {
         $class = __CLASS__;
@@ -47,6 +51,14 @@ class Praxigento_Bonus_Logger
         $this->doLog($message, $throwable, 'debug', Zend_Log::INFO);
     }
 
+    /**
+     * Internal dispatcher for the called log method.
+     *
+     * @param $message
+     * @param $throwable
+     * @param $log4phpMethod
+     * @param $zendLevel
+     */
     private function doLog($message, $throwable, $log4phpMethod, $zendLevel)
     {
         if (self::$_isLog4phpUsed) {
