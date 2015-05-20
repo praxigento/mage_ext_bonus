@@ -7,6 +7,7 @@ use Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder as C
 use Praxigento_Bonus_Model_Own_Service_Replica_Response_CreateQuoteFromOrder as CreateQuoteFromOrderResponse;
 
 /**
+ * Service to create quote replicas (copies) from other orders or quotes.
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_Model_Own_Service_Base_Call
@@ -15,7 +16,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
      * Create quote for a given customer from a sample order.
      *
      * @param Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder $req
-     * @return Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
+     * @return Praxigento_Bonus_Model_Own_Service_Replica_Response_CreateQuoteFromOrder
      */
     public function createQuoteFromOrder(CreateQuoteFromOrderRequest $req)
     {

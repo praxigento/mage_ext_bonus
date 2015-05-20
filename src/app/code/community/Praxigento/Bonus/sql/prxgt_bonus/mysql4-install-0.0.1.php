@@ -95,6 +95,11 @@ $conn->addForeignKey(
     DB::FK_ACTION_RESTRICT
 );
 
+/* UQ index (customer_id:reference) */
+$ndxFields = array(Order::ATTR_ORDER_ID);
+$ndxName = $conn->getIndexName($tblOrder, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblOrder, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+
 
 /**
  * Bonus Payout

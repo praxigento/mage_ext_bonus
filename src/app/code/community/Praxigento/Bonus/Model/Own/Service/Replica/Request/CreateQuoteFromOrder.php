@@ -28,11 +28,11 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
     }
 
     /**
-     * @param int $customerId
+     * @param int $val
      */
-    public function setCustomerId($customerId)
+    public function setCustomerId($val)
     {
-        $this->customerId = $customerId;
+        $this->customerId = $val;
     }
 
     /**
@@ -44,11 +44,11 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
     }
 
     /**
-     * @param Mage_Customer_Model_Customer $customer
+     * @param Mage_Customer_Model_Customer $val
      */
-    public function setCustomer(Mage_Customer_Model_Customer $customer)
+    public function setCustomer(Mage_Customer_Model_Customer $val)
     {
-        $this->customer = $customer;
+        $this->customer = $val;
     }
 
     /**
@@ -60,11 +60,11 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
     }
 
     /**
-     * @param int $orderId
+     * @param int $val
      */
-    public function setOrderId($orderId)
+    public function setOrderId($val)
     {
-        $this->orderId = $orderId;
+        $this->orderId = $val;
     }
 
     /**
@@ -76,11 +76,11 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
     }
 
     /**
-     * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order $val
      */
-    public function setOrder(Mage_Sales_Model_Order $order)
+    public function setOrder(Mage_Sales_Model_Order $val)
     {
-        $this->order = $order;
+        $this->order = $val;
     }
 
 }

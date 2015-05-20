@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Praxigento_Bonus_Config as Config;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
@@ -24,4 +25,9 @@ class Praxigento_Bonus_Model_Own_Transact extends Mage_Core_Model_Abstract
     const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_DATE_CREATED = 'date_created';
     const ATTR_ID = 'id';
+
+    protected function _construct()
+    {
+        $this->_init(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_TRANSACT);
+    }
 }

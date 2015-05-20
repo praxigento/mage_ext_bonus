@@ -56,5 +56,21 @@
                 </connection>
             </prxgt_bonus>
         </resources>
+        <helpers>
+            <prxgt_bonus_helper>
+                <class>Praxigento_Bonus_Helper</class>
+            </prxgt_bonus_helper>
+        </helpers>
+        <events>
+            <sales_order_place_after>
+                <observers>
+                    <prxgt_intr_observer>
+                        <type>singleton</type>
+                        <class>prxgt_bonus_model/own_observer</class>
+                        <method>onSalesOrderPlaceAfter</method>
+                    </prxgt_intr_observer>
+                </observers>
+            </sales_order_place_after>
+        </events>
     </global>
 </config>
