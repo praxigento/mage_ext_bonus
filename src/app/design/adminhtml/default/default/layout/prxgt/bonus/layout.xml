@@ -7,12 +7,12 @@
 -->
 <layout version="0.1.0">
 
-	<!-- ***********************-->
-	<!-- Sales / Bonus / Retail -->
-	<!-- ***********************-->
-	<prxgt_ad_router_adminhtml_own_sales_bonus_retail_index>
-		<reference name="content">
-			<block type="adminhtml/template" name="prxgt_ad_pv_reset_index" template="prxgt/ad/pv_reset/index.phtml"/>
-		</reference>
-	</prxgt_ad_router_adminhtml_own_sales_bonus_retail_index>
+    <!-- ***********************-->
+    <!-- Sales / Bonus / Retail -->
+    <!-- ***********************-->
+    <prxgt_bonus_adminer_adminhtml_own_sales_bonus_retail_index>
+        <reference name="content">
+            <block type="adminhtml/template" name="prxgt_ad_pv_reset_index" template="prxgt/ad/pv_reset/index.phtml"/>
+        </reference>
+    </prxgt_bonus_adminer_adminhtml_own_sales_bonus_retail_index>
 </layout>

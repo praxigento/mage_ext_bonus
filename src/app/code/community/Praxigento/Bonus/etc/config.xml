@@ -14,13 +14,20 @@
     </modules>
     <admin>
         <routers>
-            <prxgt_bonus_router>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Praxigento_Bonus after="Mage_Adminhtml">Praxigento_Bonus_Adminhtml</Praxigento_Bonus>
+                    </modules>
+                </args>
+            </adminhtml>
+            <prxgt_bonus_adminer>
                 <use>admin</use>
                 <args>
                     <module>Praxigento_Bonus</module>
-                    <frontName>prxgt_bonus_route</frontName>
+                    <frontName>prxgt_bonus_admin</frontName>
                 </args>
-            </prxgt_bonus_router>
+            </prxgt_bonus_adminer>
         </routers>
     </admin>
     <adminhtml>

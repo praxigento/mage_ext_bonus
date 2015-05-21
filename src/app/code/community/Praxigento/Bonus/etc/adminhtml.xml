@@ -39,7 +39,7 @@
                         <prxgt_bonus_retail>
                             <title>Retail</title>
                             <sort_order>100</sort_order>
-                            <action>prxgt_bonus_route/adminhtml_own_sales_bonus_retail/</action>
+                            <action>adminhtml/own_sales_bonus_retail/</action>
                         </prxgt_bonus_retail>
                     </children>
                 </prxgt_bonus>
