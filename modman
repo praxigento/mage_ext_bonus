@@ -1,2 +1,3 @@
 src/app/code/community/Praxigento/Bonus/ app/code/community/Praxigento/Bonus/
+src/app/design/adminhtml/default/default/layout/prxgt/bonus/ app/design/adminhtml/default/default/layout/prxgt/bonus/
 src/app/etc/modules/Praxigento_Bonus.xml app/etc/modules/Praxigento_Bonus.xml
