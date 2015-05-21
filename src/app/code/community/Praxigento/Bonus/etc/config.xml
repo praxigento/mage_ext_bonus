@@ -5,12 +5,24 @@
  * All rights reserved.
  */
 -->
+<!-- http://www.magentocommerce.com/wiki/5_-_modules_and_development/reference/module_config.xml -->
 <config>
     <modules>
         <Praxigento_Bonus>
             <version>0.0.1</version>
         </Praxigento_Bonus>
     </modules>
+    <admin>
+        <routers>
+            <prxgt_bonus_router>
+                <use>admin</use>
+                <args>
+                    <module>Praxigento_Bonus</module>
+                    <frontName>prxgt_bonus_route</frontName>
+                </args>
+            </prxgt_bonus_router>
+        </routers>
+    </admin>
     <adminhtml>
         <translate>
             <modules>

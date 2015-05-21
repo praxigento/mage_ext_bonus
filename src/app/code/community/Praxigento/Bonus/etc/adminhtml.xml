@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+-->
+<!-- http://www.magentocommerce.com/wiki/5_-_modules_and_development/admin/xml_structure_for_admin_configurations -->
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <sales>
+                        <children>
+                            <prxgt_bonus>
+                                <title>Bonus</title>
+                                <sort_order>2000</sort_order>
+                                <children>
+                                    <prxgt_bonus_retail>
+                                        <title>Retail</title>
+                                        <sort_order>100</sort_order>
+                                    </prxgt_bonus_retail>
+                                </children>
+                            </prxgt_bonus>
+                        </children>
+                    </sales>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <menu>
+        <sales>
+            <children>
+                <prxgt_bonus>
+                    <title>Bonus</title>
+                    <sort_order>2000</sort_order>
+                    <children>
+                        <prxgt_bonus_retail>
+                            <title>Retail</title>
+                            <sort_order>100</sort_order>
+                            <action>prxgt_bonus_route/adminhtml_own_sales_bonus_retail/</action>
+                        </prxgt_bonus_retail>
+                    </children>
+                </prxgt_bonus>
+            </children>
+        </sales>
+    </menu>
+</config>
