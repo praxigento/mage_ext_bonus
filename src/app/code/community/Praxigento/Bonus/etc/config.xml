@@ -80,6 +80,11 @@
                 <class>Praxigento_Bonus_Helper</class>
             </prxgt_bonus_helper>
         </helpers>
+        <blocks>
+            <prxgt_bonus_block>
+                <class>Praxigento_Bonus_Block</class>
+            </prxgt_bonus_block>
+        </blocks>
         <events>
             <sales_order_place_after>
                 <observers>
