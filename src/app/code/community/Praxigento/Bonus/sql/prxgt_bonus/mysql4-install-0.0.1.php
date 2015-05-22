@@ -56,8 +56,8 @@ $tbl->addColumn(Order::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' 
     'Bonus amount.');
 $tbl->addColumn(Order::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Bonus amount currency.');
-$tbl->addColumn(Order::ATTR_IS_CHARGED, Ddl::TYPE_BOOLEAN, null, array('nullable' => false, 'default' => false),
-    'Is this bonus collected in payout.');
+$tbl->addColumn(Order::ATTR_TRANSACT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => true, 'unsigned' => true),
+    'Transaction is correlated to this bonus.');
 $tbl->setComment('Retail bonus amount for orders');
 $conn->createTable($tbl);
 
@@ -95,8 +95,30 @@ $conn->addForeignKey(
     DB::FK_ACTION_RESTRICT
 );
 
+/* Transaction FK */
+$fkName = $conn->getForeignKeyName(
+    $tblOrder,
+    Order::ATTR_TRANSACT_ID,
+    $tblTransact,
+    Transact::ATTR_ID
+);
+$conn->addForeignKey(
+    $fkName,
+    $tblOrder,
+    Order::ATTR_TRANSACT_ID,
+    $tblTransact,
+    Transact::ATTR_ID,
+    Db::FK_ACTION_RESTRICT,
+    DB::FK_ACTION_RESTRICT
+);
+
 /* UQ index (customer_id:reference) */
 $ndxFields = array(Order::ATTR_ORDER_ID);
+$ndxName = $conn->getIndexName($tblOrder, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblOrder, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+
+/* UQ index (transact_id) */
+$ndxFields = array(Order::ATTR_TRANSACT_ID);
 $ndxName = $conn->getIndexName($tblOrder, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 $conn->addIndex($tblOrder, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 
