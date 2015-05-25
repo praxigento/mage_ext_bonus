@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post */
+?>
+<style>
+    .nmmlmFormLayout {
+        margin: 0 auto;
+        width: 400px;
+    }
+</style>
+
+
+<h2 align="center"><?php $this->ui('Process Retail Bonus') ?></h2>
+<div class="nmmlmFormLayout">
+    <div class="nmmlmRow">
+        <?php $this->ui('Total %s orders are processed.', $this->getProcessed()) ?>
+    </div>
+
+</div>

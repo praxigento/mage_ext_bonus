@@ -10,13 +10,24 @@
     <!-- ***********************-->
     <!-- Sales / Bonus / Retail -->
     <!-- ***********************-->
-    <prxgt_bonus_adminer_adminhtml_own_sales_bonus_retail_index>
+    <adminhtml_own_sales_bonus_retail_index>
         <reference name="content">
-            <block
-                    type="prxgt_bonus_block/adminhtml_own_sales_bonus_retail_grid"
-                    name="sales_bonus_retail_grid"
-                    />
-            <!--<block type="adminhtml/template" name="prxgt_ad_pv_reset_index" template="prxgt/ad/pv_reset/index.phtml"/>-->
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_retail_grid"
+                   name="sales_bonus_retail_grid"/>
         </reference>
-    </prxgt_bonus_adminer_adminhtml_own_sales_bonus_retail_index>
+    </adminhtml_own_sales_bonus_retail_index>
+    <adminhtml_own_sales_bonus_process_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_process"
+                   name="prxgt_bonus_sales_bonus_process"
+                   template="prxgt/bonus/sales/bonus/process/index.phtml"/>
+        </reference>
+    </adminhtml_own_sales_bonus_process_index>
+    <adminhtml_own_sales_bonus_process_post>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_process_post"
+                   name="prxgt_bonus_sales_bonus_process_post"
+                   template="prxgt/bonus/sales/bonus/process/post.phtml"/>
+        </reference>
+    </adminhtml_own_sales_bonus_process_post>
 </layout>

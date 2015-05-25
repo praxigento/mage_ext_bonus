@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Praxigento_Bonus_Config as Config;
 
 /**
  * Process orders and calculate retail bonuses.
@@ -11,9 +12,68 @@
  */
 class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_Adminhtml_Controller_Action
 {
+    protected function _construct()
+    {
+        parent::_construct();
+        $this->_setTitile();
+    }
+
+    private function _setTitile()
+    {
+        $this->_title($this->__('Sales'))->_title($this->__('Retail Bonus'))->_title($this->__('Process Orders'));
+    }
+
     public function indexAction()
     {
         $this->loadLayout();
         $this->renderLayout();
+    }
+
+    public function postAction()
+    {
+        $this->loadLayout();
+        /* process orders */
+        $srv = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
+        $orderIds = $this->_getUnprocessedOrders();
+        $processed = 0;
+        foreach ($orderIds as $one) {
+            $id = $one['entity_id'];
+            $order = Mage::getModel('sales/order')->load($id);
+            $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
+            $req->setOrder($order);
+            try {
+                $resp = $srv->saveRetailBonus($req);
+                if ($resp->isSucceed()) {
+                    $processed++;
+                }
+            } catch (Exception $e) {
+                $msg = $e->getMessage();
+                /** @var  $log Praxigento_Bonus_Logger */
+                $log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
+                $log->error("Cannot create retail bonus for order #$id. Error: $msg");
+            }
+        }
+        /* populate UI block */
+        /** @var  $block Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post */
+        $block = Mage::app()->getLayout()->getBlock('prxgt_bonus_sales_bonus_process_post');
+        $block->setProcessed($processed);
+        $this->renderLayout();
+    }
+
+    private function _getUnprocessedOrders()
+    {
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Mage::getSingleton('core/resource');
+        /** @var  \Varien_Db_Adapter_Pdo_Mysql */
+        $conn = $rsrc->getConnection('core_write');
+        $tblSales = $rsrc->getTableName('sales/order');
+        $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
+        $query = "
+SELECT $tblSales.entity_id FROM $tblSales
+  LEFT OUTER JOIN $tblRetail ON $tblSales.entity_id = $tblRetail.order_id
+WHERE $tblRetail.order_id IS NULL";
+        $rs = $conn->query($query);
+        $result = $rs->fetchAll();
+        return $result;
     }
 }
