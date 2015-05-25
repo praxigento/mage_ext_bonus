@@ -17,10 +17,14 @@
                                 <title>Bonus</title>
                                 <sort_order>2000</sort_order>
                                 <children>
-                                    <prxgt_bonus_retail>
+                                    <retail>
                                         <title>Retail</title>
                                         <sort_order>100</sort_order>
-                                    </prxgt_bonus_retail>
+                                    </retail>
+                                    <process_orders>
+                                        <title>Process Orders</title>
+                                        <sort_order>1000</sort_order>
+                                    </process_orders>
                                 </children>
                             </prxgt_bonus>
                         </children>
@@ -36,11 +40,16 @@
                     <title>Bonus</title>
                     <sort_order>2000</sort_order>
                     <children>
-                        <prxgt_bonus_retail>
+                        <retail>
                             <title>Retail</title>
                             <sort_order>100</sort_order>
                             <action>adminhtml/own_sales_bonus_retail/</action>
-                        </prxgt_bonus_retail>
+                        </retail>
+                        <process_orders>
+                            <title>Process Orders</title>
+                            <sort_order>1000</sort_order>
+                            <action>adminhtml/own_sales_bonus_process/</action>
+                        </process_orders>
                     </children>
                 </prxgt_bonus>
             </children>
