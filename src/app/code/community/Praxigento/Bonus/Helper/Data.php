@@ -38,5 +38,34 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
         return $result;
     }
 
+    public function cfgRetailBonusEnabled($store = null)
+    {
+        $result = Mage::getStoreConfig('nmmlm_core_referrals/retail_bonus/is_enabled', $store);
+        $result = filter_var($result, FILTER_VALIDATE_BOOLEAN);
+        return $result;
+    }
 
+    public function cfgRetailBonusFeeFixed($store = null)
+    {
+        $result = Nmmlm_Core_Config::cfgReferralsRetailBonusFeeFixed($store);
+        return $result;
+    }
+
+    public function cfgRetailBonusFeeMax($store = null)
+    {
+        $result = Nmmlm_Core_Config::cfgReferralsRetailBonusFeeMax($store);
+        return $result;
+    }
+
+    public function cfgRetailBonusFeeMin($store = null)
+    {
+        $result = Nmmlm_Core_Config::cfgReferralsRetailBonusFeeMin($store);
+        return $result;
+    }
+
+    public function cfgRetailBonusFeePercent($store = null)
+    {
+        $result = Nmmlm_Core_Config::cfgReferralsRetailBonusFeePercent($store);
+        return $result;
+    }
 }

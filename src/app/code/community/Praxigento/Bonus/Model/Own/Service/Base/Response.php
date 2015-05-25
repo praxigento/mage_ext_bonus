@@ -12,5 +12,25 @@
  */
 abstract class Praxigento_Bonus_Model_Own_Service_Base_Response
 {
+    const ERR_NO_ERROR = 'no_error';
+    const ERR_UNDEFINED = 'undefined';
+    private $errorCode = self::ERR_UNDEFINED;
+
+    /**
+     * @return mixed
+     */
+    public function getErrorCode()
+    {
+        return $this->errorCode;
+    }
+
+    /**
+     * @param mixed $errorCode
+     */
+    public function setErrorCode($errorCode)
+    {
+        $this->errorCode = $errorCode;
+    }
+
     public abstract function isSucceed();
 }

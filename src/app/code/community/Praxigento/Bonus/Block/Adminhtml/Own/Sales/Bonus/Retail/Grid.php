@@ -50,10 +50,10 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Retail_Grid
         $helper = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
-        $this->addColumn('id', array(
+        $this->addColumn(Order::ATTR_ID, array(
             'header' => $helper->__('#'),
             'filter' => false,
-            'index' => 'id'
+            'index' => Order::ATTR_ID
         ));
 
         $this->addColumn(self::AS_ORDER_ID, array(
@@ -64,22 +64,30 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Retail_Grid
 
         $this->addColumn(self::AS_CUST_ID, array(
             'header' => $helper->__('Customer #'),
-//            'filter' => true,
+            'filter' => false,
             'index' => self::AS_CUST_ID
         ));
 
-        $this->addColumn('amount', array(
+        $this->addColumn(Order::ATTR_AMOUNT, array(
             'header' => $helper->__('Bonus Amount'),
-            'index' => 'amount',
+            'index' => Order::ATTR_AMOUNT,
             'type' => 'currency',
             'filter' => false,
             'currency_code' => $currency
         ));
 
-        $this->addColumn('transact_id', array(
+        $this->addColumn(Order::ATTR_FEE, array(
+            'header' => $helper->__('Fee Amount'),
+            'index' => Order::ATTR_FEE,
+            'type' => 'currency',
+            'filter' => false,
+            'currency_code' => $currency
+        ));
+
+        $this->addColumn(Order::ATTR_TRANSACT_ID, array(
             'header' => $helper->__('Transaction #'),
             'filter' => false,
-            'index' => 'transact_id'
+            'index' => Order::ATTR_TRANSACT_ID
         ));
         return parent::_prepareColumns();
     }

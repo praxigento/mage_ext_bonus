@@ -52,10 +52,20 @@ $tbl->addColumn(Order::ATTR_ORDER_ID, Ddl::TYPE_INTEGER, null, array('nullable' 
     'Related order that generates bonus.');
 $tbl->addColumn(Order::ATTR_UPLINE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer that earns this bonus.');
-$tbl->addColumn(Order::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Bonus amount.');
 $tbl->addColumn(Order::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Bonus amount currency.');
+$tbl->addColumn(Order::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Bonus amount.');
+$tbl->addColumn(Order::ATTR_FEE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Bonus fee value.');
+$tbl->addColumn(Order::ATTR_FEE_FIXED, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Fixed part of the bonus fee.');
+$tbl->addColumn(Order::ATTR_FEE_PERCENT, Ddl::TYPE_DECIMAL, '5,4', array('nullable' => false),
+    'Bonus fee percent.');
+$tbl->addColumn(Order::ATTR_FEE_MIN, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Minimum bonus fee.');
+$tbl->addColumn(Order::ATTR_FEE_MAX, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Maximum bonus fee.');
 $tbl->addColumn(Order::ATTR_TRANSACT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => true, 'unsigned' => true),
     'Transaction is correlated to this bonus.');
 $tbl->setComment('Retail bonus amount for orders');

@@ -10,7 +10,7 @@
 class Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus
     extends Praxigento_Bonus_Model_Own_Service_Base_Response
 {
-
+    const ERR_BONUS_DISABLED = 'bonus_is_disabled';
     /** @var  Praxigento_Bonus_Model_Own_Order */
     private $bonusOrder;
 
