@@ -96,19 +96,25 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
 
     private function _calcRetailBonusFee($amount)
     {
-        $fixed = $this->_helper->cfgRetailBonusFeeFixed();
-        $percent = $this->_helper->cfgRetailBonusFeePercent();
-        $min = $this->_helper->cfgRetailBonusFeeMin();
-        $max = $this->_helper->cfgRetailBonusFeeMax();
-        $result = $fixed + $amount * $percent;
-        $result = ($result < $min) ? $min : $result;
-        $result = ($result > $max) ? $max : $result;
-        $result = number_format($result, 2);
-        $this->_log->trace("Retail bonus fee for amount $amount is $result ($min < [$fixed + $amount * $percent] < $max).");
+        $result = 0;
+        if ($amount > 0) {
+            $fixed = $this->_helper->cfgRetailBonusFeeFixed();
+            $percent = $this->_helper->cfgRetailBonusFeePercent();
+            $min = $this->_helper->cfgRetailBonusFeeMin();
+            $max = $this->_helper->cfgRetailBonusFeeMax();
+            $result = $fixed + $amount * $percent;
+            $result = ($result < $min) ? $min : $result;
+            $result = ($result > $max) ? $max : $result;
+            $result = number_format($result, 2);
+            $this->_log->trace("Retail bonus fee for amount $amount is $result ($min < [$fixed + $amount * $percent] < $max).");
+        } else {
+            $this->_log->trace("Retail bonus fee for amount $amount is not calculated (=0.00).");
+        }
         return $result;
     }
 
-    private function _calcRetailBonusAmount()
+    private
+    function _calcRetailBonusAmount()
     {
         /* calculate retail order amount w/o tax and shipping */
         /** @var  $order Mage_Sales_Model_Order */

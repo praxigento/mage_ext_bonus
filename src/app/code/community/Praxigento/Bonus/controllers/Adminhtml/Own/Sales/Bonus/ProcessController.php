@@ -32,31 +32,38 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_
     public function postAction()
     {
         $this->loadLayout();
-        /* process orders */
-        $srv = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
-        $orderIds = $this->_getUnprocessedOrders();
-        $processed = 0;
-        foreach ($orderIds as $one) {
-            $id = $one['entity_id'];
-            $order = Mage::getModel('sales/order')->load($id);
-            $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
-            $req->setOrder($order);
-            try {
-                $resp = $srv->saveRetailBonus($req);
-                if ($resp->isSucceed()) {
-                    $processed++;
-                }
-            } catch (Exception $e) {
-                $msg = $e->getMessage();
-                /** @var  $log Praxigento_Bonus_Logger */
-                $log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
-                $log->error("Cannot create retail bonus for order #$id. Error: $msg");
-            }
-        }
-        /* populate UI block */
+        /** @var  $hlp Praxigento_Bonus_Helper_Data */
+        $hlp = Mage::helper(Config::CFG_HELPER);
         /** @var  $block Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post */
         $block = Mage::app()->getLayout()->getBlock('prxgt_bonus_sales_bonus_process_post');
-        $block->setProcessed($processed);
+        /* process orders */
+        if ($hlp->cfgRetailBonusEnabled()) {
+            $srv = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
+            $orderIds = $this->_getUnprocessedOrders();
+            $processed = 0;
+            $failed = array();
+            foreach ($orderIds as $one) {
+                $id = $one['entity_id'];
+                $order = Mage::getModel('sales/order')->load($id);
+                $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
+                $req->setOrder($order);
+                try {
+                    $resp = $srv->saveRetailBonus($req);
+                    if ($resp->isSucceed()) {
+                        $processed++;
+                    }
+                } catch (Exception $e) {
+                    $msg = $e->getMessage();
+                    /** @var  $log Praxigento_Bonus_Logger */
+                    $log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
+                    $log->error("Cannot create retail bonus for order #$id. Error: $msg");
+                    $failed[$id] = $msg;
+                }
+            }
+            /* populate UI block */
+            $block->setProcessedCount($processed);
+            $block->setFailedOrders($failed);
+        }
         $this->renderLayout();
     }
 

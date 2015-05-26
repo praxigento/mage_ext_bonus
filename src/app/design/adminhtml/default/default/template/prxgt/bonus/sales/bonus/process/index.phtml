@@ -32,22 +32,38 @@
 
 <h2 align="center"><?php $this->ui('Process Retail Bonus') ?></h2>
 <div class="nmmlmFormLayout">
-    <form method="post" action="<?php echo $this->getUrl('*/*/post'); ?>" id="<?php $this->uiDomForm() ?>">
-        <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
 
-        <div class="nmmlmRow">
-            <?php $this->ui('There are %s unprocessed orders.', $this->getOrdersCount()) ?>
-        </div>
 
-        <div class="nmmlmRow">
-            <?php $this->ui('Press \'OK\' to process all orders and generate retail bonuses.') ?>
-        </div>
+    <?php if ($this->isRetailBonusEnabled()): ?>
 
-        <div class="nmmlmRow">
-            <div class="nmmlmBtn">
-                <?php $this->uiButtonSubmit(' OK ') ?>
+
+        <form method="post" action="<?php echo $this->getUrl('*/*/post'); ?>" id="<?php $this->uiDomForm() ?>">
+            <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+            <div class="nmmlmRow">
+                <?php $this->ui('There are %s unprocessed orders.', $this->getOrdersCount()) ?>
             </div>
-            <div class="clear"></div>
+
+            <div class="nmmlmRow">
+                <?php $this->ui('Press \'OK\' to process all orders and generate retail bonuses.') ?>
+            </div>
+
+            <div class="nmmlmRow">
+                <div class="nmmlmBtn">
+                    <?php $this->uiButtonSubmit(' OK ') ?>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </form>
+
+
+    <?php else: ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Retail bonus is disabled.') ?>
         </div>
-    </form>
+
+
+    <?php endif; ?>
 </div>

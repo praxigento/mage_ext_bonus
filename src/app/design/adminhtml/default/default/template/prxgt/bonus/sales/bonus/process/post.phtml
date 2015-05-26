@@ -18,9 +18,39 @@
 
 
 <h2 align="center"><?php $this->ui('Process Retail Bonus') ?></h2>
+
 <div class="nmmlmFormLayout">
-    <div class="nmmlmRow">
-        <?php $this->ui('Total %s orders are processed.', $this->getProcessed()) ?>
-    </div>
+
+
+    <?php if ($this->isRetailBonusEnabled()): ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Total %s orders are processed.', $this->getProcessedCount()) ?>
+        </div>
+
+        <?php $failed = $this->getFailedOrders(); ?>
+
+        <?php if (count($failed)) : ?>
+            <div class="nmmlmRow">
+                <pre>
+                    <?php
+                    foreach ($failed as $id => $msg) {
+                        echo "\n$id:\t$msg";
+                    }
+                    ?>
+                </pre>
+            </div>
+        <?php endif; ?>
+
+    <?php else: ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Retail bonus is disabled.') ?>
+        </div>
+
+
+    <?php endif; ?>
 
 </div>

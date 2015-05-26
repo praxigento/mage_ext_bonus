@@ -20,8 +20,6 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_RetailController extends Mage_A
         $this->_title($this->__('Sales'))->_title($this->__('Retail Bonus'));
         /* see ./etc/adminhtml.xml::/config/acl/resources/admin/children/sales/children/prxgt_bonus/children/retail */
         $this->_setActiveMenu('sales/prxgt_bonus/prxgt_bonus_retail');
-//        $contentBlock = $this->getLayout()->createBlock(Config::CFG_BLOCK . '/adminhtml_own_sales_bonus_retail');
-//        $this->_addContent($contentBlock);
         $this->renderLayout();
     }
 }

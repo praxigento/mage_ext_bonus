@@ -40,4 +40,12 @@ WHERE $tblRetail.order_id IS NULL";
         $arr = $rs->fetch();
         $this->_ordersCount = $arr[$as];
     }
+
+    public function isRetailBonusEnabled()
+    {
+        /** @var  $hlp Praxigento_Bonus_Helper_Data */
+        $hlp = Mage::helper(Config::CFG_HELPER);
+        $result = $hlp->cfgRetailBonusEnabled();
+        return $result;
+    }
 }

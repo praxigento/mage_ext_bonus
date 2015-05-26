@@ -31,6 +31,8 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
          */
         $quote = Mage::getModel('sales/quote');
         $quote->setCustomer($customer);
+        /* switch off qty control */
+        $quote->setIsSuperMode(true);
         /**
          *  Transfer order data to quote.
          */
