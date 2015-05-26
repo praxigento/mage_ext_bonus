@@ -27,6 +27,17 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Return GMT DateTime instance in case of $format is null or formatted string otherwise.
+     * @param null $format
+     * @return DateTime|string
+     */
+    public function getDateGmtNow($format = null)
+    {
+        $result = Nmmlm_Core_Util::dateGmtNow($format);
+        return $result;
+    }
+
+    /**
      * Extract upline customer data from session.
      *
      * @return Mage_Customer_Model_Customer|null

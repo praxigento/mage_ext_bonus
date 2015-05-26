@@ -12,8 +12,10 @@
  */
 abstract class Praxigento_Bonus_Model_Own_Service_Base_Response
 {
+    const ERR_BONUS_DISABLED = 'bonus_is_disabled';
     const ERR_NO_ERROR = 'no_error';
     const ERR_UNDEFINED = 'undefined';
+
     private $errorCode = self::ERR_UNDEFINED;
 
     /**
