@@ -38,6 +38,9 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_
         $block = Mage::app()->getLayout()->getBlock('prxgt_bonus_sales_bonus_process_post');
         /* process orders */
         if ($hlp->cfgRetailBonusEnabled()) {
+            /* prevent memory exhausting */
+            ini_set('memory_limit', '-1');
+            /* process orders */
             $srv = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
             $orderIds = $this->_getUnprocessedOrders();
             $processed = 0;
