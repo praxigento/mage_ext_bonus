@@ -12,14 +12,14 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_RetailController extends Mage_Adminhtml_Controller_Action
+class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Grid_RetailController extends Mage_Adminhtml_Controller_Action
 {
     public function indexAction()
     {
         $this->loadLayout();
         $this->_title($this->__('Sales'))->_title($this->__('Retail Bonus'));
-        /* see ./etc/adminhtml.xml::/config/acl/resources/admin/children/sales/children/prxgt_bonus/children/retail */
-        $this->_setActiveMenu('sales/prxgt_bonus/prxgt_bonus_retail');
+        /* see ./etc/adminhtml.xml::/config/acl/resources/admin/children/sales/children/prxgt_bonus/... */
+        $this->_setActiveMenu('sales/prxgt_bonus/retail_grid');
         $this->renderLayout();
     }
 }

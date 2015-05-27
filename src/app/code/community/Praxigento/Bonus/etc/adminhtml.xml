@@ -17,14 +17,34 @@
                                 <title>Bonus</title>
                                 <sort_order>2000</sort_order>
                                 <children>
-                                    <retail>
-                                        <title>Retail</title>
+                                    <retail_grid>
+                                        <title>Retail Grid</title>
                                         <sort_order>100</sort_order>
-                                    </retail>
-                                    <process_orders>
-                                        <title>Process Orders</title>
+                                    </retail_grid>
+                                    <transact_grid>
+                                        <title>Transactions Grid</title>
+                                        <sort_order>200</sort_order>
+                                    </transact_grid>
+                                    <payout_grid>
+                                        <title>Payouts Grid</title>
+                                        <sort_order>300</sort_order>
+                                    </payout_grid>
+                                    <collect_retail>
+                                        <title>Collect Retail</title>
                                         <sort_order>1000</sort_order>
-                                    </process_orders>
+                                    </collect_retail>
+                                    <collect_transact>
+                                        <title>Collect Transactions</title>
+                                        <sort_order>1100</sort_order>
+                                    </collect_transact>
+                                    <collect_payout>
+                                        <title>Collect Payouts</title>
+                                        <sort_order>1200</sort_order>
+                                    </collect_payout>
+                                    <payment>
+                                        <title>Pay to eWallets</title>
+                                        <sort_order>2000</sort_order>
+                                    </payment>
                                 </children>
                             </prxgt_bonus>
                         </children>
@@ -40,16 +60,41 @@
                     <title>Bonus</title>
                     <sort_order>2000</sort_order>
                     <children>
-                        <retail>
-                            <title>Retail</title>
+                        <retail_grid>
+                            <title>Retails Grid</title>
                             <sort_order>100</sort_order>
-                            <action>adminhtml/own_sales_bonus_retail/</action>
-                        </retail>
-                        <process_orders>
-                            <title>Process Orders</title>
+                            <action>adminhtml/own_sales_bonus_grid_retail/</action>
+                        </retail_grid>
+                        <transact_grid>
+                            <title>Transactions Grid</title>
+                            <sort_order>200</sort_order>
+                            <action>adminhtml/own_sales_bonus_grid_transact/</action>
+                        </transact_grid>
+                        <payout_grid>
+                            <title>Payouts Grid</title>
+                            <sort_order>300</sort_order>
+                            <action>adminhtml/own_sales_bonus_grid_payout/</action>
+                        </payout_grid>
+                        <collect_retail>
+                            <title>Collect Retail</title>
                             <sort_order>1000</sort_order>
-                            <action>adminhtml/own_sales_bonus_process/</action>
-                        </process_orders>
+                            <action>adminhtml/own_sales_bonus_collect_retail/</action>
+                        </collect_retail>
+                        <collect_transact>
+                            <title>Collect Transactions</title>
+                            <sort_order>1100</sort_order>
+                            <action>adminhtml/own_sales_bonus_collect_transact/</action>
+                        </collect_transact>
+                        <collect_payout>
+                            <title>Collect Payouts</title>
+                            <sort_order>1200</sort_order>
+                            <action>adminhtml/own_sales_bonus_collect_payout/</action>
+                        </collect_payout>
+                        <payment>
+                            <title>Pay to eWallets</title>
+                            <sort_order>2000</sort_order>
+                            <action>adminhtml/own_sales_bonus_payment/</action>
+                        </payment>
                     </children>
                 </prxgt_bonus>
             </children>

@@ -4,38 +4,32 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
-use Praxigento_Bonus_Model_Own_Order as Order;
+use Praxigento_Bonus_Model_Own_Payout as Payout;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Retail_Grid
+class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Payout_Grid
     extends Mage_Adminhtml_Block_Widget_Grid
 {
     const AS_CUST_ID = 'customer_inc';
-    const AS_ORDER_ID = 'order_inc';
 
     public function __construct()
     {
         parent::__construct();
-        $this->setId('prxgt_bonus_retail_grid');
-        $this->setDefaultSort('id');
+        $this->setId('prxgt_bonus_grid_payout');
+        $this->setDefaultSort(Payout::ATTR_ID);
         $this->setDefaultDir('DESC');
 //        $this->setSaveParametersInSession(true);
     }
 
     protected function _prepareCollection()
     {
-        /** @var  $collection Praxigento_Bonus_Resource_Own_Order_Collection */
-        $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_order_collection');
-        /* JOIN sales_order */
-        $tbl = array('ord' => 'sales/order');
-        $cond = 'main_table.' . Order::ATTR_ORDER_ID . '=ord.entity_id';
-        $cols = array(self::AS_ORDER_ID => 'increment_id');
-        $collection->join($tbl, $cond, $cols);
+        /** @var  $collection Praxigento_Bonus_Resource_Own_Payout_Collection */
+        $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_payout_collection');
         /* JOIN customer_entity */
         $tbl = array('cust' => 'customer/entity');
-        $cond = 'main_table.' . Order::ATTR_UPLINE_ID . '=cust.entity_id';
+        $cond = 'main_table.' . Payout::ATTR_CUSTOMER_ID . '=cust.entity_id';
         $cols = array(self::AS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID);
         $collection->join($tbl, $cond, $cols);
         /* prepare collection */
@@ -50,16 +44,17 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Retail_Grid
         $helper = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
-        $this->addColumn(Order::ATTR_ID, array(
+        $this->addColumn(Payout::ATTR_ID, array(
             'header' => $helper->__('#'),
             'filter' => false,
-            'index' => Order::ATTR_ID
+            'index' => Payout::ATTR_ID
         ));
 
-        $this->addColumn(self::AS_ORDER_ID, array(
-            'header' => $helper->__('Order #'),
+        $this->addColumn(Payout::ATTR_DATE_CREATED, array(
+            'header' => $helper->__('Created at'),
             'filter' => false,
-            'index' => self::AS_ORDER_ID
+            'index' => Payout::ATTR_DATE_CREATED,
+            'type' => 'datetime'
         ));
 
         $this->addColumn(self::AS_CUST_ID, array(
@@ -68,27 +63,20 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Retail_Grid
             'index' => self::AS_CUST_ID
         ));
 
-        $this->addColumn(Order::ATTR_AMOUNT, array(
-            'header' => $helper->__('Bonus Amount'),
-            'index' => Order::ATTR_AMOUNT,
+        $this->addColumn(Payout::ATTR_AMOUNT, array(
+            'header' => $helper->__('Amount'),
+            'index' => Payout::ATTR_AMOUNT,
             'type' => 'currency',
             'filter' => false,
             'currency_code' => $currency
         ));
 
-        $this->addColumn(Order::ATTR_FEE, array(
-            'header' => $helper->__('Fee Amount'),
-            'index' => Order::ATTR_FEE,
-            'type' => 'currency',
+        $this->addColumn(Payout::ATTR_REFERENCE, array(
+            'header' => $helper->__('eWallet Ref.'),
             'filter' => false,
-            'currency_code' => $currency
+            'index' => Payout::ATTR_REFERENCE
         ));
 
-        $this->addColumn(Order::ATTR_TRANSACT_ID, array(
-            'header' => $helper->__('Transaction #'),
-            'filter' => false,
-            'index' => Order::ATTR_TRANSACT_ID
-        ));
         return parent::_prepareColumns();
     }
 

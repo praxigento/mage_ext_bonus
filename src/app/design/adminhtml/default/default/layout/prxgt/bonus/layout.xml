@@ -7,15 +7,29 @@
 -->
 <layout version="0.1.0">
 
-    <!-- ***********************-->
-    <!-- Sales / Bonus / Retail -->
-    <!-- ***********************-->
-    <adminhtml_own_sales_bonus_retail_index>
+    <!-- *************************-->
+    <!-- Sales / Bonus / ... grid -->
+    <!-- *************************-->
+    <adminhtml_own_sales_bonus_grid_retail_index>
         <reference name="content">
-            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_retail_grid"
-                   name="sales_bonus_retail_grid"/>
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_grid_retail"
+                   name="sales_bonus_grid_retail"/>
         </reference>
-    </adminhtml_own_sales_bonus_retail_index>
+    </adminhtml_own_sales_bonus_grid_retail_index>
+    <adminhtml_own_sales_bonus_grid_transact_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_grid_transact"
+                   name="sales_bonus_grid_transact"/>
+        </reference>
+    </adminhtml_own_sales_bonus_grid_transact_index>
+    <adminhtml_own_sales_bonus_grid_payout_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_grid_payout"
+                   name="sales_bonus_grid_payout"/>
+        </reference>
+    </adminhtml_own_sales_bonus_grid_payout_index>
+
+
     <adminhtml_own_sales_bonus_process_index>
         <reference name="content">
             <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_process"
