@@ -24,7 +24,7 @@ class Praxigento_Bonus_Test_Model_Own_Service_Registry_Call_DvlpTest extends PHP
     {
         $call = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
         $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
-        $order = Mage::getModel('sales/order')->load(104);
+        $order = Mage::getModel('sales/order')->load(6);
         $req->setOrder($order);
         $resp = $call->saveRetailBonus($req);
         $this->assertTrue($resp instanceof SaveRetailBonusResponse);

@@ -138,12 +138,17 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
             array_keys(Mage::getConfig()->getNode('adminhtml/sales/order/create/available_product_types')->asArray()),
             true
         );
+        /* AD-336 */
+        $i=0;
         foreach ($items as $orderItem) {
             /* @var $orderItem Mage_Sales_Model_Order_Item */
             if (!$orderItem->getParentItem()) {
                 $qty = $orderItem->getQtyOrdered();
                 if ($qty > 0) {
                     $item = $this->_initQuoteItemFromOrderItem($quote, $orderItem, $storeId, $qty, $customerGid);
+                    /* AD-336 */
+                    $item->setId($i);
+                    $i++;
                     if (is_string($item)) {
                         Mage::throwException($item);
                     }
