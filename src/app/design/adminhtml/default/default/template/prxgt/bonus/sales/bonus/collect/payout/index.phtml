@@ -1,0 +1,74 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Payout_Index */
+?>
+<style>
+    .nmmlmFormLayout {
+        margin: 0 auto;
+        width: 400px;
+    }
+
+    .nmmlmRow {
+        width: 100%;
+        border-bottom: 1px solid black;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .nmmlmBtn {
+        text-align: center;
+    }
+</style>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<h2 align="center"><?php $this->ui('Collect Payouts') ?></h2>
+<div class="nmmlmFormLayout">
+
+
+    <?php if ($this->isRetailBonusEnabled()): ?>
+
+
+        <form method="post" action="<?php echo $this->getUrl('*/*/post'); ?>" id="<?php $this->uiDomForm() ?>">
+            <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+            <div class="nmmlmRow">
+                <?php $this->ui('There are %s unprocessed transactions.', $this->getCount()) ?>
+            </div>
+
+            <?php if ($this->getCount()): ?>
+
+                <div class="nmmlmRow">
+                    <?php $this->ui('Press \'OK\' to collect payouts.') ?>
+                </div>
+
+                <div class="nmmlmRow">
+                    <div class="nmmlmBtn">
+                        <?php $this->uiButtonSubmit(' OK ') ?>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+            <?php endif ?>
+
+        </form>
+
+
+    <?php else: ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Bonus is disabled.') ?>
+        </div>
+
+
+    <?php endif; ?>
+</div>

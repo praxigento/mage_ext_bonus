@@ -8,7 +8,8 @@ use Praxigento_Bonus_Config as Config;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post extends Praxigento_Bonus_Block_Adminhtml_Own_Base
+class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Retail_Post
+    extends Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Base
 {
     private $_processedCount;
     private $_failedOrders = array();
@@ -43,13 +44,5 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post extends Prax
     public function setProcessedCount($val)
     {
         $this->_processedCount = $val;
-    }
-
-    public function isRetailBonusEnabled()
-    {
-        /** @var  $hlp Praxigento_Bonus_Helper_Data */
-        $hlp = Mage::helper(Config::CFG_HELPER);
-        $result = $hlp->cfgRetailBonusEnabled();
-        return $result;
     }
 }

@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process */
+/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Transact_Index */
 ?>
 <style>
     .nmmlmFormLayout {
@@ -30,7 +30,7 @@
 
 <?php $this->uiScriptFormSubmit() ?>
 
-<h2 align="center"><?php $this->ui('Process Retail Bonus') ?></h2>
+<h2 align="center"><?php $this->ui('Collect Bonus Transactions') ?></h2>
 <div class="nmmlmFormLayout">
 
 
@@ -41,19 +41,24 @@
             <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
 
             <div class="nmmlmRow">
-                <?php $this->ui('There are %s unprocessed orders.', $this->getOrdersCount()) ?>
+                <?php $this->ui('There are %s unprocessed bonuses.', $this->getCount()) ?>
             </div>
 
-            <div class="nmmlmRow">
-                <?php $this->ui('Press \'OK\' to process all orders and generate retail bonuses.') ?>
-            </div>
+            <?php if ($this->getCount()): ?>
 
-            <div class="nmmlmRow">
-                <div class="nmmlmBtn">
-                    <?php $this->uiButtonSubmit(' OK ') ?>
+                <div class="nmmlmRow">
+                    <?php $this->ui('Press \'OK\' to collect transactions.') ?>
                 </div>
-                <div class="clear"></div>
-            </div>
+
+                <div class="nmmlmRow">
+                    <div class="nmmlmBtn">
+                        <?php $this->uiButtonSubmit(' OK ') ?>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+            <?php endif ?>
+
         </form>
 
 
@@ -61,7 +66,7 @@
 
 
         <div class="nmmlmRow">
-            <?php $this->ui('Retail bonus is disabled.') ?>
+            <?php $this->ui('Bonus is disabled.') ?>
         </div>
 
 

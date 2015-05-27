@@ -1,0 +1,51 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Transact_Post */
+?>
+<style>
+    .nmmlmFormLayout {
+        margin: 0 auto;
+        width: 400px;
+    }
+
+    .nmmlmRow {
+        width: 100%;
+        border-bottom: 1px solid black;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+</style>
+
+
+<h2 align="center"><?php $this->ui('Collect Bonus Transactions') ?></h2>
+
+<div class="nmmlmFormLayout">
+
+
+    <?php if ($this->isRetailBonusEnabled()): ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Total %s transactions are collected.', $this->getCollectedCount()) ?>
+        </div>
+
+
+    <?php else: ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Bonus is disabled.') ?>
+        </div>
+
+
+    <?php endif; ?>
+
+</div>

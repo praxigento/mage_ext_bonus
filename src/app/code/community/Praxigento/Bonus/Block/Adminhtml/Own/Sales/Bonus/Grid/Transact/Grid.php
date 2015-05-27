@@ -29,16 +29,17 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
     {
         /** @var  $collection Praxigento_Bonus_Resource_Own_Transact_Collection */
         $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_transact_collection');
+        $rsrc = $collection->getResource();
         /* JOIN customer_entity */
         $tbl = array('cust' => 'customer/entity');
         $cond = 'main_table.' . Transact::ATTR_CUSTOMER_ID . '=cust.entity_id';
         $cols = array(self::AS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID);
         $collection->join($tbl, $cond, $cols);
         /* JOIN payout_transact */
-        $tbl = array('pt' => Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT);
+        $tbl = array('pt' => $rsrc->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT));
         $cond = 'main_table.' . Transact::ATTR_ID . '=pt.' . PayoutTransact::ATTR_TRANSACT_ID;
         $cols = array(self::AS_PAYOUT => PayoutTransact::ATTR_PAYOUT_ID);
-        $collection->join($tbl, $cond, $cols);
+        $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* prepare collection */
         $sql = $collection->getSelectSql(true);
         $this->setCollection($collection);

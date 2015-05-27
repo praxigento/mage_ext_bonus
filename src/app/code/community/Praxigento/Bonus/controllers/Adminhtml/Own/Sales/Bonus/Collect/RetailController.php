@@ -10,7 +10,7 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_Adminhtml_Controller_Action
+class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_RetailController extends Mage_Adminhtml_Controller_Action
 {
     protected function _construct()
     {
@@ -20,7 +20,7 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_
 
     private function _setTitile()
     {
-        $this->_title($this->__('Sales'))->_title($this->__('Retail Bonus'))->_title($this->__('Process Orders'));
+        $this->_title($this->__('Sales'))->_title($this->__('Retail Bonus'))->_title($this->__('Collect'));
     }
 
     public function indexAction()
@@ -34,8 +34,8 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_ProcessController extends Mage_
         $this->loadLayout();
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
         $hlp = Mage::helper(Config::CFG_HELPER);
-        /** @var  $block Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Post */
-        $block = Mage::app()->getLayout()->getBlock('prxgt_bonus_sales_bonus_process_post');
+        /** @var  $block Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Retail_Post */
+        $block = Mage::app()->getLayout()->getBlock('prxgt_bonus_sales_bonus_collect_post');
         /* process orders */
         if ($hlp->cfgRetailBonusEnabled()) {
             /* prevent memory exhausting */

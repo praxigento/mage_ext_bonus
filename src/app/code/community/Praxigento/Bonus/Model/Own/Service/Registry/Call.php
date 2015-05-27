@@ -9,9 +9,13 @@ use Praxigento_Bonus_Model_Own_Payout_Transact as PayoutTransact;
 use Praxigento_Bonus_Model_Own_Service_Base_Response as BaseResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts as CreatePayoutsRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreateTransactions as CreateTransactionsRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_SaveRetailBonus as SaveRetailBonusRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts as CreatePayoutsResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreateTransactions as CreateTransactionsResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus as SaveRetailBonusResponse;
 use Praxigento_Bonus_Model_Own_Transact as Transact;
 
@@ -32,33 +36,72 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
     const AS_ID = 'id';
     const AS_ORDER_ID = 'orderId';
 
-    /**
-     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts $req
-     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts
-     */
-    public function createPayouts(CreatePayoutsRequest $req)
+    public function getUnprocessedBonuses(GetUnprocessedBonusesCountRequest $req)
     {
-        /** @var  $result CreatePayoutsResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createPayouts');
-        if ($this->_helper->cfgRetailBonusEnabled()) {
-            $items = $this->_readUnprocessedTransactions();
-            $count = count($items);
-            $this->_log->debug("Total $count transactions should be processed to create payouts.");
-            if ($count) {
-                $byCustomer = $this->_groupTransactionsByCustomer($items);
-                $idsCreated = array();
-                foreach ($byCustomer as $customerId => $items) {
-                    $newId = $this->_createOnePayout($items);
-                    if ($newId) {
-                        $idsCreated[] = $newId;
-                    }
-                }
-                $result->setPayoutIds($idsCreated);
-            }
-        } else {
-            /* retail bonus is disabled */
-            $result->setErrorCode(BaseResponse::ERR_BONUS_DISABLED);
-        }
+        /** @var  $result GetUnprocessedBonusesCountResponse */
+        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedBonusesCount');
+        $data = $this->_readUnprocessedBonuses();
+        $count = count($data);
+        $result->setCount($count);
+        return $result;
+    }
+
+    /**
+     * Select ids of the bonuses should be converted to transactions.
+     *
+     * @return array
+     */
+    protected function _readUnprocessedBonuses()
+    {
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Mage::getSingleton('core/resource');
+        /** @var  \Varien_Db_Adapter_Pdo_Mysql */
+        $conn = $rsrc->getConnection('core_write');
+        $tblSales = $rsrc->getTableName('sales/order');
+        $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
+        $entityId = 'entity_id';
+        $id = BonusOrder::ATTR_ID;
+        $orderId = BonusOrder::ATTR_ORDER_ID;
+        $customerId = BonusOrder::ATTR_UPLINE_ID;
+        $transactId = BonusOrder::ATTR_TRANSACT_ID;
+        $amountBonus = BonusOrder::ATTR_AMOUNT;
+        $amountFee = BonusOrder::ATTR_FEE;
+        $currency = BonusOrder::ATTR_CURR;
+        $asId = self::AS_ID;
+        $asOrderId = self::AS_ORDER_ID;
+        $asCustId = self::AS_CUSTOMER_ID;
+        $asAmntBonus = self::AS_AMOUNT_BONUS;
+        $asAmntFee = self::AS_AMOUNT_FEE;
+        $asCurr = self::AS_CURR;
+        $query = "
+SELECT
+  $tblRetail.$id AS $asId,
+  $tblRetail.$orderId AS $asOrderId,
+  $tblRetail.$customerId AS $asCustId,
+  $tblRetail.$amountBonus AS $asAmntBonus,
+  $tblRetail.$amountFee AS $asAmntFee,
+  $tblRetail.$currency AS $asCurr
+FROM $tblRetail
+  LEFT OUTER JOIN $tblSales ON $tblRetail.$orderId=$tblSales.$entityId
+WHERE
+  ($tblRetail.$transactId IS NULL) AND
+  (
+    ($tblSales.state='processing') || ($tblSales.state='complete')
+  ) AND
+  ($tblRetail.$amountBonus > 0)
+";
+        $rs = $conn->query($query);
+        $result = $rs->fetchAll();
+        return $result;
+    }
+
+    public function getUnprocessedTransactions(GetUnprocessedTransactionsCountRequest $req)
+    {
+        /** @var  $result GetUnprocessedTransactionsCountResponse */
+        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedTransactionsCount');
+        $data = $this->_readUnprocessedTransactions();
+        $count = count($data);
+        $result->setCount($count);
         return $result;
     }
 
@@ -104,6 +147,36 @@ WHERE
 ";
         $rs = $conn->query($query);
         $result = $rs->fetchAll();
+        return $result;
+    }
+
+    /**
+     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts $req
+     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts
+     */
+    public function createPayouts(CreatePayoutsRequest $req)
+    {
+        /** @var  $result CreatePayoutsResponse */
+        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createPayouts');
+        if ($this->_helper->cfgRetailBonusEnabled()) {
+            $items = $this->_readUnprocessedTransactions();
+            $count = count($items);
+            $this->_log->debug("Total $count transactions should be processed to create payouts.");
+            if ($count) {
+                $byCustomer = $this->_groupTransactionsByCustomer($items);
+                $idsCreated = array();
+                foreach ($byCustomer as $customerId => $items) {
+                    $newId = $this->_createOnePayout($items);
+                    if ($newId) {
+                        $idsCreated[] = $newId;
+                    }
+                }
+                $result->setPayoutIds($idsCreated);
+            }
+        } else {
+            /* retail bonus is disabled */
+            $result->setErrorCode(BaseResponse::ERR_BONUS_DISABLED);
+        }
         return $result;
     }
 
@@ -199,55 +272,6 @@ WHERE
             /* retail bonus is disabled */
             $result->setErrorCode(BaseResponse::ERR_BONUS_DISABLED);
         }
-        return $result;
-    }
-
-    /**
-     * Select ids of the bonuses should be converted to transactions.
-     *
-     * @return array
-     */
-    protected function _readUnprocessedBonuses()
-    {
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Mage::getSingleton('core/resource');
-        /** @var  \Varien_Db_Adapter_Pdo_Mysql */
-        $conn = $rsrc->getConnection('core_write');
-        $tblSales = $rsrc->getTableName('sales/order');
-        $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
-        $entityId = 'entity_id';
-        $id = BonusOrder::ATTR_ID;
-        $orderId = BonusOrder::ATTR_ORDER_ID;
-        $customerId = BonusOrder::ATTR_UPLINE_ID;
-        $transactId = BonusOrder::ATTR_TRANSACT_ID;
-        $amountBonus = BonusOrder::ATTR_AMOUNT;
-        $amountFee = BonusOrder::ATTR_FEE;
-        $currency = BonusOrder::ATTR_CURR;
-        $asId = self::AS_ID;
-        $asOrderId = self::AS_ORDER_ID;
-        $asCustId = self::AS_CUSTOMER_ID;
-        $asAmntBonus = self::AS_AMOUNT_BONUS;
-        $asAmntFee = self::AS_AMOUNT_FEE;
-        $asCurr = self::AS_CURR;
-        $query = "
-SELECT
-  $tblRetail.$id AS $asId,
-  $tblRetail.$orderId AS $asOrderId,
-  $tblRetail.$customerId AS $asCustId,
-  $tblRetail.$amountBonus AS $asAmntBonus,
-  $tblRetail.$amountFee AS $asAmntFee,
-  $tblRetail.$currency AS $asCurr
-FROM $tblRetail
-  LEFT OUTER JOIN $tblSales ON $tblRetail.$orderId=$tblSales.$entityId
-WHERE
-  ($tblRetail.$transactId IS NULL) AND
-  (
-    ($tblSales.state='processing') || ($tblSales.state='complete')
-  ) AND
-  ($tblRetail.$amountBonus > 0)
-";
-        $rs = $conn->query($query);
-        $result = $rs->fetchAll();
         return $result;
     }
 
