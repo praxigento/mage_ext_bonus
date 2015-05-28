@@ -147,6 +147,10 @@ $tbl->addColumn(Payout::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable'
     'Payout amount.');
 $tbl->addColumn(Payout::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Payout currency.');
+$tbl->addColumn(Payout::ATTR_DESC, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Payout description.');
+$tbl->addColumn(Payout::ATTR_DATE_PAID, Ddl::TYPE_TIMESTAMP, null, array('nullable' => true),
+    'Payment date.');
 $tbl->addColumn(Payout::ATTR_REFERENCE, Ddl::TYPE_CHAR, 255, array('nullable' => true),
     'Reverence for correlated external payment (in IPS, ...).');
 $tbl->setComment('Customer payouts (external payments).');

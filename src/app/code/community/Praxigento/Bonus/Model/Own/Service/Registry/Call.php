@@ -231,6 +231,7 @@ WHERE
                     $ref = $this->_createOnePayment($one);
                     if ($ref) {
                         $payout->load($one[self::AS_ID]);
+                        $payout->setDatePaid($this->_helper->getDateGmtNow('Y-m-d H:i:s'));
                         $payout->setReference($ref);
                         $payout->save();
                         $refs[] = $ref;
@@ -269,7 +270,7 @@ WHERE
                 $byCustomer = $this->_groupTransactionsByCustomer($items);
                 $idsCreated = array();
                 foreach ($byCustomer as $customerId => $items) {
-                    $newId = $this->_createOnePayout($items);
+                    $newId = $this->_createOnePayout($items, $req->getDescription());
                     if ($newId) $idsCreated[] = $newId;
                 }
                 $result->setPayoutIds($idsCreated);
@@ -294,7 +295,7 @@ WHERE
         return $result;
     }
 
-    protected function _createOnePayout($data)
+    protected function _createOnePayout($data, $desc)
     {
         $result = null;
         $payout = Mage::getModel('prxgt_bonus_model/own_payout');
@@ -335,6 +336,7 @@ WHERE
                 $payout->setAmount($amount);
                 $payout->setCurrency($currency);
                 $payout->setDateCreated($this->_helper->getDateGmtNow('Y-m-d H:i:s'));
+                $payout->setDescription($desc);
                 $payout->getResource()->save($payout);
                 $payoutId = $payout->getId();
                 /* save relations between payout and transactions */

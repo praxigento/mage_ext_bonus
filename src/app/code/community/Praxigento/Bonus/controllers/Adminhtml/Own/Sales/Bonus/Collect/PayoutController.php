@@ -43,6 +43,8 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_PayoutController extend
             /* process orders */
             $call = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
             $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_createPayouts');
+            $desc = $this->_composePayoutDesc();
+            $req->setDescription($desc);
             $resp = $call->createPayouts($req);
             $count = count($resp->getPayoutIds());
             $block->setCollectedCount($count);
@@ -50,4 +52,16 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_PayoutController extend
         $this->renderLayout();
     }
 
+    private function _composePayoutDesc()
+    {
+        $result = 'created by unknown user';
+        /** @var $session Mage_Admin_Model_Session */
+        $session = Mage::getSingleton('admin/session');
+        if ($session->isLoggedIn()) {
+            /** @var $user Mage_Admin_Model_User */
+            $user = $session->getUser();
+            $result = 'created by ' . $user->getName() . ' (' . $user->getEmail() . ')';
+        }
+        return $result;
+    }
 }

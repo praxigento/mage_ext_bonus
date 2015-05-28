@@ -71,10 +71,23 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Payout_Grid
             'currency_code' => $currency
         ));
 
+        $this->addColumn(Payout::ATTR_DESC, array(
+            'header' => $helper->__('Description'),
+            'filter' => false,
+            'index' => Payout::ATTR_DESC
+        ));
+
         $this->addColumn(Payout::ATTR_REFERENCE, array(
             'header' => $helper->__('eWallet Ref.'),
             'filter' => false,
             'index' => Payout::ATTR_REFERENCE
+        ));
+
+        $this->addColumn(Payout::ATTR_DATE_PAID, array(
+            'header' => $helper->__('Paid at'),
+            'filter' => false,
+            'index' => Payout::ATTR_DATE_PAID,
+            'type' => 'datetime'
         ));
 
         return parent::_prepareColumns();
