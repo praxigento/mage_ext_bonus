@@ -31,6 +31,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
          */
         $quote = Mage::getModel('sales/quote');
         $quote->setCustomer($customer);
+        $quote->setStoreId($storeId);
         /* switch off qty control */
         $quote->setIsSuperMode(true);
         /**
@@ -107,17 +108,21 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
      */
     protected function _initRuleData($customerGroupId, $storeId)
     {
+
         $registryKey = 'rule_data';
-        if (is_null(Mage::registry($registryKey))) {
-            $store = Mage::getModel('core/store')->load($storeId);
-            $ruleDataArray = array(
-                'store_id' => $store->getId(),
-                'website_id' => $store->getWebsiteId(),
-                'customer_group_id' => $customerGroupId,
-            );
-            $ruleData = new Varien_Object($ruleDataArray);
-            Mage::register($registryKey, $ruleData);
+        $currentData = Mage::registry($registryKey);
+        if (!is_null($currentData)) {
+            /* unregister rules data */
+            Mage::unregister($registryKey);
         }
+        $store = Mage::getModel('core/store')->load($storeId);
+        $ruleDataArray = array(
+            'store_id' => $store->getId(),
+            'website_id' => $store->getWebsiteId(),
+            'customer_group_id' => $customerGroupId,
+        );
+        $ruleData = new Varien_Object($ruleDataArray);
+        Mage::register($registryKey, $ruleData);
     }
 
     /**
@@ -139,7 +144,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
             true
         );
         /* AD-336 */
-        $i=0;
+        $i = 0;
         foreach ($items as $orderItem) {
             /* @var $orderItem Mage_Sales_Model_Order_Item */
             if (!$orderItem->getParentItem()) {
