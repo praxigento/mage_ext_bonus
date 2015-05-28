@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount
+class Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedPayoutsCount
     extends Praxigento_Bonus_Model_Own_Service_Registry_Response_BaseGetUnprocessedCount
 {
 

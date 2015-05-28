@@ -147,7 +147,7 @@ $tbl->addColumn(Payout::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable'
     'Payout amount.');
 $tbl->addColumn(Payout::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Payout currency.');
-$tbl->addColumn(Payout::ATTR_REFERENCE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(Payout::ATTR_REFERENCE, Ddl::TYPE_CHAR, 255, array('nullable' => true),
     'Reverence for correlated external payment (in IPS, ...).');
 $tbl->setComment('Customer payouts (external payments).');
 $conn->createTable($tbl);
@@ -169,8 +169,8 @@ $conn->addForeignKey(
     DB::FK_ACTION_RESTRICT
 );
 
-/* UQ index (customer_id:reference) */
-$ndxFields = array(Payout::ATTR_CUSTOMER_ID, Payout::ATTR_REFERENCE);
+/* UQ index (reference) */
+$ndxFields = array(Payout::ATTR_REFERENCE);
 $ndxName = $conn->getIndexName($tblPayout, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 $conn->addIndex($tblPayout, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 
@@ -184,11 +184,11 @@ $tbl->addColumn(Transact::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
 $tbl->addColumn(Transact::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer that gets this payout.');
 $tbl->addColumn(Transact::ATTR_DATE_CREATED, Ddl::TYPE_TIMESTAMP, null, array('nullable' => false),
-    'Payout creation date.');
+    'Transaction creation date.');
 $tbl->addColumn(Transact::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Payout amount.');
+    'Transaction amount.');
 $tbl->addColumn(Transact::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
-    'Payout currency.');
+    'Transaction currency.');
 $tbl->setComment('Atomic transactions.');
 $conn->createTable($tbl);
 

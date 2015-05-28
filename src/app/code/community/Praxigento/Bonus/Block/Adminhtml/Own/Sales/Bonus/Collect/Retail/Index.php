@@ -9,7 +9,7 @@ use Praxigento_Bonus_Config as Config;
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Retail_Index
-    extends Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Base
+    extends Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Base
 {
     private $_ordersCount = null;
 

@@ -8,24 +8,24 @@ use Praxigento_Bonus_Config as Config;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Payout_Post
+class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Payment_Post
     extends Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Base
 {
-    private $_collectedCount;
+    private $_createdCount;
 
     /**
      * @return mixed
      */
-    public function getCollectedCount()
+    public function getCreatedCount()
     {
-        return $this->_collectedCount;
+        return $this->_createdCount;
     }
 
     /**
      * @param mixed $val
      */
-    public function setCollectedCount($val)
+    public function setCreatedCount($val)
     {
-        $this->_collectedCount = $val;
+        $this->_createdCount = $val;
     }
 }

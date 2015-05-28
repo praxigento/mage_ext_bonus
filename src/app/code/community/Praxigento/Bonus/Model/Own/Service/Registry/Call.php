@@ -5,16 +5,21 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Order as BonusOrder;
+use Praxigento_Bonus_Model_Own_Payout as Payout;
 use Praxigento_Bonus_Model_Own_Payout_Transact as PayoutTransact;
 use Praxigento_Bonus_Model_Own_Service_Base_Response as BaseResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayments as CreatePaymentsRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts as CreatePayoutsRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreateTransactions as CreateTransactionsRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountRequest;
 use Praxigento_Bonus_Model_Own_Service_Registry_Request_SaveRetailBonus as SaveRetailBonusRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayments as CreatePaymentsResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts as CreatePayoutsResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreateTransactions as CreateTransactionsResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountResponse;
 use Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus as SaveRetailBonusResponse;
 use Praxigento_Bonus_Model_Own_Transact as Transact;
@@ -35,8 +40,9 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
     const AS_DATE_CREATED = 'dateCreated';
     const AS_ID = 'id';
     const AS_ORDER_ID = 'orderId';
+    const AS_REF = 'ref';
 
-    public function getUnprocessedBonuses(GetUnprocessedBonusesCountRequest $req)
+    public function getUnprocessedBonusesCount(GetUnprocessedBonusesCountRequest $req)
     {
         /** @var  $result GetUnprocessedBonusesCountResponse */
         $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedBonusesCount');
@@ -95,7 +101,7 @@ WHERE
         return $result;
     }
 
-    public function getUnprocessedTransactions(GetUnprocessedTransactionsCountRequest $req)
+    public function getUnprocessedTransactionsCount(GetUnprocessedTransactionsCountRequest $req)
     {
         /** @var  $result GetUnprocessedTransactionsCountResponse */
         $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedTransactionsCount');
@@ -150,6 +156,103 @@ WHERE
         return $result;
     }
 
+    public function getUnprocessedPayoutsCount(GetUnprocessedPayoutsCountRequest $req)
+    {
+        /** @var  $result GetUnprocessedPayoutsCountResponse */
+        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedPayoutsCount');
+        $data = $this->_readUnprocessedPayouts();
+        $count = count($data);
+        $result->setCount($count);
+        return $result;
+    }
+
+    /**
+     * Select ids of the payouts should be paid.
+     *
+     * @return array
+     */
+    protected function _readUnprocessedPayouts()
+    {
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Mage::getSingleton('core/resource');
+        /** @var  \Varien_Db_Adapter_Pdo_Mysql */
+        $conn = $rsrc->getConnection('core_write');
+
+        $tblPayout = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT);
+        /* attributes */
+        $id = Payout::ATTR_ID;
+        $customerId = Payout::ATTR_CUSTOMER_ID;
+        $dateCreated = Payout::ATTR_DATE_CREATED;
+        $amount = Payout::ATTR_AMOUNT;
+        $currency = Payout::ATTR_CURR;
+        $ref = Payout::ATTR_REFERENCE;
+
+        /* aliases */
+        $asId = self::AS_ID;
+        $asCustId = self::AS_CUSTOMER_ID;
+        $asDateCreated = self::AS_DATE_CREATED;
+        $asAmount = self::AS_AMOUNT_BONUS;
+        $asCurr = self::AS_CURR;
+        $asRef = self::AS_REF;
+        /* query */
+        $query = "
+SELECT
+  $tblPayout.$id AS $asId,
+    $tblPayout.$customerId AS $asCustId,
+  $tblPayout.$dateCreated AS $asDateCreated,
+  $tblPayout.$amount AS $asAmount,
+  $tblPayout.$currency AS $asCurr,
+  $tblPayout.$ref AS $asRef
+FROM $tblPayout
+WHERE
+  ($tblPayout.$ref IS NULL)
+";
+        $rs = $conn->query($query);
+        $result = $rs->fetchAll();
+        return $result;
+    }
+
+    /**
+     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayments $req
+     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayments
+     */
+    public function createPayments(CreatePaymentsRequest $req)
+    {
+        /** @var  $result CreatePaymentsResponse */
+        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createPayments');
+        if ($this->_helper->cfgRetailBonusEnabled()) {
+            $items = $this->_readUnprocessedPayouts();
+            $count = count($items);
+            $this->_log->debug("Total $count payouts should be processed to create payments.");
+            if ($count) {
+                $refs = array();
+                $payout = Mage::getModel('prxgt_bonus_model/own_payout');
+                foreach ($items as $one) {
+                    $ref = $this->_createOnePayment($one);
+                    if ($ref) {
+                        $payout->load($one[self::AS_ID]);
+                        $payout->setReference($ref);
+                        $payout->save();
+                        $refs[] = $ref;
+                    }
+                }
+                $result->setPaymentsRefs($refs);
+            }
+        } else {
+            /* retail bonus is disabled */
+            $result->setErrorCode(BaseResponse::ERR_BONUS_DISABLED);
+        }
+        return $result;
+    }
+
+    protected function _createOnePayment($data)
+    {
+        $result = null;
+        /* by default payment is not created, just return payout ID as a reference */
+        if ($data[self::AS_ID]) $result = $data[self::AS_ID];
+        return $result;
+    }
+
     /**
      * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts $req
      * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts
@@ -167,9 +270,7 @@ WHERE
                 $idsCreated = array();
                 foreach ($byCustomer as $customerId => $items) {
                     $newId = $this->_createOnePayout($items);
-                    if ($newId) {
-                        $idsCreated[] = $newId;
-                    }
+                    if ($newId) $idsCreated[] = $newId;
                 }
                 $result->setPayoutIds($idsCreated);
             }
@@ -393,7 +494,7 @@ WHERE
         return $result;
     }
 
-    private function _calcRetailBonusFee($amount)
+    protected function _calcRetailBonusFee($amount)
     {
         $result = 0;
         if ($amount > 0) {
