@@ -161,35 +161,15 @@ WHERE
         $rsrc = Mage::getSingleton('core/resource');
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
         $conn = $rsrc->getConnection('core_write');
-
+        /* tables */
         $tblPayout = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT);
-        /* attributes */
-        $id = Payout::ATTR_ID;
-        $customerId = Payout::ATTR_CUSTOMER_ID;
-        $dateCreated = Payout::ATTR_DATE_CREATED;
-        $amount = Payout::ATTR_AMOUNT;
-        $currency = Payout::ATTR_CURR;
-        $ref = Payout::ATTR_REFERENCE;
-
-        /* aliases */
-        $asId = self::AS_ID;
-        $asCustId = self::AS_CUSTOMER_ID;
-        $asDateCreated = self::AS_DATE_CREATED;
-        $asAmount = self::AS_AMOUNT_BONUS;
-        $asCurr = self::AS_CURR;
-        $asRef = self::AS_REF;
-        /* query */
+        /* perform query */
         $query = "
 SELECT
-  $tblPayout.$id AS $asId,
-    $tblPayout.$customerId AS $asCustId,
-  $tblPayout.$dateCreated AS $asDateCreated,
-  $tblPayout.$amount AS $asAmount,
-  $tblPayout.$currency AS $asCurr,
-  $tblPayout.$ref AS $asRef
-FROM $tblPayout
+  pbt.*
+FROM $tblPayout AS pbt
 WHERE
-  ($tblPayout.$ref IS NULL)
+  (pbt.reference IS NULL)
 ";
         $rs = $conn->query($query);
         $result = $rs->fetchAll();
@@ -214,7 +194,7 @@ WHERE
                 foreach ($items as $one) {
                     $ref = $this->_createOnePayment($one);
                     if ($ref) {
-                        $payout->load($one[self::AS_ID]);
+                        $payout->load($one[Payout::ATTR_ID]);
                         $payout->setDatePaid($this->_helper->getDateGmtNow('Y-m-d H:i:s'));
                         $payout->setReference($ref);
                         $payout->save();
@@ -234,7 +214,7 @@ WHERE
     {
         $result = null;
         /* by default payment is not created, just return payout ID as a reference */
-        if ($data[self::AS_ID]) $result = $data[self::AS_ID];
+        if ($data[Payout::ATTR_ID]) $result = $data[Payout::ATTR_ID];
         return $result;
     }
 
