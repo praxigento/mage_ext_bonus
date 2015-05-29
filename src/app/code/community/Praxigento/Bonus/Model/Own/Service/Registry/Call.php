@@ -122,34 +122,18 @@ WHERE
         $rsrc = Mage::getSingleton('core/resource');
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
         $conn = $rsrc->getConnection('core_write');
-
+        /* tables */
         $tblTransact = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_TRANSACT);
         $tblPayoutTransact = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT);
-        /* attributes */
-        $id = Transact::ATTR_ID;
-        $customerId = Transact::ATTR_CUSTOMER_ID;
-        $amount = Transact::ATTR_AMOUNT;
-        $currency = Transact::ATTR_CURR;
-        $dateCreated = Transact::ATTR_DATE_CREATED;
-        $transactId = PayoutTransact::ATTR_TRANSACT_ID;
-        /* aliases */
-        $asId = self::AS_ID;
-        $asCustId = self::AS_CUSTOMER_ID;
-        $asDateCreated = self::AS_DATE_CREATED;
-        $asAmount = self::AS_AMOUNT_BONUS;
-        $asCurr = self::AS_CURR;
-        /* query */
+        /* perform query */
         $query = "
 SELECT
-  $tblTransact.$id AS $asId,
-    $tblTransact.$customerId AS $asCustId,
-  $tblTransact.$dateCreated AS $asDateCreated,
-  $tblTransact.$amount AS $asAmount,
-  $tblTransact.$currency AS $asCurr
-FROM $tblTransact
-  LEFT OUTER JOIN $tblPayoutTransact ON $tblTransact.$id=$tblPayoutTransact.$transactId
+  pbt.*
+FROM $tblTransact AS pbt
+  LEFT OUTER JOIN $tblPayoutTransact AS pbpt
+    ON pbt.id = pbpt.transact_id
 WHERE
-  ($tblPayoutTransact.$transactId IS NULL)
+  (pbpt.payout_id IS NULL)
 ";
         $rs = $conn->query($query);
         $result = $rs->fetchAll();
@@ -286,7 +270,7 @@ WHERE
     {
         $result = array();
         foreach ($data as $one) {
-            $customerId = $one[self::AS_CUSTOMER_ID];
+            $customerId = $one[Transact::ATTR_CUSTOMER_ID];
             if (!isset($result[$customerId])) {
                 $result[$customerId] = array();
             }
@@ -303,16 +287,16 @@ WHERE
         /* calculate payout attributes */
         /* customer id & currency should be the same for all items in $data */
         $first = reset($data);
-        $customerId = $first[self::AS_CUSTOMER_ID];
-        $currency = $first[self::AS_CURR];
+        $customerId = $first[Transact::ATTR_CUSTOMER_ID];
+        $currency = $first[Transact::ATTR_CURR];
         $amount = 0;
         $isFailed = false;
         foreach ($data as $one) {
-            $oneId = $one[self::AS_ID];
-            $oneCustomerId = $one[self::AS_CUSTOMER_ID];
-            $oneAmount = $one[self::AS_AMOUNT_BONUS];
-            $oneCurr = $one[self::AS_CURR];
-            $oneCreated = $one[self::AS_DATE_CREATED];
+            $oneId = $one[Transact::ATTR_ID];
+            $oneCustomerId = $one[Transact::ATTR_CUSTOMER_ID];
+            $oneAmount = $one[Transact::ATTR_AMOUNT];
+            $oneCurr = $one[Transact::ATTR_CURR];
+            $oneCreated = $one[Transact::ATTR_DATE_CREATED];
             $this->_log->trace("Collect transaction #$oneId for customer #$oneCustomerId on $oneAmount $oneCurr at $oneCreated.");
             if ($oneCustomerId != $customerId) {
                 $this->_log->error("Cannot collect transaction to payout - customer is mismatched.");
@@ -343,7 +327,7 @@ WHERE
                 foreach ($data as $one) {
                     $payoutTransact = Mage::getModel('prxgt_bonus_model/own_payout_transact');
                     $payoutTransact->setPayoutId($payoutId);
-                    $payoutTransact->setTransactId($one[self::AS_ID]);
+                    $payoutTransact->setTransactId($one[Transact::ATTR_ID]);
                     $payoutTransact->getResource()->save($payoutTransact);
                 }
                 $conn->commit();

@@ -84,5 +84,14 @@ class Praxigento_Bonus_Test_Model_Own_Service_Registry_Call_DvlpTest extends PHP
         $this->assertTrue($resp instanceof GetUnprocessedPayoutsCountResponse);
     }
 
+    public function test_getUnprocessedTransactionsCount()
+    {
+        $call = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
+        /** @var  $req GetUnprocessedTransactionsCountRequest */
+        $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_getUnprocessedTransactionsCount');
+        $resp = $call->getUnprocessedTransactionsCount($req);
+        $this->assertTrue($resp instanceof GetUnprocessedTransactionsCountResponse);
+    }
+
 
 }
