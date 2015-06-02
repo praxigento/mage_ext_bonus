@@ -33,9 +33,9 @@
     <adminhtml>
         <layout>
             <updates>
-                <prxgt_ad>
+                <prxgt_bonus>
                     <file>prxgt/bonus/layout.xml</file>
-                </prxgt_ad>
+                </prxgt_bonus>
             </updates>
         </layout>
         <translate>
