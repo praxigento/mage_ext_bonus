@@ -12,6 +12,11 @@
 class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
+    public function formatAmount($value, $decimal = '.', $group = '')
+    {
+        return number_format($value, 2, $decimal, $group);
+    }
+
     /**
      * Load upline customer model for the given customer.
      *

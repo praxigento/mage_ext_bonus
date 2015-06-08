@@ -420,12 +420,14 @@ WHERE
                 $orderBaseTax = $order->getBaseTaxAmount();
                 $orderBaseGrandTotal = $order->getBaseGrandTotal();
                 $orderAmount = $orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping;
+                $orderAmount = $this->_helper->formatAmount($orderAmount);
                 $this->_log->trace("Order #$orderId amount to calculate retail bonus: $orderAmount $bonusCurr ($orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping [grand - tax - shipping]).");
                 /* upline quote */
                 $quoteBaseShipping = $quote->getBaseShipping();
                 $quoteBaseTax = $quote->getBaseTax();
                 $quoteBaseGrandTotal = $quote->getBaseGrandTotal();
                 $quoteAmount = $quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping;
+                $quoteAmount = $this->_helper->formatAmount($quoteAmount);
                 $this->_log->trace("Quote for order #$orderId amount to calculate retail bonus: $quoteAmount $bonusCurr ($quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping [grand - tax - shipping]).");
                 /* bonus */
                 $bonusAmount = $orderAmount - $quoteAmount;
@@ -471,7 +473,7 @@ WHERE
             $result = $fixed + $amount * $percent;
             $result = ($result < $min) ? $min : $result;
             $result = ($result > $max) ? $max : $result;
-            $result = number_format($result, 2);
+            $result = $this->_helper->formatAmount($result);
             $this->_log->trace("Retail bonus fee for amount $amount is $result ($min < [$fixed + $amount * $percent] < $max).");
         } else {
             $this->_log->trace("Retail bonus fee for amount $amount is not calculated (=0.00).");
