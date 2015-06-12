@@ -421,13 +421,15 @@ WHERE
                 $orderBaseGrandTotal = $order->getBaseGrandTotal();
                 $orderAmount = $orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping;
                 $orderAmount = $this->_helper->formatAmount($orderAmount);
+                $this->_logRetailBonusOrder($order);
                 $this->_log->trace("Order #$orderId amount to calculate retail bonus: $orderAmount $bonusCurr ($orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping [grand - tax - shipping]).");
                 /* upline quote */
-                $quoteBaseShipping = $quote->getBaseShipping();
-                $quoteBaseTax = $quote->getBaseTax();
+                $quoteBaseShipping = $this->_calcRetailBonusQuoteShipping($quote);
+                $quoteBaseTax = $this->_calcRetailBonusQuoteTax($quote);
                 $quoteBaseGrandTotal = $quote->getBaseGrandTotal();
                 $quoteAmount = $quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping;
                 $quoteAmount = $this->_helper->formatAmount($quoteAmount);
+                $this->_logRetailBonusQuote($quote);
                 $this->_log->trace("Quote for order #$orderId amount to calculate retail bonus: $quoteAmount $bonusCurr ($quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping [grand - tax - shipping]).");
                 /* bonus */
                 $bonusAmount = $orderAmount - $quoteAmount;
@@ -460,6 +462,67 @@ WHERE
             $result->setErrorCode(BaseResponse::ERR_BONUS_DISABLED);
         }
         return $result;
+    }
+
+    private function _logRetailBonusOrder(Mage_Sales_Model_Order $order)
+    {
+        $incId = $order->getIncrementId();
+        $items = $order->getAllItems();
+        $total = count($items);
+        $storeId = $order->getStoreId();
+        $this->_log->trace("Order #$incId; total items: $total; store: $storeId;");
+        foreach ($items as $item) {
+            /** @var $item Mage_Sales_Model_Order_Item */
+            $itemId = $item->getId();
+            $sku = $item->getSku();
+            $qty = $item->getQtyOrdered();
+            $price = $item->getBasePrice();
+            $tax = $item->getBaseTaxAmount();
+            $discount = $item->getBaseDiscountAmount();
+            $rowTotal = $item->getBaseRowTotal();
+            $pvUnit = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
+            $pvTotal = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
+            $appliedRules = $item->getAppliedRuleIds();
+            $this->_log->trace("\tItem data: ID: $itemId; SKU: $sku; Qty: $qty; Price: $price; Discount: $discount; Tax: $tax; Total: $rowTotal; PV Unit: $pvUnit; PV Total: $pvTotal; Sales Rules: $appliedRules;");
+        }
+    }
+
+    protected function _calcRetailBonusQuoteShipping(Mage_Sales_Model_Quote $quote)
+    {
+        /** @var  $shipping */
+        $shipping = $quote->getShippingAddress();
+        $result = $shipping->getBaseShippingAmount();
+        return $result;
+    }
+
+    protected function _calcRetailBonusQuoteTax(Mage_Sales_Model_Quote $quote)
+    {
+        /** @var  $shipping */
+        $shipping = $quote->getShippingAddress();
+        $result = $shipping->getBaseTaxAmount();
+        return $result;
+    }
+
+    private function _logRetailBonusQuote(Mage_Sales_Model_Quote $quote)
+    {
+        $items = $quote->getAllItems();
+        $total = count($items);
+        $storeId = $quote->getStoreId();
+        $this->_log->trace("New quote; total items: $total; store: $storeId;");
+        foreach ($items as $item) {
+            /** @var $item Mage_Sales_Model_Quote_Item */
+            $itemId = $item->getId();
+            $sku = $item->getSku();
+            $qty = $item->getQtyOrdered();
+            $price = $item->getBasePrice();
+            $tax = $item->getBaseTaxAmount();
+            $discount = $item->getBaseDiscountAmount();
+            $rowTotal = $item->getBaseRowTotal();
+            $pvUnit = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
+            $pvTotal = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
+            $appliedRules = $item->getAppliedRuleIds();
+            $this->_log->trace("\tItem data: ID: $itemId; SKU: $sku; Qty: $qty; Price: $price; Discount: $discount; Tax: $tax; Total: $rowTotal; PV Unit: $pvUnit; PV Total: $pvTotal; Sales Rules: $appliedRules;");
+        }
     }
 
     protected function _calcRetailBonusFee($amount)
