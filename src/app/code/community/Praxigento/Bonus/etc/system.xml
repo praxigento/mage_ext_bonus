@@ -14,6 +14,20 @@
         <!-- ************************************************* -->
         <nmmlm_core_referrals>
             <groups>
+                <!-- "general" group is defined in core module -->
+                <general translate="label">
+                    <fields>
+                        <downline_depth translate="label comment">
+                            <label>Downline Depth</label>
+                            <comment>Max depth of the downline tree.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </downline_depth>
+                    </fields>
+                </general>
                 <!-- "retail_bonus" group is defined in core module -->
                 <retail_bonus translate="label">
                     <fields>

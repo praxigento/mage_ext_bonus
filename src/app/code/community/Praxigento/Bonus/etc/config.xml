@@ -104,4 +104,11 @@
             </sales_order_place_after>
         </events>
     </global>
+    <default>
+        <nmmlm_core_referrals>
+            <general>
+                <downline_depth>3</downline_depth>
+            </general>
+        </nmmlm_core_referrals>
+    </default>
 </config>

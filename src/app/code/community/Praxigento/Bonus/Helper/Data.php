@@ -54,6 +54,14 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
         return $result;
     }
 
+    public function cfgGeneralDownlineDepth($store = null)
+    {
+        $result = Mage::getStoreConfig('nmmlm_core_referrals/general/downline_depth', $store);
+        $result *= 1;
+        $result = $result < 1 ? 1 : $result;
+        return $result;
+    }
+
     public function cfgRetailBonusEnabled($store = null)
     {
         $result = Mage::getStoreConfig('nmmlm_core_referrals/retail_bonus/is_enabled', $store);
