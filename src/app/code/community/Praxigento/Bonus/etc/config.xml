@@ -55,20 +55,45 @@
                 <resourceModel>prxgt_bonus_resource</resourceModel>
             </prxgt_bonus_model>
             <prxgt_bonus_resource>
-                <class>Praxigento_Bonus_Resource</class>
+                <class>Praxigento_Bonus_Resource_Own</class>
                 <entities>
-                    <own_order>
-                        <table>prxgt_bonus_order</table>
-                    </own_order>
-                    <own_payout>
-                        <table>prxgt_bonus_payout</table>
-                    </own_payout>
-                    <own_payout_transact>
-                        <table>prxgt_bonus_payout_transact</table>
-                    </own_payout_transact>
-                    <own_transact>
-                        <table>prxgt_bonus_transact</table>
-                    </own_transact>
+                    <!-- core entities -->
+                    <core_type>
+                        <table>prxgt_bonus_core_type</table>
+                    </core_type>
+                    <!-- details -->
+                    <detail_retail>
+                        <table>prxgt_bonus_detail_retail</table>
+                    </detail_retail>
+                    <!-- logs -->
+                    <log_account>
+                        <table>prxgt_bonus_log_account</table>
+                    </log_account>
+                    <log_bonus>
+                        <table>prxgt_bonus_log_bonus</table>
+                    </log_bonus>
+                    <log_downline>
+                        <table>prxgt_bonus_log_downline</table>
+                    </log_downline>
+                    <log_order>
+                        <table>prxgt_bonus_log_order</table>
+                    </log_order>
+                    <log_payout>
+                        <table>prxgt_bonus_log_payout</table>
+                    </log_payout>
+                    <!-- snapshots (current and historical) -->
+                    <snap_bonus>
+                        <table>prxgt_bonus_snap_bonus</table>
+                    </snap_bonus>
+                    <snap_bonus_hist>
+                        <table>prxgt_bonus_snap_bonus_hist</table>
+                    </snap_bonus_hist>
+                    <snap_downline>
+                        <table>prxgt_bonus_snap_downline</table>
+                    </snap_downline>
+                    <snap_downline_hist>
+                        <table>prxgt_bonus_snap_downline_hist</table>
+                    </snap_downline_hist>
                 </entities>
             </prxgt_bonus_resource>
         </models>

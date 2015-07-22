@@ -4,10 +4,7 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
-use Praxigento_Bonus_Model_Own_Order as Order;
-use Praxigento_Bonus_Model_Own_Payout as Payout;
-use Praxigento_Bonus_Model_Own_Payout_Transact as PayoutTransact;
-use Praxigento_Bonus_Model_Own_Transact as Transact;
+use Praxigento_Bonus_Model_Own_Core_Type as CoreType;
 use Varien_Db_Adapter_Interface as Db;
 use Varien_Db_Ddl_Table as Ddl;
 
@@ -27,13 +24,22 @@ $coreSetup = new Mage_Eav_Model_Entity_Setup('core_setup');
 $conn = $this->getConnection();
 
 /**
- * Table names.
+ * Own tables names.
  */
-$tblOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
-$tblPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT);
-$tblPayoutTransact = $this->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT);
-$tblTransact = $this->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_TRANSACT);
-
+$tblCoreType = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CORE_TYPE);
+$tblDetailOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAIL_ORDER);
+$tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
+$tblLogBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_BONUS);
+$tblLogDowline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+$tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
+$tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
+$tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
+$tblSnapBonusHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS_HIST);
+$tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+$tblSnapDownlineHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE_HIST);
+/**
+ * Mage tables names.
+ */
 $tblSalesOrder = $this->getTable('sales/order');
 $tblCustomer = $this->getTable('customer/entity');
 
@@ -43,94 +49,22 @@ $tblCustomer = $this->getTable('customer/entity');
 $optId = array('identity' => true, 'primary' => true, 'nullable' => false, 'unsigned' => true);
 
 /**
- * Bonus Order
+ * Core Type
  */
-$tbl = $conn->newTable($tblOrder);
-$tbl->addColumn(Order::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+$tbl = $conn->newTable($tblCoreType);
+$tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
-$tbl->addColumn(Order::ATTR_ORDER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Related order that generates bonus.');
-$tbl->addColumn(Order::ATTR_UPLINE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Customer that earns this bonus.');
-$tbl->addColumn(Order::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
-    'Bonus amount currency.');
-$tbl->addColumn(Order::ATTR_AMOUNT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Bonus amount.');
-$tbl->addColumn(Order::ATTR_FEE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Bonus fee value.');
-$tbl->addColumn(Order::ATTR_FEE_FIXED, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Fixed part of the bonus fee.');
-$tbl->addColumn(Order::ATTR_FEE_PERCENT, Ddl::TYPE_DECIMAL, '5,4', array('nullable' => false),
-    'Bonus fee percent.');
-$tbl->addColumn(Order::ATTR_FEE_MIN, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Minimum bonus fee.');
-$tbl->addColumn(Order::ATTR_FEE_MAX, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Maximum bonus fee.');
-$tbl->addColumn(Order::ATTR_TRANSACT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => true, 'unsigned' => true),
-    'Transaction is correlated to this bonus.');
-$tbl->setComment('Retail bonus amount for orders');
+$tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Code of the bonus type (pv, gv, tv, ...)');
+$tbl->addColumn(CoreType::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Description of the bonus type (Personal Volume, ...)');
+$tbl->setComment('Available bonus types.');
 $conn->createTable($tbl);
 
-/* Sales Order FK */
-$fkName = $conn->getForeignKeyName(
-    $tblOrder,
-    Order::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblOrder,
-    Order::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* Upline Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblOrder,
-    Order::ATTR_UPLINE_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblOrder,
-    Order::ATTR_UPLINE_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* Transaction FK */
-$fkName = $conn->getForeignKeyName(
-    $tblOrder,
-    Order::ATTR_TRANSACT_ID,
-    $tblTransact,
-    Transact::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblOrder,
-    Order::ATTR_TRANSACT_ID,
-    $tblTransact,
-    Transact::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* UQ index (customer_id:reference) */
-$ndxFields = array(Order::ATTR_ORDER_ID);
-$ndxName = $conn->getIndexName($tblOrder, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblOrder, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-
-/* UQ index (transact_id) */
-$ndxFields = array(Order::ATTR_TRANSACT_ID);
-$ndxName = $conn->getIndexName($tblOrder, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblOrder, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+/* UQ index (code) */
+$ndxFields = array(CoreType::ATTR_CODE);
+$ndxName = $conn->getIndexName($tblCoreType, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblCoreType, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 
 
 /**
