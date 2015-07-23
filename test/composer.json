@@ -15,6 +15,10 @@
     },
     {
       "type": "vcs",
+      "url": "https://github.com/praxigento/mage_ext_log4php"
+    },
+    {
+      "type": "vcs",
       "url": "https://github.com/praxigento/mobi_mage_bundle"
     },
     {
