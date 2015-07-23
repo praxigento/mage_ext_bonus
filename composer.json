@@ -29,8 +29,8 @@
     }
   ],
   "require": {
-    "praxigento/mobi_mage_core": "*@dev",
-    "praxigento/mobi_mage_theme": "*@dev"
+    "praxigento/mobi_mage_core": "dev-master",
+    "praxigento/mobi_mage_theme": "dev-master"
   },
   "minimum-stability": "dev"
 }
