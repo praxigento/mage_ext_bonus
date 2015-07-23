@@ -29,21 +29,29 @@
   "require-dev": {
     "phpunit/phpunit": "3.7.*"
   },
-  "extra": {
-    "magento-root-dir": "mage",
-    "magento-deploystrategy": "symlink",
-    "magento-force": "override",
-    "auto-append-gitignore": false
-  },
-  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
-      "Praxigento\\Test\\Module\\": "src"
+      "Praxigento\\Deploy\\": "bin/deploy"
     }
   },
   "scripts": {
     "post-install-cmd": [
-      "Praxigento\\Test\\Module\\Installer::postInstall"
+      "find ./bin/ -type f -name \"*.sh\" -exec chmod a+x {} \\;",
+      "Praxigento\\Deploy\\Installer::postInstall"
+    ],
+    "post-update-cmd": [
+      "find ./bin/ -type f -name \"*.sh\" -exec chmod a+x {} \\;"
     ]
-  }
+  },
+  "extra": {
+    "magento-root-dir": "mage",
+    "magento-deploystrategy": "symlink",
+    "magento-force": true,
+    "auto-append-gitignore": false,
+    "praxigento_templates_config": [
+      "./templates.json",
+      "./cfg/templates.json"
+    ]
+  },
+  "minimum-stability": "dev"
 }
