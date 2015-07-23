@@ -9,5 +9,28 @@
       "name": "Alex Gusev",
       "email": "alex@flancer64.com"
     }
-  ]
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mage_ext_log4php"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_bundle"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_core"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_theme"
+    }
+  ],
+  "require": {
+    "praxigento/mobi_mage_core": "*@dev",
+    "praxigento/mobi_mage_theme": "*@dev"
+  },
+  "minimum-stability": "dev"
 }
