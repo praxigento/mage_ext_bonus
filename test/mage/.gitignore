@@ -2,6 +2,7 @@
 /.htaccess
 /api.php
 /app/
+/dev/
 /cron.php
 /cron.sh
 /downloader/
@@ -12,12 +13,15 @@
 /includes/
 /index.php
 /install.php
+/LICENSE.html
 /js/
 /lib/
 /mage
 /media/
 /pkginfo/
+/sh/
 /shell/
 /skin/
+/sql/
 /var/
 # Remove all entries below or add required ones above
