@@ -2,3 +2,4 @@ src/app/code/community/Praxigento/Bonus/ app/code/community/Praxigento/Bonus/
 src/app/design/adminhtml/default/default/layout/prxgt/bonus/ app/design/adminhtml/default/default/layout/prxgt/bonus/
 src/app/design/adminhtml/default/default/template/prxgt/bonus/ app/design/adminhtml/default/default/template/prxgt/bonus/
 src/app/etc/modules/Praxigento_Bonus.xml app/etc/modules/Praxigento_Bonus.xml
+src/shell/Praxigento/Bonus shell/Praxigento/Bonus
