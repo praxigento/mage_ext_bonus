@@ -15,6 +15,18 @@
     },
     {
       "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_bundle"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_core"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/praxigento/mobi_mage_theme"
+    },
+    {
+      "type": "vcs",
       "url": "https://github.com/praxigento/mage_ext_bonus"
     }
   ],
