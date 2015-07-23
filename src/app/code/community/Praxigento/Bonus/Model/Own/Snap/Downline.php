@@ -10,10 +10,19 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  *
+ * @method int getCustomerId()
+ * @method null setCustomerId(int $val)
+ * @method string getPath()
+ * @method null setPath(string $val)
+ * @method int getUplineId()
+ * @method null setUplineId(int $val)
  */
 class Praxigento_Bonus_Model_Own_Snap_Downline extends Mage_Core_Model_Abstract
 {
+    const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_ID = 'id';
+    const ATTR_PATH = 'path';
+    const ATTR_UPLINE_ID = 'upline_id';
 
     protected function _construct()
     {

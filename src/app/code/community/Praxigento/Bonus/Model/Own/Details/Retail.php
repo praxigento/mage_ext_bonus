@@ -27,7 +27,7 @@ use Praxigento_Bonus_Config as Config;
  * @method int getOrderId()
  * @method null setOrderId(int $val)
  */
-class Praxigento_Bonus_Model_Own_Detail_Retail extends Mage_Core_Model_Abstract
+class Praxigento_Bonus_Model_Own_Details_Retail extends Mage_Core_Model_Abstract
 {
     const ATTR_CURR = 'currency';
     const ATTR_CUSTOMER_ID = 'customer_id';

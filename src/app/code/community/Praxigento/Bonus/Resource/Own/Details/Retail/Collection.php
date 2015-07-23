@@ -8,7 +8,7 @@ use Praxigento_Bonus_Config as Config;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Resource_Own_Detail_Retail_Collection
+class Praxigento_Bonus_Resource_Own_Details_Retail_Collection
     extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
     /**

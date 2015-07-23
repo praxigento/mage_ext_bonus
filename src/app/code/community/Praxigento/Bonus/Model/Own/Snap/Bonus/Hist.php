@@ -10,10 +10,13 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  *
+ * @method string getPeriod()
+ * @method null setPeriod(string $val)
+ *
  */
-class Praxigento_Bonus_Model_Own_Snap_Bonus_Hist extends Mage_Core_Model_Abstract
+class Praxigento_Bonus_Model_Own_Snap_Bonus_Hist extends Praxigento_Bonus_Model_Own_Snap_Bonus
 {
-    const ATTR_ID = 'id';
+    const ATTR_PERIOD = 'period';
 
     protected function _construct()
     {

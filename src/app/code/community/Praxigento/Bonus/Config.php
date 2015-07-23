@@ -23,7 +23,7 @@ class Praxigento_Bonus_Config
      */
 
     const ENTITY_CORE_TYPE = 'core_type';
-    const ENTITY_DETAIL_RETAIL = 'detail_retail';
+    const ENTITY_DETAILS_RETAIL = 'details_retail';
     const ENTITY_LOG_ACCOUNT = 'log_account';
     const ENTITY_LOG_BONUS = 'log_bonus';
     const ENTITY_LOG_DOWNLINE = 'log_downline';

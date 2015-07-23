@@ -62,9 +62,9 @@
                         <table>prxgt_bonus_core_type</table>
                     </core_type>
                     <!-- details -->
-                    <detail_retail>
-                        <table>prxgt_bonus_detail_retail</table>
-                    </detail_retail>
+                    <details_retail>
+                        <table>prxgt_bonus_details_retail</table>
+                    </details_retail>
                     <!-- logs -->
                     <log_account>
                         <table>prxgt_bonus_log_account</table>
