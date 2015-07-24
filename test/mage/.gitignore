@@ -25,21 +25,3 @@
 /sql/
 /var/
 # Remove all entries below or add required ones above
-/app/code/community/Praxigento/Bonus
-/app/design/adminhtml/default/default/layout/prxgt/bonus
-/app/design/adminhtml/default/default/template/prxgt/bonus
-/app/etc/modules/Praxigento_Bonus.xml
-/shell/Praxigento/Bonus
-/app/code/community/Nmmlm/Core
-/app/code/local/Mage/Adminhtml/Model/System/Config/Source/Customer/Group/Multiselect.php
-/app/design/adminhtml/default/default/layout/nmmlm/core
-/app/design/adminhtml/default/default/template/nmmlm/core
-/app/design/frontend/default/default/layout/nmmlm/core
-/app/design/frontend/default/default/template/nmmlm/core
-/app/etc/modules/Nmmlm_Core.xml
-/app/locale/en_US/nmmlm/core
-/app/locale/en_US/template/email/nmmlm/core
-/app/locale/ru_RU/nmmlm/core
-/app/locale/ru_RU/template/email/nmmlm/core
-/js/nmmlm/core
-/skin/frontend/default/default/nmmlm/core
