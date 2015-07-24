@@ -118,13 +118,22 @@
             </prxgt_bonus_block>
         </blocks>
         <events>
+            <prxgt_core_customer_upline_change>
+                <observers>
+                    <prxgt_bonus_observer>
+                        <type>singleton</type>
+                        <class>prxgt_bonus_model/own_observer</class>
+                        <method>onPrxgtCoreCustomerUplineChange</method>
+                    </prxgt_bonus_observer>
+                </observers>
+            </prxgt_core_customer_upline_change>
             <sales_order_place_after>
                 <observers>
-                    <prxgt_intr_observer>
+                    <prxgt_bonus_observer>
                         <type>singleton</type>
                         <class>prxgt_bonus_model/own_observer</class>
                         <method>onSalesOrderPlaceAfter</method>
-                    </prxgt_intr_observer>
+                    </prxgt_bonus_observer>
                 </observers>
             </sales_order_place_after>
         </events>

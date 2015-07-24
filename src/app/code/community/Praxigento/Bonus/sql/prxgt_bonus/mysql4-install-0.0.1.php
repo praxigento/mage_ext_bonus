@@ -237,8 +237,8 @@ $tbl->addColumn(LogDownline::ATTR_DATE_CHANGED, Ddl::TYPE_TIMESTAMP, null, array
     'Action performed time.');
 $tbl->addColumn(LogDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Action related customer.');
-$tbl->addColumn(LogDownline::ATTR_UPLINE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Action related customer.');
+$tbl->addColumn(LogDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'New parent customer for action related customer.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -261,14 +261,14 @@ $conn->addForeignKey(
 /* Upline type FK */
 $fkName = $conn->getForeignKeyName(
     $tblLogDownline,
-    LogDownline::ATTR_UPLINE_ID,
+    LogDownline::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
 );
 $conn->addForeignKey(
     $fkName,
     $tblLogDownline,
-    LogDownline::ATTR_UPLINE_ID,
+    LogDownline::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
     Db::FK_ACTION_RESTRICT,
@@ -474,8 +474,8 @@ $tbl->addColumn(SnapDownline::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
 $tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer itself.');
-$tbl->addColumn(SnapDownline::ATTR_UPLINE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Upline customer (sponsor, parent).');
+$tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Parent customer (sponsor, upline).');
 $tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
     'Path to the node - /1/2/3/.../');
 $conn->createTable($tbl);
@@ -497,17 +497,17 @@ $conn->addForeignKey(
     DB::FK_ACTION_RESTRICT
 );
 
-/* Upline customer FK */
+/* Parent customer FK */
 $fkName = $conn->getForeignKeyName(
     $tblSnapDownline,
-    SnapDownline::ATTR_UPLINE_ID,
+    SnapDownline::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
 );
 $conn->addForeignKey(
     $fkName,
     $tblSnapDownline,
-    SnapDownline::ATTR_UPLINE_ID,
+    SnapDownline::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
     Db::FK_ACTION_RESTRICT,
@@ -523,8 +523,8 @@ $tbl->addColumn(SnapDownlineHist::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
 $tbl->addColumn(SnapDownlineHist::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer itself.');
-$tbl->addColumn(SnapDownlineHist::ATTR_UPLINE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Upline customer (sponsor, parent).');
+$tbl->addColumn(SnapDownlineHist::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Parent customer (sponsor, upline).');
 $tbl->addColumn(SnapDownlineHist::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
     'Historical period in format YYYYMM or YYYYMMDD');
 $tbl->addColumn(SnapDownlineHist::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
@@ -556,14 +556,14 @@ $conn->addForeignKey(
 /* Upline customer FK */
 $fkName = $conn->getForeignKeyName(
     $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_UPLINE_ID,
+    SnapDownlineHist::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
 );
 $conn->addForeignKey(
     $fkName,
     $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_UPLINE_ID,
+    SnapDownlineHist::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
     Db::FK_ACTION_RESTRICT,
