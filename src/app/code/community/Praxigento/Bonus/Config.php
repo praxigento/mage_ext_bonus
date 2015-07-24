@@ -14,6 +14,22 @@
  */
 class Praxigento_Bonus_Config
 {
+    /**
+     * Available bonuses codes.
+     */
+
+    const BONUS_COURTESY = 'cb';
+    const BONUS_GROUP = 'gv';
+    const BONUS_INFINITY = 'ib';
+    const BONUS_OVERRIDE = 'ob';
+    const BONUS_PERSONAL = 'pv';
+    const BONUS_RETAIL = 'retail';
+    const BONUS_TEAM = 'tv';
+
+    /**
+     * 'config.xml' related constants.
+     */
+
     const CFG_BLOCK = 'prxgt_bonus_block';
     const CFG_HELPER = 'prxgt_bonus_helper';
     const CFG_MODEL = 'prxgt_bonus_model';

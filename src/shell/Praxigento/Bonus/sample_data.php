@@ -63,6 +63,7 @@ USAGE;
             $this->_createCatalogCategories();
             $this->_createProducts();
             $this->_createCustomers();
+            $this->_createOrders();
             $this->_log->debug("Sample data generation is completed.");
             echo "Done.\n";
         } else {
@@ -196,7 +197,7 @@ USAGE;
             $this->_log->debug("Total $count lines are read from file {$this->_fileNameCustomers}");
             /* create customers and generate MLM IDs */
             foreach ($records as $one) {
-                $this->_createCustomerEnrty($one);
+                $this->_createCustomerEntry($one);
             }
             /* set up Upline and MLM Path */
             foreach ($records as $one) {
@@ -205,11 +206,10 @@ USAGE;
         }
     }
 
-    private function _createCustomerEnrty(Record $rec)
+    private function _createCustomerEntry(Record $rec)
     {
         $nameFirst = $rec->nameFirst;
         $nameLast = $rec->nameLast;
-//        $email = str_replace('@', '_', $rec->email) . '@praxigento.com';
         $email = $rec->email;
         /* save customer and update customer group */
         $customer = Mage::getModel('customer/customer');
@@ -225,6 +225,60 @@ USAGE;
         } catch (Exception $e) {
             $this->_log->error("Cannot save customer '$nameFirst $nameLast <$email>'.", $e);
         }
+    }
+
+    /**
+     * Create one order per customer.
+     */
+    private function _createOrders()
+    {
+        /** @var  $allProducts Innoexts_WarehousePlus_Model_Mysql4_Catalog_Product_Collection */
+        $allProducts = Mage::getModel('catalog/product')->getCollection();
+        /** @var  $product Mage_Catalog_Model_Product */
+        $product = $allProducts->getFirstItem();
+        $allCustomers = Mage::getModel('customer/customer')->getCollection();
+        foreach ($allCustomers as $one) {
+            $this->_createOrderForCustomer($one, $product);
+        }
+
+    }
+
+    private function _createOrderForCustomer(
+        Nmmlm_Core_Model_Customer_Customer $customer,
+        Mage_Catalog_Model_Product $product)
+    {
+        /** @var  $quote Mage_Sales_Model_Quote */
+        $quote = Mage::getModel('sales/quote')->setStoreId(Mage::app()->getStore('default')->getId());
+        $quote->assignCustomer($customer);
+        $buyInfo = array('qty' => 1);
+        $quote->addProduct($product, new Varien_Object($buyInfo));
+
+        $addressData = array(
+            'firstname' => 'Test',
+            'lastname' => 'Test',
+            'street' => 'Sample Street 10',
+            'city' => 'Somewhere',
+            'postcode' => '123456',
+            'telephone' => '123456',
+            'country_id' => 'US',
+            'region_id' => 12, // id from directory_country_region table
+        );
+        $billingAddress = $quote->getBillingAddress()->addData($addressData);
+        $shippingAddress = $quote->getShippingAddress()->addData($addressData);
+        $shippingAddress->setCollectShippingRates(true)->collectShippingRates()
+            ->setShippingMethod('flatrate_flatrate')
+            ->setPaymentMethod('checkmo');
+
+        $quote->getPayment()->importData(array('method' => 'checkmo'));
+
+        $quote->collectTotals()->save();
+
+        $service = Mage::getModel('sales/service_quote', $quote);
+        $service->submitAll();
+        $order = $service->getOrder();
+
+        $this->_log->debug("Created order: " . $order->getIncrementId());
+
     }
 
     private function _updateUpline(Record $rec)
