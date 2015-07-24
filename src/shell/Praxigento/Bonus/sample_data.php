@@ -29,6 +29,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
      */
     private $_regUpline = array();
     private $_categoryElectronics;
+    /** @var  array of bonus types; 'code' is the key. */
+    private $_cacheBonusTypes;
 
     public function __construct()
     {
@@ -64,6 +66,8 @@ USAGE;
             $this->_createProducts();
             $this->_createCustomers();
             $this->_createOrders();
+            /* add fake data to bonus module */
+            $this->_populateLogOrder();
             $this->_log->debug("Sample data generation is completed.");
             echo "Done.\n";
         } else {
@@ -279,6 +283,49 @@ USAGE;
 
         $this->_log->debug("Created order: " . $order->getIncrementId());
 
+    }
+
+    /**
+     * Add random data to orders log.
+     */
+    private function _populateLogOrder()
+    {
+        $bonus = $this->_getBonusTypeByCode(Praxigento_Bonus_Config::BONUS_PERSONAL);
+        $bonusId = $bonus->getId();
+        $allOrders = Mage::getModel('sales/order')->getCollection();
+        /** @var  $one Mage_Sales_Model_Order */
+        foreach ($allOrders as $one) {
+            $value = $this->_randomAmount();
+            $orderId = $one->getId();
+            /** @var  $log Praxigento_Bonus_Model_Own_Log_Order */
+            $log = Mage::getModel('prxgt_bonus_model/log_order');
+            $log->setOrderId($orderId);
+            $log->setTypeId($bonusId);
+            $log->setValue($value);
+            $log->getResource()->save($log);
+        }
+
+    }
+
+    private function _randomAmount()
+    {
+        $result = rand(1, 10000) / 100;
+        return $result;
+    }
+
+    private function _getBonusTypeByCode($code)
+    {
+        if (is_null($this->_cacheBonusTypes)) {
+            $allBonusTypes = Mage::getModel('prxgt_bonus_model/core_type')->getCollection();
+            $types = array();
+            /** @var  $one Praxigento_Bonus_Model_Own_Core_Type */
+            foreach ($allBonusTypes as $one) {
+                $types[$one->getCode()] = $one;
+            }
+            $this->_cacheBonusTypes = $types;
+        }
+        $result = $this->_cacheBonusTypes[$code];
+        return $result;
     }
 
     private function _updateUpline(Record $rec)

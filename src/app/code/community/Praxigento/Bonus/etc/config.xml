@@ -51,7 +51,7 @@
     <global>
         <models>
             <prxgt_bonus_model>
-                <class>Praxigento_Bonus_Model</class>
+                <class>Praxigento_Bonus_Model_Own</class>
                 <resourceModel>prxgt_bonus_resource</resourceModel>
             </prxgt_bonus_model>
             <prxgt_bonus_resource>
