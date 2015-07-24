@@ -20,9 +20,9 @@ use Praxigento_Bonus_Config as Config;
 class Praxigento_Bonus_Model_Own_Snap_Downline extends Mage_Core_Model_Abstract
 {
     const ATTR_CUSTOMER_ID = 'customer_id';
-    const ATTR_ID = 'id';
     const ATTR_PARENT_ID = 'parent_id';
     const ATTR_PATH = 'path';
+
 
     protected function _construct()
     {

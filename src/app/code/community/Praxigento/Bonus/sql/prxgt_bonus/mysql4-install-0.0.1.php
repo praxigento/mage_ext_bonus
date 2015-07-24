@@ -470,9 +470,7 @@ $conn->addForeignKey(
  * Snapshot Downline
  ****************** */
 $tbl = $conn->newTable($tblSnapDownline);
-$tbl->addColumn(SnapDownline::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
-$tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+$tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('primary' => true, 'identity' => false, 'nullable' => false, 'unsigned' => true),
     'Customer itself.');
 $tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Parent customer (sponsor, upline).');

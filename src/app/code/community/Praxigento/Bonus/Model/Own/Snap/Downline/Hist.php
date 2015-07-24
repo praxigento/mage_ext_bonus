@@ -16,6 +16,7 @@ use Praxigento_Bonus_Config as Config;
  */
 class Praxigento_Bonus_Model_Own_Snap_Downline_Hist extends Praxigento_Bonus_Model_Own_Snap_Downline
 {
+    const ATTR_ID = 'id';
     const ATTR_PERIOD = 'period';
 
     protected function _construct()

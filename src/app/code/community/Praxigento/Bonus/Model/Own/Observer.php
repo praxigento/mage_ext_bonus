@@ -45,20 +45,32 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
      */
     public function onPrxgtCoreCustomerUplineChange(Varien_Event_Observer $event)
     {
-        /** @var  $customer Nmmlm_Core_Model_Customer_Customer */
-        $customer = $event->getCustomer();
         /** @var  $parent Nmmlm_Core_Model_Customer_Customer */
         $parent = $event->getParent();
-        $customerId = $customer->getId();
-        $customerPath = $customer->getNmmlmCoreMlmPath();
         $parentId = $parent->getId();
-        /* save log record */
-        /** @var  $log Praxigento_Bonus_Model_Own_Log_Downline */
-        $log = Mage::getModel('prxgt_bonus_model/own_log_downline');
-        $log->setCustomerId($customerId);
-        $log->setParentId($parentId);
-        $log->getResource()->save($log);
-        /* update snapshot record */
-
+        /* dont' process if parent is missed - this is first save, w/o parent data */
+        if ($parentId) {
+            /** @var  $customer Nmmlm_Core_Model_Customer_Customer */
+            $customer = $event->getCustomer();
+            $customerId = $customer->getId();
+            $customerPath = $customer->getNmmlmCoreMlmPath();
+            /**
+             * Save log record.
+             */
+            /** @var  $log Praxigento_Bonus_Model_Own_Log_Downline */
+            $log = Mage::getModel('prxgt_bonus_model/own_log_downline');
+            $log->setCustomerId($customerId);
+            $log->setParentId($parentId);
+            $log->getResource()->save($log);
+            /**
+             * Update snapshot record.
+             */
+            /** @var  $snap Praxigento_Bonus_Model_Own_Snap_Downline */
+            $snap = Mage::getModel('prxgt_bonus_model/own_snap_downline')->load($customerId);
+            $snap->setCustomerId($customerId);
+            $snap->setParentId($parentId);
+            $snap->setPath($customerPath);
+            $snap->getResource()->save($snap);
+        }
     }
 }
