@@ -60,9 +60,9 @@ USAGE;
         $create = $this->getArg(self::OPT_CREATE);
         if ($create) {
             $this->_log->debug("Sample data generation is started.");
-//            $this->_createCatalogCategories();
-//            $this->_createProducts();
-//            $this->_createCustomers();
+            $this->_createCatalogCategories();
+            $this->_createProducts();
+            $this->_createCustomers();
             $this->_createOrders();
             $this->_log->debug("Sample data generation is completed.");
             echo "Done.\n";
