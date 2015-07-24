@@ -532,7 +532,7 @@ $tbl->addColumn(SnapDownlineHist::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nulla
 $conn->createTable($tbl);
 
 /* UQ index (order_id) */
-$ndxFields = array(SnapDownlineHist::ATTR_PERIOD, SnapDownlineHist::ATTR_CUSTOMER_ID, SnapDownlineHist::ATTR_UPLINE_ID);
+$ndxFields = array(SnapDownlineHist::ATTR_PERIOD, SnapDownlineHist::ATTR_CUSTOMER_ID, SnapDownlineHist::ATTR_PARENT_ID);
 $ndxName = $conn->getIndexName($tblSnapDownlineHist, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 $conn->addIndex($tblSnapDownlineHist, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 
