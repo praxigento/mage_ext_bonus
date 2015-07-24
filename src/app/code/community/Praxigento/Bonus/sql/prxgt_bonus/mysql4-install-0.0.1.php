@@ -568,6 +568,44 @@ $conn->addForeignKey(
     DB::FK_ACTION_RESTRICT
 );
 
+
+/** =================================================================================================================
+ *  Insert initial data.
+ * ================================================================================================================= */
+
+/**
+ * CoreType data
+ */
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_PERSONAL, CoreType::ATTR_NOTE => 'Personal volume bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_TEAM, CoreType::ATTR_NOTE => 'Team volume bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_COURTESY, CoreType::ATTR_NOTE => 'Courtesy bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_OVERRIDE, CoreType::ATTR_NOTE => 'Override bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_INFINITY, CoreType::ATTR_NOTE => 'Infinity bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_GROUP, CoreType::ATTR_NOTE => 'Group bonus.')
+);
+$conn->insert(
+    $tblCoreType,
+    array(CoreType::ATTR_CODE => Config::BONUS_RETAIL, CoreType::ATTR_NOTE => 'Retail bonus.')
+);
+
+
 /**
  * Post setup Mage routines.
  */

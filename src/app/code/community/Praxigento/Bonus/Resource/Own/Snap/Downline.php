@@ -18,6 +18,7 @@ class Praxigento_Bonus_Resource_Own_Snap_Downline extends Mage_Core_Model_Mysql4
     {
         $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE, Model::ATTR_CUSTOMER_ID);
         $this->_isPkAutoIncrement = false;
+        $this->_idFieldName = Model::ATTR_CUSTOMER_ID;
     }
 
 }
