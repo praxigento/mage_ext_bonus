@@ -14,11 +14,13 @@
 $dir = dirname(dirname(dirname($_SERVER['SCRIPT_NAME'])));
 require_once $dir . '/abstract.php';
 
-class Praxigento_Dcp_Shell extends Mage_Shell_Abstract
+class Praxigento_Shell extends Mage_Shell_Abstract
 {
     const DEFAULT_UPLINE = 100000001;
-    const OPT_SOURCE = 'source';
+    const OPT_CREATE = 'create';
+    /** @var Logger */
     private $_log;
+    private $_fileNameCustomers;
     /**
      * Registry to store customer data with Sponsor (Upline) ID as a key.
      *
@@ -26,11 +28,27 @@ class Praxigento_Dcp_Shell extends Mage_Shell_Abstract
      * @var array
      */
     private $_regUpline = array();
+    private $_categoryElectronics;
 
     public function __construct()
     {
         parent::__construct();
         $this->_log = Praxigento_Log_Logger::getLogger(__CLASS__);
+        $this->_fileNameCustomers = dirname($_SERVER['SCRIPT_NAME']) . '/data_customers.csv';
+    }
+
+    /**
+     * Retrieve Usage Help Message
+     *
+     */
+    public function usageHelp()
+    {
+        return <<<USAGE
+Usage:  php -f sample_data.php [options]
+
+  --create      Create sample data.
+
+USAGE;
     }
 
     /**
@@ -39,28 +57,97 @@ class Praxigento_Dcp_Shell extends Mage_Shell_Abstract
      */
     public function run()
     {
-        $source = $this->getArg(self::OPT_SOURCE);
-        if ($source) {
-            $records = $this->_readFile($source);
-            $count = sizeof($records);
-            if ($count) {
-                $this->_log->info("Total $count records are read.");
-                /* create customers and generate MLM IDs */
-                foreach ($records as $one) {
-                    $this->_createCustomers($one);
-                }
-                /* set up Upline and MLM Path */
-                foreach ($records as $one) {
-                    $this->_updateUpline($one);
-                }
-            }
-            echo "done from $source!\n";
+        $create = $this->getArg(self::OPT_CREATE);
+        if ($create) {
+            $this->_log->debug("Sample data generation is started.");
+            $this->_createCatalogCategories();
+            $this->_createProducts();
+            $this->_createCustomers();
+            $this->_log->debug("Sample data generation is completed.");
+            echo "Done.\n";
         } else {
             echo $this->usageHelp();
         }
 
     }
 
+    private function _createProducts()
+    {
+        $be = Mage::getModel('nmmlm_core_model/dict_catalog_product');
+//        $be->setBeId(100);
+        $be->setEnabled(true);
+        $be->setMageSku('sku1213');
+        $be->setName(new Nmmlm_Core_Model_Dict_I18n_Text("product1"));
+        $be->setDescription(new Nmmlm_Core_Model_Dict_I18n_Text('description'));
+
+        $be->setMageCategoryIds(array($this->_categoryElectronics->getId()));
+
+        $be->setPriceAdjusted(new Nmmlm_Core_Model_Dict_Catalog_Price(4.01, 'USD'));
+        $be->setPriceRegular(new Nmmlm_Core_Model_Dict_Catalog_Price(6.32, 'USD'));
+        $be->setPriceWholesale(new Nmmlm_Core_Model_Dict_Catalog_Price(3.16, 'USD'));
+        $be->setPvWholesale(100);
+        $be->setWeight(0.200);
+
+        $be->getInventory()->setQty(1000, 1);
+        $be->getInventory()->setPvActual(120, 1);
+        $be->getInventory()->setPvWarehouse(130, 1);
+        $be->getInventory()->setPriceWarehouse(new Nmmlm_Core_Model_Dict_Catalog_Price(4.24, 'USD'), 1);
+
+        $sync = Mage::getModel('nmmlm_core_model/sync_mage_product');
+        $sync->addOne($be);
+
+//        $prod = Mage::getModel('catalog/product');
+//        try {
+//            $prod
+//                ->setStoreId(1) //you can set data in store scope
+//                ->setWebsiteIds(array(1)) //website ID the product is assigned to, as an array
+//                ->setAttributeSetId(4)//ID of a attribute set named 'default' for type 'catalog_product'
+//                ->setTypeId('simple')//product type
+//                ->setCreatedAt(strtotime('now'))//product creation time
+//                ->setSku('smartphone')//SKU
+//                ->setName('test product21')//product name
+//                ->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED)
+//                ->setTaxClassId(1)//tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
+//                ->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)//catalog and search visibility
+//                ->setPrice(11.22)//price in form 11.22
+//
+//                ->setDescription('This is a long description')
+//                ->setShortDescription('This is a short description')
+//                ->setStockData(array(
+//                        'use_config_manage_stock' => 0, //'Use config settings' checkbox
+//                        'manage_stock' => 1, //manage stock
+//                        'min_sale_qty' => 1, //Minimum Qty Allowed in Shopping Cart
+//                        'max_sale_qty' => 2, //Maximum Qty Allowed in Shopping Cart
+//                        'is_in_stock' => 1, //Stock Availability
+//                        'qty' => 999 //qty
+//                    )
+//                )
+//                ->setCategoryIds(array($this->_categoryElectronics->getId())); //assign product to categories
+//            $prod->save();
+//        } catch (Exception $e) {
+//            Mage::log($e->getMessage());
+//        }
+    }
+
+    private function _createCatalogCategories()
+    {
+        /** @var  $allCats Mage_Catalog_Model_Resource_Category_Collection */
+        $allCats = Mage::getModel('catalog/category')->getCollection();
+        /** @var  $rootCat Mage_Catalog_Model_Category */
+        $rootCat = $allCats->getFirstItem();
+        /** @var  $subCats Mage_Catalog_Model_Resource_Category_Collection */
+        $subCats = $rootCat->getChildrenCategories();
+        $defaultCat = $subCats->getFirstItem();
+        /** @var  $category Mage_Catalog_Model_Category */
+        $category = Mage::getModel('catalog/category');
+        $category->setName('Electronics');
+        $category->setIsActive(true);
+        $category->setPath($defaultCat->getPath());
+        $category->save();
+        $this->_categoryElectronics = $category;
+        $this->_log->debug("'Electronics'category is added to catalog (default category)");
+
+    }
 
     /**
      * Read file with data, parse and return array of Records.
@@ -101,7 +188,24 @@ class Praxigento_Dcp_Shell extends Mage_Shell_Abstract
         return $result;
     }
 
-    private function _createCustomers(Record $rec)
+    private function _createCustomers()
+    {
+        $records = $this->_readFile($this->_fileNameCustomers);
+        $count = sizeof($records);
+        if ($count) {
+            $this->_log->debug("Total $count lines are read from file {$this->_fileNameCustomers}");
+            /* create customers and generate MLM IDs */
+            foreach ($records as $one) {
+                $this->_createCustomerEnrty($one);
+            }
+            /* set up Upline and MLM Path */
+            foreach ($records as $one) {
+                $this->_updateUpline($one);
+            }
+        }
+    }
+
+    private function _createCustomerEnrty(Record $rec)
     {
         $nameFirst = $rec->nameFirst;
         $nameLast = $rec->nameLast;
@@ -140,20 +244,6 @@ class Praxigento_Dcp_Shell extends Mage_Shell_Abstract
         $wrapper->save();
         $this->_log->trace("New group '$groupId' is set for customer '{$rec->email}'.");
 
-    }
-
-    /**
-     * Retrieve Usage Help Message
-     *
-     */
-    public function usageHelp()
-    {
-        return <<<USAGE
-Usage:  php -f test_data_add.php [options]
-
-  --source <path>               Add customers to Magneto from file with customer data.
-
-USAGE;
     }
 
     /**
@@ -196,5 +286,5 @@ class Record
 
 /* prevent Notice: A session had already been started */
 session_start();
-$shell = new Praxigento_Dcp_Shell();
+$shell = new Praxigento_Shell();
 $shell->run();
