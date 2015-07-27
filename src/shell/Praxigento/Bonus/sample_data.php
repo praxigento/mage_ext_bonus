@@ -50,9 +50,9 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $create = $this->getArg(self::OPT_CREATE);
         if ($create) {
             $this->_log->debug("Sample data generation is started.");
-//            $this->_createCatalogCategories();
-//            $this->_createProducts();
-//            $this->_createCustomers();
+            $this->_createCatalogCategories();
+            $this->_createProducts();
+            $this->_createCustomers();
             $this->_createOrders();
             /* add fake data to bonus module */
             $this->_populateLogOrder();
@@ -335,12 +335,18 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     {
         $bonus = $this->_getBonusTypeByCode(Praxigento_Bonus_Config::BONUS_PERSONAL);
         $bonusId = $bonus->getId();
+        /**/
+        $helper = Mage::helper('nmmlm_core_helper');
         $allOrders = Mage::getModel('sales/order')->getCollection();
         /** @var  $one Mage_Sales_Model_Order */
         foreach ($allOrders as $one) {
             $orderId = $one->getId();
             /** @var  $log Praxigento_Bonus_Model_Own_Log_Order */
             $log = Mage::getModel('prxgt_bonus_model/log_order');
+            $createdAt = $one->getCreatedAt();
+            $date = $helper->convertToDateTime($createdAt);
+            $formatted = date_format($date, Nmmlm_Core_Config::FORMAT_DATETIME);
+            $log->setDateChanged($formatted);
             $log->setOrderId($orderId);
             $log->setTypeId($bonusId);
             $log->setValue($one->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL));
