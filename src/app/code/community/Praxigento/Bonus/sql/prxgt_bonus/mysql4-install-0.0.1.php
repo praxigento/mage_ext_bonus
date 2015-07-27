@@ -67,13 +67,11 @@ $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
 $tbl = $conn->newTable($tblCfgPersonal);
 $tbl->addColumn(CfgPersonal::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
-$tbl->addColumn(CfgPersonal::ATTR_FROM, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Code of the bonus type (pv, gv, tv, ...)');
-$tbl->addColumn(CfgPersonal::ATTR_TO, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'High level of PV per period for applied percent (excluded).');
+$tbl->addColumn(CfgPersonal::ATTR_LEVEL, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Low level of PV per period for applied percent (included).');
 $tbl->addColumn(CfgPersonal::ATTR_PERCENT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Percent applied to PV collected per period to compute bonus value.');
-$tbl->setComment('Personal Volume bonus percents.');
+$tbl->setComment('Personal Volume bonus percent by PV level.');
 $conn->createTable($tbl);
 
 
@@ -84,9 +82,9 @@ $tbl = $conn->newTable($tblCoreType);
 $tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
 $tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Low level of PV per period for applied percent (included).');
-$tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Low level of PV per period for applied percent (included).');
+    'Code of the bonus type (pv, gv, tv, ...)');
+$tbl->addColumn(CoreType::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Description of the bonus type (Personal Volume, ...)');
 $tbl->setComment('Available bonus types.');
 $conn->createTable($tbl);
 
@@ -118,6 +116,7 @@ $tbl->addColumn(DetailsRetail::ATTR_FEE_MIN, Ddl::TYPE_DECIMAL, '12,4', array('n
     'Minimum bonus fee.');
 $tbl->addColumn(DetailsRetail::ATTR_FEE_MAX, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Maximum bonus fee.');
+$tbl->setComment('Details for Retail bonus.');
 $conn->createTable($tbl);
 
 /* UQ index (order_id) */
@@ -174,6 +173,7 @@ $tbl->addColumn(LogAccount::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullab
     'Change value (positive or negative).');
 $tbl->addColumn(LogAccount::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Change value currency.');
+$tbl->setComment('Log for account transfers.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -208,6 +208,7 @@ $tbl->addColumn(LogBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable
     'Action related bonus type.');
 $tbl->addColumn(LogBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
+$tbl->setComment('Log for bonus transfers.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -257,6 +258,7 @@ $tbl->addColumn(LogDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('n
     'Action related customer.');
 $tbl->addColumn(LogDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'New parent customer for action related customer.');
+$tbl->setComment('Log for downline tree changes.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -308,6 +310,7 @@ $tbl->addColumn(LogOrder::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable
     'Action related bonus type.');
 $tbl->addColumn(LogOrder::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
+$tbl->setComment('Log for sales order related changes.');
 $conn->createTable($tbl);
 
 /* Order FK */
@@ -359,6 +362,7 @@ $tbl->addColumn(LogPayout::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullabl
     'Change value (positive or negative).');
 $tbl->addColumn(LogPayout::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
     'Change value currency.');
+$tbl->setComment('Log for payouts.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -391,6 +395,7 @@ $tbl->addColumn(SnapBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullabl
     'Bonus type.');
 $tbl->addColumn(SnapBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Current bonus value (positive or negative).');
+$tbl->setComment('Current state of the bonuses per customer.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -442,6 +447,7 @@ $tbl->addColumn(SnapBonusHist::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable
     'Historical period in format YYYYMM or YYYYMMDD');
 $tbl->addColumn(SnapBonusHist::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Current bonus value (positive or negative).');
+$tbl->setComment('Snapshots of the bonuses per customer.');
 $conn->createTable($tbl);
 
 /* UQ index (order_id) */
@@ -494,6 +500,7 @@ $tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nu
     'Parent customer (sponsor, upline).');
 $tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
     'Path to the node - /1/2/3/.../');
+$tbl->setComment('Current state of the downline tree.');
 $conn->createTable($tbl);
 
 /* Customer FK */
@@ -545,6 +552,7 @@ $tbl->addColumn(SnapDownlineHist::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nulla
     'Historical period in format YYYYMM or YYYYMMDD');
 $tbl->addColumn(SnapDownlineHist::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
     'Path to the node - /1/2/3/.../');
+$tbl->setComment('Snapshots of the downline tree.');
 $conn->createTable($tbl);
 
 /* UQ index (order_id) */
@@ -624,6 +632,29 @@ $conn->insert(
 );
 
 
+/**
+ * Cfg Personal data
+ */
+$conn->insert(
+    $tblCfgPersonal,
+    array(CfgPersonal::ATTR_LEVEL => '0.00', CfgPersonal::ATTR_PERCENT => '0.00')
+);
+$conn->insert(
+    $tblCfgPersonal,
+    array(CfgPersonal::ATTR_LEVEL => '50.00', CfgPersonal::ATTR_PERCENT => '0.05')
+);
+$conn->insert(
+    $tblCfgPersonal,
+    array(CfgPersonal::ATTR_LEVEL => '100.00', CfgPersonal::ATTR_PERCENT => '0.10')
+);
+$conn->insert(
+    $tblCfgPersonal,
+    array(CfgPersonal::ATTR_LEVEL => '500.00', CfgPersonal::ATTR_PERCENT => '0.15')
+);
+$conn->insert(
+    $tblCfgPersonal,
+    array(CfgPersonal::ATTR_LEVEL => '750.00', CfgPersonal::ATTR_PERCENT => '0.20')
+);
 /**
  * Post setup Mage routines.
  */
