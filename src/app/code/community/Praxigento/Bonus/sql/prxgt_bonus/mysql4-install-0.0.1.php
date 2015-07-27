@@ -4,6 +4,7 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
+use Praxigento_Bonus_Model_Own_Cfg_Personal as CfgPersonal;
 use Praxigento_Bonus_Model_Own_Core_Type as CoreType;
 use Praxigento_Bonus_Model_Own_Details_Retail as DetailsRetail;
 use Praxigento_Bonus_Model_Own_Log_Account as LogAccount;
@@ -36,6 +37,7 @@ $conn = $this->getConnection();
 /**
  * Own tables names.
  */
+$tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
 $tblCoreType = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CORE_TYPE);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
 $tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
@@ -60,15 +62,31 @@ $optId = array('identity' => true, 'primary' => true, 'nullable' => false, 'unsi
 $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
 
 /** ******************
+ * Cfg Personal
+ ****************** */
+$tbl = $conn->newTable($tblCfgPersonal);
+$tbl->addColumn(CfgPersonal::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Entity ID.');
+$tbl->addColumn(CfgPersonal::ATTR_FROM, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Code of the bonus type (pv, gv, tv, ...)');
+$tbl->addColumn(CfgPersonal::ATTR_TO, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'High level of PV per period for applied percent (excluded).');
+$tbl->addColumn(CfgPersonal::ATTR_PERCENT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Percent applied to PV collected per period to compute bonus value.');
+$tbl->setComment('Personal Volume bonus percents.');
+$conn->createTable($tbl);
+
+
+/** ******************
  * Core Type
  ****************** */
 $tbl = $conn->newTable($tblCoreType);
 $tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
 $tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Code of the bonus type (pv, gv, tv, ...)');
-$tbl->addColumn(CoreType::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Description of the bonus type (Personal Volume, ...)');
+    'Low level of PV per period for applied percent (included).');
+$tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Low level of PV per period for applied percent (included).');
 $tbl->setComment('Available bonus types.');
 $conn->createTable($tbl);
 

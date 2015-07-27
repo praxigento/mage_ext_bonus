@@ -62,6 +62,13 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
         return $result;
     }
 
+    public function cfgPersonalBonusEnabled($store = null)
+    {
+        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/is_enabled', $store);
+        $result = filter_var($result, FILTER_VALIDATE_BOOLEAN);
+        return $result;
+    }
+
     public function cfgRetailBonusEnabled($store = null)
     {
         $result = Mage::getStoreConfig('nmmlm_core_referrals/retail_bonus/is_enabled', $store);

@@ -28,13 +28,63 @@
                         </downline_depth>
                     </fields>
                 </general>
+                <personal_bonus translate="label">
+                    <label>Personal Bonus</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>380</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <is_enabled translate="label comment">
+                            <label>Enable Personal Bonus</label>
+                            <comment>Switch on/off personal bonus processing.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>101</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </is_enabled>
+                    </fields>
+                </personal_bonus>
+                <downline_bonus translate="label">
+                    <label>Downline Bonus</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>390</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <is_enabled translate="label comment">
+                            <label>Enable Downline Bonus</label>
+                            <comment>Switch on/off downline bonus processing.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </is_enabled>
+                        <is_unilevel translate="label comment">
+                            <label>Use Unilevel</label>
+                            <comment>Process downline bonus using Unilevel scheme.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </is_unilevel>
+                    </fields>
+                </downline_bonus>
                 <!-- "retail_bonus" group is defined in core module -->
                 <retail_bonus translate="label">
                     <fields>
                         <!-- AD-316: conflict with Nmmlm_Core module -->
                         <is_enabled translate="label comment">
                             <label>Enable Retail Bonus (Praxigento_Bonus)</label>
-                            <comment>Switch on/off retail bonus calculation.</comment>
+                            <comment>Switch on/off retail bonus processing.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>101</sort_order>
@@ -44,6 +94,26 @@
                         </is_enabled>
                     </fields>
                 </retail_bonus>
+                <perk_bonus translate="label">
+                    <label>Perk Bonus</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>500</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <is_enabled translate="label comment">
+                            <label>Enable Perk Bonus</label>
+                            <comment>Switch on/off perk bonus processing.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>101</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </is_enabled>
+                    </fields>
+                </perk_bonus>
             </groups>
         </nmmlm_core_referrals>
     </sections>
