@@ -45,7 +45,7 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
     public function getUnprocessedBonusesCount(GetUnprocessedBonusesCountRequest $req)
     {
         /** @var  $result GetUnprocessedBonusesCountResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedBonusesCount');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedBonusesCount');
         $data = $this->_readUnprocessedBonuses();
         $count = count($data);
         $result->setCount($count);
@@ -104,7 +104,7 @@ WHERE
     public function getUnprocessedTransactionsCount(GetUnprocessedTransactionsCountRequest $req)
     {
         /** @var  $result GetUnprocessedTransactionsCountResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedTransactionsCount');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedTransactionsCount');
         $data = $this->_readUnprocessedTransactions();
         $count = count($data);
         $result->setCount($count);
@@ -143,7 +143,7 @@ WHERE
     public function getUnprocessedPayoutsCount(GetUnprocessedPayoutsCountRequest $req)
     {
         /** @var  $result GetUnprocessedPayoutsCountResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_getUnprocessedPayoutsCount');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedPayoutsCount');
         $data = $this->_readUnprocessedPayouts();
         $count = count($data);
         $result->setCount($count);
@@ -183,14 +183,14 @@ WHERE
     public function createPayments(CreatePaymentsRequest $req)
     {
         /** @var  $result CreatePaymentsResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createPayments');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_createPayments');
         if ($this->_helper->cfgRetailBonusEnabled()) {
             $items = $this->_readUnprocessedPayouts();
             $count = count($items);
             $this->_log->debug("Total $count payouts should be processed to create payments.");
             if ($count) {
                 $refs = array();
-                $payout = Mage::getModel('prxgt_bonus_model/own_payout');
+                $payout = Mage::getModel('prxgt_bonus_model/payout');
                 foreach ($items as $one) {
                     $ref = $this->_createOnePayment($one);
                     if ($ref) {
@@ -225,7 +225,7 @@ WHERE
     public function createPayouts(CreatePayoutsRequest $req)
     {
         /** @var  $result CreatePayoutsResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createPayouts');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_createPayouts');
         if ($this->_helper->cfgRetailBonusEnabled()) {
             $items = $this->_readUnprocessedTransactions();
             $count = count($items);
@@ -262,8 +262,8 @@ WHERE
     protected function _createOnePayout($data, $desc)
     {
         $result = null;
-        $payout = Mage::getModel('prxgt_bonus_model/own_payout');
-        $transact = Mage::getModel('prxgt_bonus_model/own_transact');
+        $payout = Mage::getModel('prxgt_bonus_model/payout');
+        $transact = Mage::getModel('prxgt_bonus_model/transact');
         /* calculate payout attributes */
         /* customer id & currency should be the same for all items in $data */
         $first = reset($data);
@@ -305,7 +305,7 @@ WHERE
                 $payoutId = $payout->getId();
                 /* save relations between payout and transactions */
                 foreach ($data as $one) {
-                    $payoutTransact = Mage::getModel('prxgt_bonus_model/own_payout_transact');
+                    $payoutTransact = Mage::getModel('prxgt_bonus_model/payout_transact');
                     $payoutTransact->setPayoutId($payoutId);
                     $payoutTransact->setTransactId($one[Transact::ATTR_ID]);
                     $payoutTransact->getResource()->save($payoutTransact);
@@ -322,7 +322,7 @@ WHERE
     public function createTransactions(CreateTransactionsRequest $req)
     {
         /** @var  $result CreateTransactionsResponse */
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_createTransactions');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_createTransactions');
         if ($this->_helper->cfgRetailBonusEnabled()) {
             $idsCreated = array();
             $ids = $this->_readUnprocessedBonuses();
@@ -350,8 +350,8 @@ WHERE
      */
     protected function _createOneTransaction($data)
     {
-        $transact = Mage::getModel('prxgt_bonus_model/own_transact');
-        $retail = Mage::getModel('prxgt_bonus_model/own_order');
+        $transact = Mage::getModel('prxgt_bonus_model/transact');
+        $retail = Mage::getModel('prxgt_bonus_model/order');
         /* start transaction */
         $conn = Mage::getSingleton('core/resource')->getConnection('core_write');
         try {
@@ -383,7 +383,7 @@ WHERE
      */
     public function saveRetailBonus(SaveRetailBonusRequest $req)
     {
-        $result = Mage::getModel('prxgt_bonus_model/own_service_registry_response_saveRetailBonus');
+        $result = Mage::getModel('prxgt_bonus_model/service_registry_response_saveRetailBonus');
         if ($this->_helper->cfgRetailBonusEnabled()) {
             /**
              * Prepare processing data.
@@ -406,8 +406,8 @@ WHERE
                 /**
                  * Compose upline's quote from customer order.
                  */
-                $call = Mage::getModel('prxgt_bonus_model/own_service_replica_call');
-                $reqRep = Mage::getModel('prxgt_bonus_model/own_service_replica_request_createQuoteFromOrder');
+                $call = Mage::getModel('prxgt_bonus_model/service_replica_call');
+                $reqRep = Mage::getModel('prxgt_bonus_model/service_replica_request_createQuoteFromOrder');
                 $reqRep->setCustomer($upline);
                 $reqRep->setOrder($order);
                 $respRep = $call->createQuoteFromOrder($reqRep);
@@ -439,7 +439,7 @@ WHERE
                 /**
                  * Save bonus value.
                  */
-                $bonusModel = Mage::getModel('prxgt_bonus_model/own_order');
+                $bonusModel = Mage::getModel('prxgt_bonus_model/order');
                 $bonusModel->setOrderId($orderId);
                 $bonusModel->setUplineId($uplineId);
                 $bonusModel->setCurrency($bonusCurr);

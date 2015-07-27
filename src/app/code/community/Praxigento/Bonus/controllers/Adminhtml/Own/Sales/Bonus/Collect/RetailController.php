@@ -41,14 +41,14 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_RetailController extend
             /* prevent memory exhausting */
             ini_set('memory_limit', '-1');
             /* process orders */
-            $srv = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
+            $srv = Mage::getModel('prxgt_bonus_model/service_registry_call');
             $orderIds = $this->_getUnprocessedOrders();
             $processed = 0;
             $failed = array();
             foreach ($orderIds as $one) {
                 $id = $one['entity_id'];
                 $order = Mage::getModel('sales/order')->load($id);
-                $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
+                $req = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
                 $req->setOrder($order);
                 try {
                     $resp = $srv->saveRetailBonus($req);

@@ -17,7 +17,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Base
     protected function getRegistryCall()
     {
         if (is_null($this->_registryCall)) {
-            $this->_registryCall = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
+            $this->_registryCall = Mage::getModel('prxgt_bonus_model/service_registry_call');
         }
         return $this->_registryCall;
     }

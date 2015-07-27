@@ -27,8 +27,8 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
         /** @var  $order Mage_Sales_Model_Order */
         $order = $event->getData('order');
         /** @var  $call Praxigento_Bonus_Model_Own_Service_Registry_Call */
-        $call = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
-        $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_saveRetailBonus');
+        $call = Mage::getModel('prxgt_bonus_model/service_registry_call');
+        $req = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
         $req->setOrder($order);
         try {
             $resp = $call->saveRetailBonus($req);
@@ -58,7 +58,7 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
              * Save log record.
              */
             /** @var  $log Praxigento_Bonus_Model_Own_Log_Downline */
-            $log = Mage::getModel('prxgt_bonus_model/own_log_downline');
+            $log = Mage::getModel('prxgt_bonus_model/log_downline');
             $log->setCustomerId($customerId);
             $log->setParentId($parentId);
             $log->getResource()->save($log);
@@ -66,7 +66,7 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
              * Update snapshot record.
              */
             /** @var  $snap Praxigento_Bonus_Model_Own_Snap_Downline */
-            $snap = Mage::getModel('prxgt_bonus_model/own_snap_downline')->load($customerId);
+            $snap = Mage::getModel('prxgt_bonus_model/snap_downline')->load($customerId);
             $snap->setCustomerId($customerId);
             $snap->setParentId($parentId);
             $snap->setPath($customerPath);

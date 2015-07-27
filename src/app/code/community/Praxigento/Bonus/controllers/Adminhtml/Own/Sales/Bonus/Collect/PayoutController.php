@@ -41,8 +41,8 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_PayoutController extend
             /* prevent memory exhausting */
             ini_set('memory_limit', '-1');
             /* process orders */
-            $call = Mage::getModel('prxgt_bonus_model/own_service_registry_call');
-            $req = Mage::getModel('prxgt_bonus_model/own_service_registry_request_createPayouts');
+            $call = Mage::getModel('prxgt_bonus_model/service_registry_call');
+            $req = Mage::getModel('prxgt_bonus_model/service_registry_request_createPayouts');
             $desc = $this->_composePayoutDesc();
             $req->setDescription($desc);
             $resp = $call->createPayouts($req);

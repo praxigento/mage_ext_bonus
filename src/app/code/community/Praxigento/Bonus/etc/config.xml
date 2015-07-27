@@ -122,7 +122,7 @@
                 <observers>
                     <prxgt_bonus_observer>
                         <type>singleton</type>
-                        <class>prxgt_bonus_model/own_observer</class>
+                        <class>prxgt_bonus_model/observer</class>
                         <method>onPrxgtCoreCustomerUplineChange</method>
                     </prxgt_bonus_observer>
                 </observers>
@@ -131,7 +131,7 @@
                 <observers>
                     <prxgt_bonus_observer>
                         <type>singleton</type>
-                        <class>prxgt_bonus_model/own_observer</class>
+                        <class>prxgt_bonus_model/observer</class>
                         <method>onSalesOrderPlaceAfter</method>
                     </prxgt_bonus_observer>
                 </observers>
