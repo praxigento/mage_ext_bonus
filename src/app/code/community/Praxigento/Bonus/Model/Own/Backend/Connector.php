@@ -47,7 +47,7 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      */
     public function creditGetBalance(Nmmlm_Core_Wrapper_Customer $wrapper, $currCode = null)
     {
-        // TODO: Implement creditGetBalance() method.
+        return 0;
     }
 
     /**

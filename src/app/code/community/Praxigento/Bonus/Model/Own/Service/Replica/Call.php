@@ -20,7 +20,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call extends Praxigento_Bonus_M
      */
     public function createQuoteFromOrder(CreateQuoteFromOrderRequest $req)
     {
-        $result = Mage::getModel('prxgt_bonus_model/own_service_replica_response_createQuoteFromOrder');
+        $result = Mage::getModel('prxgt_bonus_model/service_replica_response_createQuoteFromOrder');
         /* extract data from request and load data models */
         $customer = $this->_initCustomer($req->getCustomerId(), $req->getCustomer());
         $customerGroupId = $customer->getGroupId();

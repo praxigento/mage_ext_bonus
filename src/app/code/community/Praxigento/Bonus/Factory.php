@@ -18,7 +18,7 @@ class Praxigento_Bonus_Factory extends Nmmlm_Core_Factory
     public function getBackendConnector()
     {
         if (is_null(self::$_backendConnector)) {
-            self::$_backendConnector = Mage::getModel('prxgt_bonus_model/own_backend_connector');
+            self::$_backendConnector = Mage::getModel('prxgt_bonus_model/backend_connector');
         }
         return self::$_backendConnector;
     }

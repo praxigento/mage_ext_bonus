@@ -57,6 +57,10 @@
             <prxgt_bonus_resource>
                 <class>Praxigento_Bonus_Resource_Own</class>
                 <entities>
+                    <!-- configuration -->
+                    <cfg_personal>
+                        <table>prxgt_bonus_cfg_personal</table>
+                    </cfg_personal>
                     <!-- core entities -->
                     <core_type>
                         <table>prxgt_bonus_core_type</table>
@@ -122,7 +126,7 @@
                 <observers>
                     <prxgt_bonus_observer>
                         <type>singleton</type>
-                        <class>prxgt_bonus_model/own_observer</class>
+                        <class>prxgt_bonus_model/observer</class>
                         <method>onPrxgtCoreCustomerUplineChange</method>
                     </prxgt_bonus_observer>
                 </observers>
@@ -131,7 +135,7 @@
                 <observers>
                     <prxgt_bonus_observer>
                         <type>singleton</type>
-                        <class>prxgt_bonus_model/own_observer</class>
+                        <class>prxgt_bonus_model/observer</class>
                         <method>onSalesOrderPlaceAfter</method>
                     </prxgt_bonus_observer>
                 </observers>
