@@ -22,6 +22,10 @@ REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '3', path ='nmmlm_core
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='nmmlm_core_referrals/group/reg_default';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='nmmlm_core_referrals/group/reg_ref';
 --
+-- Configure Personal Volume Bonus
+--
+
+--
 -- Switch off Youama AjaxLogin (use default Magento Login form)
 --
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '0', path ='youamaajaxlogin/settings/power';

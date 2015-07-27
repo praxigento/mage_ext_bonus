@@ -12,6 +12,8 @@ namespace Praxigento\Deploy;
 use Composer\Script\Event;
 use PDO;
 
+set_time_limit(0);
+
 class Installer
 {
 

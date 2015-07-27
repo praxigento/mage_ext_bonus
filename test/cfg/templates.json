@@ -1,5 +1,14 @@
 {
   "templates": {
+    "bin/deploy/install.php": {
+      "src": "cfg/bin/deploy/install.php",
+      "dst": "bin/deploy/install.php",
+      "events": [
+        "post-install-cmd",
+        "post-status-cmd"
+      ],
+      "rewrite": true
+    },
     "bin/deploy/Installer.php": {
       "src": "cfg/bin/deploy/Installer.php",
       "dst": "bin/deploy/Installer.php",
