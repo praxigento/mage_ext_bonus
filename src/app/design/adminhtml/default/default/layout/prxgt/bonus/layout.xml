@@ -8,6 +8,21 @@
 <layout version="0.1.0">
 
 
+    <adminhtml_own_sales_bonus_process_pv_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_process_pv_index"
+                   name="sales_bonus_process_pv"
+                   template="prxgt/bonus/sales/bonus/process/pv/index.phtml"/>
+        </reference>
+    </adminhtml_own_sales_bonus_process_pv_index>
+    <adminhtml_own_sales_bonus_process_pv_post>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_sales_bonus_process_pv_post"
+                   name="sales_bonus_process_pv"
+                   template="prxgt/bonus/sales/bonus/process/pv/post.phtml"/>
+        </reference>
+    </adminhtml_own_sales_bonus_process_pv_post>
+
     <!-- *************************-->
     <!-- Sales / Bonus / ... grid -->
     <!-- *************************-->

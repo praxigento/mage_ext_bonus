@@ -17,6 +17,16 @@
                                 <title>Bonus</title>
                                 <sort_order>2000</sort_order>
                                 <children>
+                                    <process>
+                                        <title>Process</title>
+                                        <sort_order>50</sort_order>
+                                        <children>
+                                            <retail_grid>
+                                                <title>Personal Volume Bonus</title>
+                                                <sort_order>100</sort_order>
+                                            </retail_grid>
+                                        </children>
+                                    </process>
                                     <retail_grid>
                                         <title>Retail Grid</title>
                                         <sort_order>100</sort_order>
@@ -60,6 +70,17 @@
                     <title>Bonus</title>
                     <sort_order>2000</sort_order>
                     <children>
+                        <process>
+                            <title>Process</title>
+                            <sort_order>50</sort_order>
+                            <children>
+                                <retail_grid>
+                                    <title>Personal Volume Bonus</title>
+                                    <sort_order>100</sort_order>
+                                    <action>adminhtml/own_sales_bonus_process_pv/</action>
+                                </retail_grid>
+                            </children>
+                        </process>
                         <retail_grid>
                             <title>Retails Grid</title>
                             <sort_order>100</sort_order>

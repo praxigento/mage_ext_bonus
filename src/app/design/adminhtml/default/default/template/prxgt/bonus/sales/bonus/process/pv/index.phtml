@@ -1,0 +1,65 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ */
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+/** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Pv_Index */
+?>
+<style>
+    .nmmlmFormLayout {
+        margin: 0 auto;
+        width: 400px;
+    }
+
+    .nmmlmRow {
+        width: 100%;
+        border-bottom: 1px solid black;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .nmmlmBtn {
+        text-align: center;
+    }
+</style>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<h2 align="center"><?php $this->ui('Personal Volume Bonus') ?></h2>
+<div class="nmmlmFormLayout">
+
+
+    <?php if ($this->isPersonalBonusEnabled()): ?>
+
+
+        <form method="post" action="<?php echo $this->getUrl('*/*/post'); ?>" id="<?php $this->uiDomForm() ?>">
+            <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+            <div class="nmmlmRow">
+                <?php $this->ui('Press \'OK\' to process PV bonus.') ?>
+            </div>
+
+            <div class="nmmlmRow">
+                <div class="nmmlmBtn">
+                    <?php $this->uiButtonSubmit(' OK ') ?>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+        </form>
+
+
+    <?php else: ?>
+
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Personal Volume Bonus is disabled.') ?>
+        </div>
+
+
+    <?php endif; ?>
+</div>

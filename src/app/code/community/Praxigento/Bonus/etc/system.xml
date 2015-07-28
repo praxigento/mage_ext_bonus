@@ -41,11 +41,37 @@
                             <comment>Switch on/off personal bonus processing.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>101</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </is_enabled>
+                        <use_compression translate="label comment">
+                            <label>Enable Compression</label>
+                            <comment>Enable downline tree compression.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </use_compression>
+                        <qualification_level>
+                            <label>Qualification Level</label>
+                            <comment>Minimal PV points to be qualified.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                                <use_compression>1</use_compression>
+                            </depends>
+                        </qualification_level>
                     </fields>
                 </personal_bonus>
                 <downline_bonus translate="label">
