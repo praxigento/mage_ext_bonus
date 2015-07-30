@@ -53,3 +53,46 @@ if (!function_exists('prxgt_install_recreate_column')) {
         }
     }
 }
+
+if (!function_exists('prxgt_install_create_index_unique')) {
+
+    /**
+     * Create unique index.
+     *
+     * @param $conn  Varien_Db_Adapter_Interface
+     * @param $table string Table name.
+     * @param $fields array Fields names to include in index.
+     */
+    function prxgt_install_create_index_unique(Varien_Db_Adapter_Interface $conn, $table, $fields)
+    {
+        $ndxName = $conn->getIndexName($table, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE);
+        $conn->addIndex($table, $ndxName, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE);
+    }
+}
+if (!function_exists('prxgt_install_create_foreign_key')) {
+
+    /**
+     * Create foreign key.
+     *
+     * @param Varien_Db_Adapter_Interface $conn
+     * @param $priTableName
+     * @param $priColumnName
+     * @param $refTableName
+     * @param $refColumnName
+     * @param string $onDelete
+     * @param string $onUpdate
+     */
+    function prxgt_install_create_foreign_key(
+        Varien_Db_Adapter_Interface $conn,
+        $priTableName,
+        $priColumnName,
+        $refTableName,
+        $refColumnName,
+        $onDelete = Varien_Db_Adapter_Interface::FK_ACTION_RESTRICT,
+        $onUpdate = Varien_Db_Adapter_Interface::FK_ACTION_RESTRICT
+    )
+    {
+        $fkName = $conn->getForeignKeyName($priTableName, $priColumnName, $refTableName, $refColumnName);
+        $conn->addForeignKey($fkName, $priTableName, $priColumnName, $refTableName, $refColumnName, $onDelete, $onUpdate);
+    }
+}

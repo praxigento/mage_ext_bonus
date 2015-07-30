@@ -57,6 +57,10 @@
             <prxgt_bonus_resource>
                 <class>Praxigento_Bonus_Resource_Own</class>
                 <entities>
+                    <!-- account -->
+                    <account>
+                        <table>prxgt_bonus_account</table>
+                    </account>
                     <!-- configuration -->
                     <cfg_personal>
                         <table>prxgt_bonus_cfg_personal</table>

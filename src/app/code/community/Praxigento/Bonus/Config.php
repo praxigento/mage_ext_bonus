@@ -46,6 +46,7 @@ class Praxigento_Bonus_Config
      * Entities in config.xml:/config/global/models/prxgt_bonus_resource/entities
      */
 
+    const ENTITY_ACCOUNT = 'account';
     const ENTITY_CFG_PERSONAL = 'cfg_personal';
     const ENTITY_CORE_TYPE = 'core_type';
     const ENTITY_DETAILS_RETAIL = 'details_retail';
