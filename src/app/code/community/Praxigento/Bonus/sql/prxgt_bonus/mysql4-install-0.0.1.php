@@ -13,10 +13,12 @@ use Praxigento_Bonus_Model_Own_Log_Bonus as LogBonus;
 use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
 use Praxigento_Bonus_Model_Own_Log_Order as LogOrder;
 use Praxigento_Bonus_Model_Own_Log_Payout as LogPayout;
+use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Snap_Bonus as SnapBonus;
 use Praxigento_Bonus_Model_Own_Snap_Bonus_Hist as SnapBonusHist;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Model_Own_Snap_Downline_Hist as SnapDownlineHist;
+use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
 use Praxigento_Bonus_Model_Own_Type_Bonus as TypeBonus;
 use Praxigento_Bonus_Model_Own_Type_Oper as TypeOper;
@@ -50,10 +52,12 @@ $tblLogBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_BONU
 $tblLogDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
 $tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
 $tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
+$tblOperation = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
 $tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
 $tblSnapBonusHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS_HIST);
 $tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
 $tblSnapDownlineHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE_HIST);
+$tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
 $tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
 $tblTypeBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
 $tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
@@ -69,6 +73,7 @@ $tblCustomer = $this->getTable('customer/entity');
 $optId = array('identity' => true, 'primary' => true, 'nullable' => false, 'unsigned' => true);
 $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
 
+
 /** ******************
  * Type Asset
  ****************** */
@@ -81,7 +86,6 @@ $tbl->addColumn(TypeAsset::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => f
     'Description of the asset(PV, internal money, ...).');
 $tbl->setComment('Types of the available assets.');
 $conn->createTable($tbl);
-
 /* UQ index (code) */
 $ndxFields = array(TypeAsset::ATTR_CODE);
 prxgt_install_create_index_unique($conn, $tblTypeAsset, $ndxFields);
@@ -99,7 +103,6 @@ $tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => f
     'Description of the bonus type (Personal Volume, ...).');
 $tbl->setComment('Types of the available bonuses.');
 $conn->createTable($tbl);
-
 /* UQ index (code) */
 $ndxFields = array(TypeBonus::ATTR_CODE);
 prxgt_install_create_index_unique($conn, $tblTypeBonus, $ndxFields);
@@ -117,7 +120,6 @@ $tbl->addColumn(TypeOper::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => fa
     'Description of the operation (Internal Trnasfer, ...).');
 $tbl->setComment('Types of the available operations.');
 $conn->createTable($tbl);
-
 /* UQ index (code) */
 $ndxFields = array(TypeOper::ATTR_CODE);
 prxgt_install_create_index_unique($conn, $tblTypeOper, $ndxFields);
@@ -135,7 +137,6 @@ $tbl->addColumn(Account::ATTR_ASSET_ID, Ddl::TYPE_INTEGER, null, array('nullable
     'Type of the accounted asset.');
 $tbl->setComment('Customer accounts to register asset transition.');
 $conn->createTable($tbl);
-
 /* UQ index (code) */
 $ndxFields = array(Account::ATTR_CUSTOMER_ID, Account::ATTR_ASSET_ID);
 prxgt_install_create_index_unique($conn, $tblAccount, $ndxFields);
@@ -143,6 +144,45 @@ prxgt_install_create_index_unique($conn, $tblAccount, $ndxFields);
 prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_CUSTOMER_ID, $tblCustomer, Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD);
 /* Asset type FK */
 prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_ASSET_ID, $tblTypeAsset, TypeAsset::ATTR_ID);
+
+
+/** ******************
+ * Operation
+ ****************** */
+$tbl = $conn->newTable($tblOperation);
+$tbl->addColumn(Operation::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(Operation::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Type of the operation.');
+$tbl->addColumn(Operation::ATTR_DATE_PERFORMED, Ddl::TYPE_TIMESTAMP, null, array('nullable' => false, 'default' => $currentTs),
+    'Operation performed time.');
+$tbl->setComment('Operations with assets (transactions set).');
+$conn->createTable($tbl);
+/* Operation Type FK */
+prxgt_install_create_foreign_key($conn, $tblOperation, Operation::ATTR_TYPE_ID, $tblTypeOper, TypeOper::ATTR_ID);
+
+
+/** ******************
+ * Transaction
+ ****************** */
+$tbl = $conn->newTable($tblTransaction);
+$tbl->addColumn(Transaction::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(Transaction::ATTR_OPERATION_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'ID of the related operation.');
+$tbl->addColumn(Transaction::ATTR_DEBIT_ACC_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Debit account id.');
+$tbl->addColumn(Transaction::ATTR_CREDIT_ACC_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Credit account id.');
+$tbl->addColumn(Transaction::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Change value (positive only).');
+$tbl->setComment('Asset atomic transactions.');
+$conn->createTable($tbl);
+/* Operation FK */
+prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_OPERATION_ID, $tblOperation, Operation::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_DEBIT_ACC_ID, $tblAccount, Account::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_CREDIT_ACC_ID, $tblAccount, Account::ATTR_ID);
+
 
 /** ******************
  * Cfg Personal

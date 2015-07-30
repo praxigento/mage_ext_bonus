@@ -55,10 +55,12 @@ class Praxigento_Bonus_Config
     const ENTITY_LOG_DOWNLINE = 'log_downline';
     const ENTITY_LOG_ORDER = 'log_order';
     const ENTITY_LOG_PAYOUT = 'log_payout';
+    const ENTITY_OPERATION = 'operation';
     const ENTITY_SNAP_BONUS = 'snap_bonus';
     const ENTITY_SNAP_BONUS_HIST = 'snap_bonus_hist';
     const ENTITY_SNAP_DOWNLINE = 'snap_downline';
     const ENTITY_SNAP_DOWNLINE_HIST = 'snap_downline_hist';
+    const ENTITY_TRANSACTION = 'transaction';
     const ENTITY_TYPE_ASSET = 'type_asset';
     const ENTITY_TYPE_BONUS = 'type_bonus';
     const ENTITY_TYPE_OPER = 'type_oper';
