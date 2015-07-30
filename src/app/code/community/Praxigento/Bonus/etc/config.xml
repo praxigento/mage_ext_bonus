@@ -61,7 +61,7 @@
                     <cfg_personal>
                         <table>prxgt_bonus_cfg_personal</table>
                     </cfg_personal>
-                    <!-- core entities -->
+                    <!-- @deprecated -->
                     <core_type>
                         <table>prxgt_bonus_core_type</table>
                     </core_type>
@@ -98,6 +98,16 @@
                     <snap_downline_hist>
                         <table>prxgt_bonus_snap_downline_hist</table>
                     </snap_downline_hist>
+                    <!-- types  -->
+                    <type_asset>
+                        <table>prxgt_bonus_type_asset</table>
+                    </type_asset>
+                    <type_bonus>
+                        <table>prxgt_bonus_type_bonus</table>
+                    </type_bonus>
+                    <type_oper>
+                        <table>prxgt_bonus_type_oper</table>
+                    </type_oper>
                 </entities>
             </prxgt_bonus_resource>
         </models>

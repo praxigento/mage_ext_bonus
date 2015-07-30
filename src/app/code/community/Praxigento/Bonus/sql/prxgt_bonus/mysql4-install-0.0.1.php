@@ -16,6 +16,9 @@ use Praxigento_Bonus_Model_Own_Snap_Bonus as SnapBonus;
 use Praxigento_Bonus_Model_Own_Snap_Bonus_Hist as SnapBonusHist;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Model_Own_Snap_Downline_Hist as SnapDownlineHist;
+use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
+use Praxigento_Bonus_Model_Own_Type_Bonus as TypeBonus;
+use Praxigento_Bonus_Model_Own_Type_Oper as TypeOper;
 use Varien_Db_Adapter_Interface as Db;
 use Varien_Db_Ddl_Table as Ddl;
 
@@ -49,6 +52,9 @@ $tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BO
 $tblSnapBonusHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS_HIST);
 $tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
 $tblSnapDownlineHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE_HIST);
+$tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
+$tblTypeBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
+$tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
 /**
  * Mage tables names.
  */
@@ -66,7 +72,7 @@ $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
  ****************** */
 $tbl = $conn->newTable($tblCfgPersonal);
 $tbl->addColumn(CfgPersonal::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
+    'Instance ID.');
 $tbl->addColumn(CfgPersonal::ATTR_LEVEL, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Low level of PV per period for applied percent (included).');
 $tbl->addColumn(CfgPersonal::ATTR_PERCENT, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
@@ -76,7 +82,63 @@ $conn->createTable($tbl);
 
 
 /** ******************
- * Core Type
+ * Type Asset
+ ****************** */
+$tbl = $conn->newTable($tblTypeAsset);
+$tbl->addColumn(TypeAsset::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(TypeAsset::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Code of the asset (pv, int, ext, intEUR, ...).');
+$tbl->addColumn(TypeAsset::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Description of the asset(PV, internal money, ...).');
+$tbl->setComment('Types of the available assets.');
+$conn->createTable($tbl);
+
+/* UQ index (code) */
+$ndxFields = array(TypeAsset::ATTR_CODE);
+$ndxName = $conn->getIndexName($tblTypeAsset, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblTypeAsset, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+
+
+/** ******************
+ * Type Bonus
+ ****************** */
+$tbl = $conn->newTable($tblTypeBonus);
+$tbl->addColumn(TypeBonus::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(TypeBonus::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Code of the bonus type (pv, gv, tv, ...).');
+$tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Description of the bonus type (Personal Volume, ...).');
+$tbl->setComment('Types of the available bonuses.');
+$conn->createTable($tbl);
+
+/* UQ index (code) */
+$ndxFields = array(TypeBonus::ATTR_CODE);
+$ndxName = $conn->getIndexName($tblTypeBonus, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblTypeBonus, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+
+
+/** ******************
+ * Type Oper
+ ****************** */
+$tbl = $conn->newTable($tblTypeOper);
+$tbl->addColumn(TypeOper::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(TypeOper::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Code of the operation (int, ...).');
+$tbl->addColumn(TypeOper::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+    'Description of the operation (Internal Trnasfer, ...).');
+$tbl->setComment('Types of the available operations.');
+$conn->createTable($tbl);
+
+/* UQ index (code) */
+$ndxFields = array(TypeOper::ATTR_CODE);
+$ndxName = $conn->getIndexName($tblTypeOper, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$conn->addIndex($tblTypeOper, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+
+/** ******************
+ * Core Type TODO remove
  ****************** */
 $tbl = $conn->newTable($tblCoreType);
 $tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
@@ -600,61 +662,67 @@ $conn->addForeignKey(
  * ================================================================================================================= */
 
 /**
- * CoreType data
+ * Asset Type data
  */
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_PERSONAL, CoreType::ATTR_NOTE => 'Personal volume bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_TEAM, CoreType::ATTR_NOTE => 'Team volume bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_COURTESY, CoreType::ATTR_NOTE => 'Courtesy bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_OVERRIDE, CoreType::ATTR_NOTE => 'Override bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_INFINITY, CoreType::ATTR_NOTE => 'Infinity bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_GROUP, CoreType::ATTR_NOTE => 'Group bonus.')
-);
-$conn->insert(
-    $tblCoreType,
-    array(CoreType::ATTR_CODE => Config::BONUS_RETAIL, CoreType::ATTR_NOTE => 'Retail bonus.')
+$conn->insertArray(
+    $tblTypeAsset,
+    array(TypeAsset::ATTR_CODE, TypeAsset::ATTR_NOTE),
+    array(
+        array(Config::ASSET_EXT, 'External money account (base currency).'),
+        array(Config::ASSET_INT, 'Internal money account (base currency).'),
+        array(Config::ASSET_PV, 'PV account.')
+    )
 );
 
+/**
+ * Bonus Type data
+ */
+$conn->insertArray(
+    $tblTypeBonus,
+    array(TypeBonus::ATTR_CODE, TypeBonus::ATTR_NOTE),
+    array(
+        array(Config::BONUS_PERSONAL, 'Personl Volume bonus.'),
+        array(Config::BONUS_TEAM, 'Team volume bonus.'),
+        array(Config::BONUS_COURTESY, 'Courtesy bonus.'),
+        array(Config::BONUS_OVERRIDE, 'Override bonus.'),
+        array(Config::BONUS_INFINITY, 'Infinity bonus.'),
+        array(Config::BONUS_GROUP, 'Group bonus.'),
+        array(Config::BONUS_RETAIL, 'Retail bonus.')
+    )
+);
+
+/**
+ * Operation Type data
+ */
+$conn->insertArray(
+    $tblTypeOper,
+    array(TypeOper::ATTR_CODE, TypeOper::ATTR_NOTE),
+    array(
+        array(Config::OPER_TRANS_INT, 'Internal transfer between customers.'),
+        array(Config::OPER_TRANS_EXT, 'Transfer between internal and external customer accounts.'),
+        array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
+        array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
+        array(Config::OPER_BONUS_PV, 'Bonus for PV.')
+
+    )
+);
 
 /**
  * Cfg Personal data
  */
-$conn->insert(
+$conn->insertArray(
     $tblCfgPersonal,
-    array(CfgPersonal::ATTR_LEVEL => '0.00', CfgPersonal::ATTR_PERCENT => '0.00')
+    array(CfgPersonal::ATTR_LEVEL, CfgPersonal::ATTR_PERCENT),
+    array(
+        array('0.00', '0.00'),
+        array('50.00', '0.05'),
+        array('100.00', '0.10'),
+        array('500.00', '0.15'),
+        array('750.00', '0.20')
+    )
 );
-$conn->insert(
-    $tblCfgPersonal,
-    array(CfgPersonal::ATTR_LEVEL => '50.00', CfgPersonal::ATTR_PERCENT => '0.05')
-);
-$conn->insert(
-    $tblCfgPersonal,
-    array(CfgPersonal::ATTR_LEVEL => '100.00', CfgPersonal::ATTR_PERCENT => '0.10')
-);
-$conn->insert(
-    $tblCfgPersonal,
-    array(CfgPersonal::ATTR_LEVEL => '500.00', CfgPersonal::ATTR_PERCENT => '0.15')
-);
-$conn->insert(
-    $tblCfgPersonal,
-    array(CfgPersonal::ATTR_LEVEL => '750.00', CfgPersonal::ATTR_PERCENT => '0.20')
-);
+
+
 /**
  * Post setup Mage routines.
  */

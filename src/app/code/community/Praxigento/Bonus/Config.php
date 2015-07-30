@@ -15,6 +15,14 @@
 class Praxigento_Bonus_Config
 {
     /**
+     * Available assets codes.
+     */
+
+    const ASSET_EXT = 'EXT';
+    const ASSET_INT = 'INT'; // internal money account (base currency)
+    const ASSET_PV = 'PV'; // external money account (base currency)
+
+    /**
      * Available bonuses codes.
      */
 
@@ -50,4 +58,17 @@ class Praxigento_Bonus_Config
     const ENTITY_SNAP_BONUS_HIST = 'snap_bonus_hist';
     const ENTITY_SNAP_DOWNLINE = 'snap_downline';
     const ENTITY_SNAP_DOWNLINE_HIST = 'snap_downline_hist';
+    const ENTITY_TYPE_ASSET = 'type_asset';
+    const ENTITY_TYPE_BONUS = 'type_bonus';
+    const ENTITY_TYPE_OPER = 'type_oper';
+
+    /**
+     * Available operations codes.
+     */
+
+    const OPER_BONUS_PV = 'BON_PV';
+    const OPER_ORDER_PV = 'ORDR_PV';
+    const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
+    const OPER_TRANS_EXT = 'TRANS_EXT';
+    const OPER_TRANS_INT = 'TRANS_INT';
 }
