@@ -30,9 +30,9 @@ chmod g+w -R $LOCAL_ROOT/mage/var/
 find $LOCAL_ROOT/mage/ -type d -exec chmod g+x {} \;
 
 ##
-echo "Additional config to local.xml."
+# Additional config should be performed in the module/etc/local.xml
 ##
-sed -i 's/<\/config>/<nmmlm><factory><class>Praxigento_Bonus_Factory<\/class><\/factory><\/nmmlm><\/config>/g' ./mage/app/etc/local.xml
+#sed -i 's/<\/config>/<nmmlm><factory><class>Praxigento_Bonus_Factory<\/class><\/factory><\/nmmlm><\/config>/g' ./mage/app/etc/local.xml
 
 
 ##
