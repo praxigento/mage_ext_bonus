@@ -321,9 +321,10 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $order->setUpdatedAt($record->orderDate);
         $order->setBaseGrandTotal($record->orderAmount);
         $order->setGrandTotal($record->orderAmount);
+        $order->setData(Nmmlm_Core_Config::ATTR_COMMON_PV_SUBTOTAL, $record->orderPv);
         $order->setData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL, $record->orderPv);
 
-        $order->getResource()->save($order);
+        $order->save();
         $this->_log->debug("Order #" . $order->getIncrementId() . " is created.");
 
     }
