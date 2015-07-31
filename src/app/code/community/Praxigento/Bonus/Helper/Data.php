@@ -69,6 +69,20 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
         return $result;
     }
 
+    public function cfgPersonalBonusPeriod($store = null)
+    {
+        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/period', $store);
+        $result = ($result) ? $result : Praxigento_Bonus_Config::PERIOD_DAY;
+        return $result;
+    }
+
+    public function cfgPersonalBonusPayoutDelay($store = null)
+    {
+        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/payout_delay', $store);
+        $result = filter_var($result, FILTER_VALIDATE_INT);
+        return $result;
+    }
+
     public function cfgRetailBonusEnabled($store = null)
     {
         $result = Mage::getStoreConfig('nmmlm_core_referrals/retail_bonus/is_enabled', $store);
