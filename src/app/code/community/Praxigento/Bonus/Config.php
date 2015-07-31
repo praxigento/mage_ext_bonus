@@ -19,9 +19,9 @@ class Praxigento_Bonus_Config
      */
 
     const ASSET_EXT = 'EXT';
-    const ASSET_INT = 'INT'; // internal money account (base currency)
-    const ASSET_PV = 'PV'; // external money account (base currency)
-
+    const ASSET_INT = 'INT'; // Retail bonus on hold (before transfer to customer internal or external account)
+    const ASSET_PV = 'PV'; // internal money account (base currency)
+    const ASSET_RETAIL = 'RETAIL'; // external money account (base currency)
     /**
      * Available bonuses codes.
      */
@@ -73,4 +73,13 @@ class Praxigento_Bonus_Config
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
     const OPER_TRANS_EXT = 'TRANS_EXT';
     const OPER_TRANS_INT = 'TRANS_INT';
+
+    /**
+     * Available bonus calculation periods.
+     */
+
+    const PERIOD_DAY = 'day';
+    const PERIOD_MONTH = 'month';
+    const PERIOD_WEEK = 'week';
+    const PERIOD_YEAR = 'year';
 }

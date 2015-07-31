@@ -571,7 +571,8 @@ $conn->insertArray(
     array(
         array(Config::ASSET_EXT, 'External money account (base currency).'),
         array(Config::ASSET_INT, 'Internal money account (base currency).'),
-        array(Config::ASSET_PV, 'PV account.')
+        array(Config::ASSET_PV, 'PV account.'),
+        array(Config::ASSET_RETAIL, 'Retail bonus account (base currency).')
     )
 );
 
