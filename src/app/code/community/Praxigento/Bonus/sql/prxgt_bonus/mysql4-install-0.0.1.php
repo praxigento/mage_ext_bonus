@@ -161,6 +161,8 @@ $tbl->addColumn(Transaction::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
 $tbl->addColumn(Transaction::ATTR_OPERATION_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'ID of the related operation.');
+$tbl->addColumn(Transaction::ATTR_DATE_APPLIED, Ddl::TYPE_TIMESTAMP, null, array('nullable' => false, 'default' => $currentTs),
+    'Time transaction applied to the account balances (can be in the past).');
 $tbl->addColumn(Transaction::ATTR_DEBIT_ACC_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Debit account id.');
 $tbl->addColumn(Transaction::ATTR_CREDIT_ACC_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
