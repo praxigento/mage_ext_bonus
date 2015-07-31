@@ -419,7 +419,7 @@ USAGE;
         foreach ($allOrders as $one) {
             /* create operation and transaction to customer account */
             $customerId = $one->getCustomerId();
-            $pvValue = $one->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
+            $pv = $one->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
             $date = $one->getCreatedAtDate();
             try {
                 $connection->beginTransaction();
@@ -444,33 +444,36 @@ USAGE;
                 $operation->setTypeId($opType);
                 $operation->save();
                 $operationId = $operation->getId();
-                /* create transaction */
-                /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
-                $trnx = Mage::getModel('prxgt_bonus_model/transaction');
-                $trnx->setOperationId($operationId);
-                $trnx->setDateApplied($date);
-                $trnx->setDebitAccId($accountId);
-                $trnx->setCreditAccId($accountId);
-                $trnx->setValue($pvValue);
-                $trnx->save();
-                /* update balances */
-                /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
-                $balanceCollection = Mage::getModel('prxgt_bonus_model/balance')->getCollection();
-                $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
-                $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, Praxigento_Bonus_Config::PERIOD_KEY_NOW);
-                /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
-                $balance = Mage::getModel('prxgt_bonus_model/balance');
-                if ($balanceCollection->getSize()) {
-                    $balance = $balanceCollection->getFirstItem();
-                } else {
-                    /* create new balance record for NOW  */
-                    $balance->setAccountId($accountId);
-                    $balance->setPeriod(Praxigento_Bonus_Config::PERIOD_KEY_NOW);
+                /* don't create transactions for empty operations */
+                if ($pv != 0) {
+                    /* create transaction */
+                    /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
+                    $trnx = Mage::getModel('prxgt_bonus_model/transaction');
+                    $trnx->setOperationId($operationId);
+                    $trnx->setDateApplied($date);
+                    $trnx->setDebitAccId($accountId);
+                    $trnx->setCreditAccId($accountId);
+                    $trnx->setValue($pv);
+                    $trnx->save();
+                    /* update balances */
+                    /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
+                    $balanceCollection = Mage::getModel('prxgt_bonus_model/balance')->getCollection();
+                    $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
+                    $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, Praxigento_Bonus_Config::PERIOD_KEY_NOW);
+                    /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
+                    $balance = Mage::getModel('prxgt_bonus_model/balance');
+                    if ($balanceCollection->getSize()) {
+                        $balance = $balanceCollection->getFirstItem();
+                    } else {
+                        /* create new balance record for NOW  */
+                        $balance->setAccountId($accountId);
+                        $balance->setPeriod(Praxigento_Bonus_Config::PERIOD_KEY_NOW);
+                        $balance->save();
+                    }
+                    $val = $balance->getValue() + $pv;
+                    $balance->setValue($val);
                     $balance->save();
                 }
-                $val = $balance->getValue() + $pvValue;
-                $balance->setValue($val);
-                $balance->save();
                 $connection->commit();
             } catch (Exception $e) {
                 $connection->rollback();
