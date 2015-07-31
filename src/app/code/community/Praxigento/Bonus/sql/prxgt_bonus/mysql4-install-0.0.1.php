@@ -7,7 +7,6 @@ use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Account as Account;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Cfg_Personal as CfgPersonal;
-use Praxigento_Bonus_Model_Own_Core_Type as CoreType;
 use Praxigento_Bonus_Model_Own_Details_Retail as DetailsRetail;
 use Praxigento_Bonus_Model_Own_Log_Account as LogAccount;
 use Praxigento_Bonus_Model_Own_Log_Bonus as LogBonus;
@@ -47,7 +46,6 @@ $conn = $this->getConnection();
 $tblAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
 $tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
 $tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
-$tblCoreType = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CORE_TYPE);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
 $tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
 $tblLogBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_BONUS);
@@ -216,25 +214,6 @@ $conn->createTable($tbl);
 
 
 /** ******************
- * Core Type TODO remove
- ****************** */
-$tbl = $conn->newTable($tblCoreType);
-$tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
-$tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Code of the bonus type (pv, gv, tv, ...)');
-$tbl->addColumn(CoreType::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Description of the bonus type (Personal Volume, ...)');
-$tbl->setComment('Available bonus types.');
-$conn->createTable($tbl);
-
-/* UQ index (code) */
-$ndxFields = array(CoreType::ATTR_CODE);
-$ndxName = $conn->getIndexName($tblCoreType, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblCoreType, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-
-
-/** ******************
  * Detail Retail
  ****************** */
 $tbl = $conn->newTable($tblDetailsRetail);
@@ -351,7 +330,7 @@ $tbl->addColumn(LogBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable
 $tbl->setComment('Log for bonus transfers.');
 $conn->createTable($tbl);
 
-/* Customer FK */
+/* FKs */
 $fkName = $conn->getForeignKeyName(
     $tblLogBonus,
     LogBonus::ATTR_CUSTOMER_ID,
@@ -369,21 +348,8 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogBonus,
-    LogBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogBonus,
-    LogBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+
 
 
 /** ******************
@@ -471,21 +437,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogOrder,
-    LogOrder::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogOrder,
-    LogOrder::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************
@@ -556,21 +508,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonus,
-    SnapBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonus,
-    SnapBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************
@@ -613,21 +551,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblSnapBonusHist, SnapBonusHist::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************

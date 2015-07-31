@@ -67,10 +67,6 @@
                     <cfg_personal>
                         <table>prxgt_bonus_cfg_personal</table>
                     </cfg_personal>
-                    <!-- @deprecated -->
-                    <core_type>
-                        <table>prxgt_bonus_core_type</table>
-                    </core_type>
                     <!-- details -->
                     <details_retail>
                         <table>prxgt_bonus_details_retail</table>
@@ -172,6 +168,7 @@
         </nmmlm_core_referrals>
     </default>
     <nmmlm>
+        <!-- Implementation of the Nmmlm_Core_Factory used in the module's tests. -->
         <factory>
             <class>Praxigento_Bonus_Factory</class>
         </factory>
