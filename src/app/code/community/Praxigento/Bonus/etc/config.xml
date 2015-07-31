@@ -94,15 +94,9 @@
                     <snap_bonus>
                         <table>prxgt_bonus_snap_bonus</table>
                     </snap_bonus>
-                    <snap_bonus_hist>
-                        <table>prxgt_bonus_snap_bonus_hist</table>
-                    </snap_bonus_hist>
                     <snap_downline>
                         <table>prxgt_bonus_snap_downline</table>
                     </snap_downline>
-                    <snap_downline_hist>
-                        <table>prxgt_bonus_snap_downline_hist</table>
-                    </snap_downline_hist>
                     <transaction>
                         <table>prxgt_bonus_trnx</table>
                     </transaction>
