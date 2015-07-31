@@ -71,6 +71,7 @@ class Praxigento_Bonus_Config
     const OPER_BONUS_PV = 'BON_PV';
     const OPER_ORDER_PV = 'ORDR_PV';
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
+    const OPER_PV_INT = 'PV_INT';
     const OPER_TRANS_EXT = 'TRANS_EXT';
     const OPER_TRANS_INT = 'TRANS_INT';
 
@@ -79,6 +80,7 @@ class Praxigento_Bonus_Config
      */
 
     const PERIOD_DAY = 'day';
+    const PERIOD_KEY_NOW = 'NOW';
     const PERIOD_MONTH = 'month';
     const PERIOD_WEEK = 'week';
     const PERIOD_YEAR = 'year';
