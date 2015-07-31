@@ -57,10 +57,12 @@
             <prxgt_bonus_resource>
                 <class>Praxigento_Bonus_Resource_Own</class>
                 <entities>
-                    <!-- account -->
                     <account>
                         <table>prxgt_bonus_account</table>
                     </account>
+                    <balance>
+                        <table>prxgt_bonus_balance</table>
+                    </balance>
                     <!-- configuration -->
                     <cfg_personal>
                         <table>prxgt_bonus_cfg_personal</table>
@@ -169,4 +171,9 @@
             </general>
         </nmmlm_core_referrals>
     </default>
+    <nmmlm>
+        <factory>
+            <class>Praxigento_Bonus_Factory</class>
+        </factory>
+    </nmmlm>
 </config>

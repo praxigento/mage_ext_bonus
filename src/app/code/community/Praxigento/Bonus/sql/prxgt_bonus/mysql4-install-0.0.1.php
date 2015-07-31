@@ -5,6 +5,7 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Account as Account;
+use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Cfg_Personal as CfgPersonal;
 use Praxigento_Bonus_Model_Own_Core_Type as CoreType;
 use Praxigento_Bonus_Model_Own_Details_Retail as DetailsRetail;
@@ -44,6 +45,7 @@ $conn = $this->getConnection();
  * Own tables names.
  */
 $tblAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
+$tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
 $tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
 $tblCoreType = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CORE_TYPE);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
@@ -86,9 +88,8 @@ $tbl->addColumn(TypeAsset::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => f
     'Description of the asset(PV, internal money, ...).');
 $tbl->setComment('Types of the available assets.');
 $conn->createTable($tbl);
-/* UQ index (code) */
-$ndxFields = array(TypeAsset::ATTR_CODE);
-prxgt_install_create_index_unique($conn, $tblTypeAsset, $ndxFields);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblTypeAsset, array(TypeAsset::ATTR_CODE));
 
 
 /** ******************
@@ -103,9 +104,8 @@ $tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => f
     'Description of the bonus type (Personal Volume, ...).');
 $tbl->setComment('Types of the available bonuses.');
 $conn->createTable($tbl);
-/* UQ index (code) */
-$ndxFields = array(TypeBonus::ATTR_CODE);
-prxgt_install_create_index_unique($conn, $tblTypeBonus, $ndxFields);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblTypeBonus, array(TypeBonus::ATTR_CODE));
 
 
 /** ******************
@@ -120,9 +120,8 @@ $tbl->addColumn(TypeOper::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => fa
     'Description of the operation (Internal Trnasfer, ...).');
 $tbl->setComment('Types of the available operations.');
 $conn->createTable($tbl);
-/* UQ index (code) */
-$ndxFields = array(TypeOper::ATTR_CODE);
-prxgt_install_create_index_unique($conn, $tblTypeOper, $ndxFields);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblTypeOper, array(TypeOper::ATTR_CODE));
 
 
 /** ******************
@@ -137,12 +136,10 @@ $tbl->addColumn(Account::ATTR_ASSET_ID, Ddl::TYPE_INTEGER, null, array('nullable
     'Type of the accounted asset.');
 $tbl->setComment('Customer accounts to register asset transition.');
 $conn->createTable($tbl);
-/* UQ index (code) */
-$ndxFields = array(Account::ATTR_CUSTOMER_ID, Account::ATTR_ASSET_ID);
-prxgt_install_create_index_unique($conn, $tblAccount, $ndxFields);
-/* Customer FK */
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblAccount, array(Account::ATTR_CUSTOMER_ID, Account::ATTR_ASSET_ID));
+/* FKs */
 prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_CUSTOMER_ID, $tblCustomer, Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD);
-/* Asset type FK */
 prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_ASSET_ID, $tblTypeAsset, TypeAsset::ATTR_ID);
 
 
@@ -158,7 +155,7 @@ $tbl->addColumn(Operation::ATTR_DATE_PERFORMED, Ddl::TYPE_TIMESTAMP, null, array
     'Operation performed time.');
 $tbl->setComment('Operations with assets (transactions set).');
 $conn->createTable($tbl);
-/* Operation Type FK */
+/* FKs */
 prxgt_install_create_foreign_key($conn, $tblOperation, Operation::ATTR_TYPE_ID, $tblTypeOper, TypeOper::ATTR_ID);
 
 
@@ -178,10 +175,30 @@ $tbl->addColumn(Transaction::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nulla
     'Change value (positive only).');
 $tbl->setComment('Asset atomic transactions.');
 $conn->createTable($tbl);
-/* Operation FK */
+/* FKs */
 prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_OPERATION_ID, $tblOperation, Operation::ATTR_ID);
 prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_DEBIT_ACC_ID, $tblAccount, Account::ATTR_ID);
 prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_CREDIT_ACC_ID, $tblAccount, Account::ATTR_ID);
+
+
+/** ******************
+ * Balance
+ ****************** */
+$tbl = $conn->newTable($tblBalance);
+$tbl->addColumn(Transaction::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(Balance::ATTR_ACCOUNT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Customer related to the account.');
+$tbl->addColumn(Balance::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+    'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
+$tbl->addColumn(Balance::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Current balance value (positive or negative).');
+$tbl->setComment('Account balances (current and history).');
+$conn->createTable($tbl);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblBalance, array(Balance::ATTR_ACCOUNT_ID, Balance::ATTR_PERIOD));
+/* FKs */
+prxgt_install_create_foreign_key($conn, $tblBalance, Balance::ATTR_ACCOUNT_ID, $tblAccount, Account::ATTR_ID);
 
 
 /** ******************

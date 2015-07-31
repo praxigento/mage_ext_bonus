@@ -358,9 +358,9 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     private function _getBonusTypeByCode($code)
     {
         if (is_null($this->_cacheBonusTypes)) {
-            $allBonusTypes = Mage::getModel('prxgt_bonus_model/core_type')->getCollection();
+            $allBonusTypes = Mage::getModel('prxgt_bonus_model/type_bonus')->getCollection();
             $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Core_Type */
+            /** @var  $one Praxigento_Bonus_Model_Own_Type_Bonus */
             foreach ($allBonusTypes as $one) {
                 $types[$one->getCode()] = $one;
             }

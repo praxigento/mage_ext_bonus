@@ -47,6 +47,7 @@ class Praxigento_Bonus_Config
      */
 
     const ENTITY_ACCOUNT = 'account';
+    const ENTITY_BALANCE = 'balance';
     const ENTITY_CFG_PERSONAL = 'cfg_personal';
     const ENTITY_CORE_TYPE = 'core_type';
     const ENTITY_DETAILS_RETAIL = 'details_retail';
