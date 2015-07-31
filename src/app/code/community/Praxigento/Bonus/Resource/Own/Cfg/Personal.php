@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
-use Praxigento_Bonus_Model_Own_Core_Type as Model;
+use Praxigento_Bonus_Model_Own_Cfg_Personal as Model;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>

@@ -7,7 +7,6 @@ use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Account as Account;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Cfg_Personal as CfgPersonal;
-use Praxigento_Bonus_Model_Own_Core_Type as CoreType;
 use Praxigento_Bonus_Model_Own_Details_Retail as DetailsRetail;
 use Praxigento_Bonus_Model_Own_Log_Account as LogAccount;
 use Praxigento_Bonus_Model_Own_Log_Bonus as LogBonus;
@@ -16,9 +15,7 @@ use Praxigento_Bonus_Model_Own_Log_Order as LogOrder;
 use Praxigento_Bonus_Model_Own_Log_Payout as LogPayout;
 use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Snap_Bonus as SnapBonus;
-use Praxigento_Bonus_Model_Own_Snap_Bonus_Hist as SnapBonusHist;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
-use Praxigento_Bonus_Model_Own_Snap_Downline_Hist as SnapDownlineHist;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
 use Praxigento_Bonus_Model_Own_Type_Bonus as TypeBonus;
@@ -47,7 +44,6 @@ $conn = $this->getConnection();
 $tblAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
 $tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
 $tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
-$tblCoreType = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CORE_TYPE);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
 $tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
 $tblLogBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_BONUS);
@@ -56,9 +52,7 @@ $tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDE
 $tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
 $tblOperation = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
 $tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
-$tblSnapBonusHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS_HIST);
 $tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-$tblSnapDownlineHist = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE_HIST);
 $tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
 $tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
 $tblTypeBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
@@ -216,25 +210,6 @@ $conn->createTable($tbl);
 
 
 /** ******************
- * Core Type TODO remove
- ****************** */
-$tbl = $conn->newTable($tblCoreType);
-$tbl->addColumn(CoreType::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
-$tbl->addColumn(CoreType::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Code of the bonus type (pv, gv, tv, ...)');
-$tbl->addColumn(CoreType::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
-    'Description of the bonus type (Personal Volume, ...)');
-$tbl->setComment('Available bonus types.');
-$conn->createTable($tbl);
-
-/* UQ index (code) */
-$ndxFields = array(CoreType::ATTR_CODE);
-$ndxName = $conn->getIndexName($tblCoreType, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblCoreType, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-
-
-/** ******************
  * Detail Retail
  ****************** */
 $tbl = $conn->newTable($tblDetailsRetail);
@@ -351,7 +326,7 @@ $tbl->addColumn(LogBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable
 $tbl->setComment('Log for bonus transfers.');
 $conn->createTable($tbl);
 
-/* Customer FK */
+/* FKs */
 $fkName = $conn->getForeignKeyName(
     $tblLogBonus,
     LogBonus::ATTR_CUSTOMER_ID,
@@ -369,21 +344,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogBonus,
-    LogBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogBonus,
-    LogBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************
@@ -471,21 +432,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogOrder,
-    LogOrder::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogOrder,
-    LogOrder::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************
@@ -533,6 +480,8 @@ $tbl->addColumn(SnapBonus::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nul
     'Related customer.');
 $tbl->addColumn(SnapBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Bonus type.');
+$tbl->addColumn(SnapBonus::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+    'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(SnapBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Current bonus value (positive or negative).');
 $tbl->setComment('Current state of the bonuses per customer.');
@@ -556,78 +505,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonus,
-    SnapBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonus,
-    SnapBonus::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-
-/** ******************
- * Snapshot Bonus History
- ****************** */
-$tbl = $conn->newTable($tblSnapBonusHist);
-$tbl->addColumn(SnapBonusHist::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
-$tbl->addColumn(SnapBonusHist::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Related customer.');
-$tbl->addColumn(SnapBonusHist::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Bonus type.');
-$tbl->addColumn(SnapBonusHist::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
-    'Historical period in format YYYYMM or YYYYMMDD');
-$tbl->addColumn(SnapBonusHist::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Current bonus value (positive or negative).');
-$tbl->setComment('Snapshots of the bonuses per customer.');
-$conn->createTable($tbl);
-
-/* UQ index (order_id) */
-$ndxFields = array(SnapBonusHist::ATTR_PERIOD, SnapBonusHist::ATTR_CUSTOMER_ID, SnapBonusHist::ATTR_TYPE_ID);
-$ndxName = $conn->getIndexName($tblSnapBonusHist, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblSnapBonusHist, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-
-/* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* Bonus type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonusHist,
-    SnapBonusHist::ATTR_TYPE_ID,
-    $tblCoreType,
-    CoreType::ATTR_ID,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
 
 
 /** ******************
@@ -638,6 +516,8 @@ $tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('
     'Customer itself.');
 $tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Parent customer (sponsor, upline).');
+$tbl->addColumn(SnapDownline::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+    'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
     'Path to the node - /1/2/3/.../');
 $tbl->setComment('Current state of the downline tree.');
@@ -671,63 +551,6 @@ $conn->addForeignKey(
     $fkName,
     $tblSnapDownline,
     SnapDownline::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-
-/** ******************
- * Snapshot Downline History
- ****************** */
-$tbl = $conn->newTable($tblSnapDownlineHist);
-$tbl->addColumn(SnapDownlineHist::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
-    'Entity ID.');
-$tbl->addColumn(SnapDownlineHist::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Customer itself.');
-$tbl->addColumn(SnapDownlineHist::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Parent customer (sponsor, upline).');
-$tbl->addColumn(SnapDownlineHist::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
-    'Historical period in format YYYYMM or YYYYMMDD');
-$tbl->addColumn(SnapDownlineHist::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
-    'Path to the node - /1/2/3/.../');
-$tbl->setComment('Snapshots of the downline tree.');
-$conn->createTable($tbl);
-
-/* UQ index (order_id) */
-$ndxFields = array(SnapDownlineHist::ATTR_PERIOD, SnapDownlineHist::ATTR_CUSTOMER_ID, SnapDownlineHist::ATTR_PARENT_ID);
-$ndxName = $conn->getIndexName($tblSnapDownlineHist, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblSnapDownlineHist, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-
-/* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* Upline customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapDownlineHist,
-    SnapDownlineHist::ATTR_PARENT_ID,
     $tblCustomer,
     Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
     Db::FK_ACTION_RESTRICT,
