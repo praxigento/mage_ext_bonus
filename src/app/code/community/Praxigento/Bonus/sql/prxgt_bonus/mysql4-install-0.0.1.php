@@ -225,16 +225,17 @@ $tbl->addColumn(Period::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
 $tbl->addColumn(Period::ATTR_BONUS_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Bonus type related to this period.');
-$tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_TEXT, '8', array('nullable' => false),
-    'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
-$tbl->addColumn(Balance::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Current balance value (positive or negative).');
-$tbl->setComment('Account balances (current and history).');
+$tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Period type.');
+$tbl->addColumn(Period::ATTR_VALUE, Ddl::TYPE_TEXT, '8', array('nullable' => false),
+    'Period value in format [YYYY|YYYYMM|YYYYMMDD]');
+$tbl->setComment('Bonus calculation periods.');
 $conn->createTable($tbl);
 /* UQs  */
-prxgt_install_create_index_unique($conn, $tblBalance, array(Balance::ATTR_ACCOUNT_ID, Balance::ATTR_PERIOD));
+prxgt_install_create_index_unique($conn, $tblPeriod, array(Period::ATTR_BONUS_ID, Period::ATTR_VALUE));
 /* FKs */
-prxgt_install_create_foreign_key($conn, $tblBalance, Balance::ATTR_ACCOUNT_ID, $tblAccount, Account::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_BONUS_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_TYPE, $tblTypePeriod, TypePeriod::ATTR_ID);
 
 
 /** ******************

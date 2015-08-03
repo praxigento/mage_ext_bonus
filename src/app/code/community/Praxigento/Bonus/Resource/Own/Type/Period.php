@@ -9,7 +9,7 @@ use Praxigento_Bonus_Model_Own_Type_Period as Model;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Resource_Own_Type_Oper
+class Praxigento_Bonus_Resource_Own_Type_Period
     extends Mage_Core_Model_Mysql4_Abstract
 {
     /**
