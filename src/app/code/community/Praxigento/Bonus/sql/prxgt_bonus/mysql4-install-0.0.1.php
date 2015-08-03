@@ -14,12 +14,14 @@ use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
 use Praxigento_Bonus_Model_Own_Log_Order as LogOrder;
 use Praxigento_Bonus_Model_Own_Log_Payout as LogPayout;
 use Praxigento_Bonus_Model_Own_Operation as Operation;
+use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Snap_Bonus as SnapBonus;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
 use Praxigento_Bonus_Model_Own_Type_Bonus as TypeBonus;
 use Praxigento_Bonus_Model_Own_Type_Oper as TypeOper;
+use Praxigento_Bonus_Model_Own_Type_Period as TypePeriod;
 use Varien_Db_Adapter_Interface as Db;
 use Varien_Db_Ddl_Table as Ddl;
 
@@ -51,12 +53,14 @@ $tblLogDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_D
 $tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
 $tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
 $tblOperation = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
+$tblPeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_PERIOD);
 $tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
 $tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
 $tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
 $tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
 $tblTypeBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
 $tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
+$tblTypePeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
 /**
  * Mage tables names.
  */
@@ -76,9 +80,9 @@ $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
 $tbl = $conn->newTable($tblTypeAsset);
 $tbl->addColumn(TypeAsset::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
-$tbl->addColumn(TypeAsset::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeAsset::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Code of the asset (pv, int, ext, intEUR, ...).');
-$tbl->addColumn(TypeAsset::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeAsset::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Description of the asset(PV, internal money, ...).');
 $tbl->setComment('Types of the available assets.');
 $conn->createTable($tbl);
@@ -92,9 +96,9 @@ prxgt_install_create_index_unique($conn, $tblTypeAsset, array(TypeAsset::ATTR_CO
 $tbl = $conn->newTable($tblTypeBonus);
 $tbl->addColumn(TypeBonus::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
-$tbl->addColumn(TypeBonus::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeBonus::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Code of the bonus type (pv, gv, tv, ...).');
-$tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Description of the bonus type (Personal Volume, ...).');
 $tbl->setComment('Types of the available bonuses.');
 $conn->createTable($tbl);
@@ -108,14 +112,30 @@ prxgt_install_create_index_unique($conn, $tblTypeBonus, array(TypeBonus::ATTR_CO
 $tbl = $conn->newTable($tblTypeOper);
 $tbl->addColumn(TypeOper::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
-$tbl->addColumn(TypeOper::ATTR_CODE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeOper::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Code of the operation (int, ...).');
-$tbl->addColumn(TypeOper::ATTR_NOTE, Ddl::TYPE_CHAR, 255, array('nullable' => false),
+$tbl->addColumn(TypeOper::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Description of the operation (Internal Trnasfer, ...).');
 $tbl->setComment('Types of the available operations.');
 $conn->createTable($tbl);
 /* UQs  */
 prxgt_install_create_index_unique($conn, $tblTypeOper, array(TypeOper::ATTR_CODE));
+
+
+/** ******************
+ * Type Period
+ ****************** */
+$tbl = $conn->newTable($tblTypePeriod);
+$tbl->addColumn(TypePeriod::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(TypePeriod::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
+    'Code of the bonus calculation period (DAY, WEEK, ...).');
+$tbl->addColumn(TypePeriod::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
+    'Description of the operation (Daily calculation, ...).');
+$tbl->setComment('Types of the available bonus calculation periods.');
+$conn->createTable($tbl);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblTypePeriod, array(TypePeriod::ATTR_CODE));
 
 
 /** ******************
@@ -181,11 +201,31 @@ prxgt_install_create_foreign_key($conn, $tblTransaction, Transaction::ATTR_CREDI
  * Balance
  ****************** */
 $tbl = $conn->newTable($tblBalance);
-$tbl->addColumn(Transaction::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+$tbl->addColumn(Balance::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
 $tbl->addColumn(Balance::ATTR_ACCOUNT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer related to the account.');
-$tbl->addColumn(Balance::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+$tbl->addColumn(Balance::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array('nullable' => false),
+    'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
+$tbl->addColumn(Balance::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
+    'Current balance value (positive or negative).');
+$tbl->setComment('Account balances (current and history).');
+$conn->createTable($tbl);
+/* UQs  */
+prxgt_install_create_index_unique($conn, $tblBalance, array(Balance::ATTR_ACCOUNT_ID, Balance::ATTR_PERIOD));
+/* FKs */
+prxgt_install_create_foreign_key($conn, $tblBalance, Balance::ATTR_ACCOUNT_ID, $tblAccount, Account::ATTR_ID);
+
+
+/** ******************
+ * Period
+ ****************** */
+$tbl = $conn->newTable($tblPeriod);
+$tbl->addColumn(Period::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+    'Instance ID.');
+$tbl->addColumn(Period::ATTR_BONUS_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Bonus type related to this period.');
+$tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(Balance::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Current balance value (positive or negative).');
@@ -221,7 +261,7 @@ $tbl->addColumn(DetailsRetail::ATTR_ORDER_ID, Ddl::TYPE_INTEGER, null, array('nu
     'Related order that generates bonus.');
 $tbl->addColumn(DetailsRetail::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Customer that should earn this bonus (sponsor of the order creator).');
-$tbl->addColumn(DetailsRetail::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
+$tbl->addColumn(DetailsRetail::ATTR_CURR, Ddl::TYPE_TEXT, '3', array('nullable' => false),
     'Bonus amount currency.');
 $tbl->addColumn(DetailsRetail::ATTR_FEE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Bonus fee value.');
@@ -288,7 +328,7 @@ $tbl->addColumn(LogAccount::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nu
     'Action related customer.');
 $tbl->addColumn(LogAccount::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
-$tbl->addColumn(LogAccount::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
+$tbl->addColumn(LogAccount::ATTR_CURR, Ddl::TYPE_TEXT, '3', array('nullable' => false),
     'Change value currency.');
 $tbl->setComment('Log for account transfers.');
 $conn->createTable($tbl);
@@ -449,7 +489,7 @@ $tbl->addColumn(LogPayout::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nul
     'Payout related customer.');
 $tbl->addColumn(LogPayout::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
-$tbl->addColumn(LogPayout::ATTR_CURR, Ddl::TYPE_CHAR, '3', array('nullable' => false),
+$tbl->addColumn(LogPayout::ATTR_CURR, Ddl::TYPE_TEXT, '3', array('nullable' => false),
     'Change value currency.');
 $tbl->setComment('Log for payouts.');
 $conn->createTable($tbl);
@@ -482,7 +522,7 @@ $tbl->addColumn(SnapBonus::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nul
     'Related customer.');
 $tbl->addColumn(SnapBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Bonus type.');
-$tbl->addColumn(SnapBonus::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+$tbl->addColumn(SnapBonus::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(SnapBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Current bonus value (positive or negative).');
@@ -518,9 +558,9 @@ $tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('
     'Customer itself.');
 $tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Parent customer (sponsor, upline).');
-$tbl->addColumn(SnapDownline::ATTR_PERIOD, Ddl::TYPE_CHAR, '8', array('nullable' => false),
+$tbl->addColumn(SnapDownline::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
-$tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_CHAR, '255', array('nullable' => false),
+$tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_TEXT, '255', array('nullable' => false),
     'Path to the node - /1/2/3/.../');
 $tbl->setComment('Current state of the downline tree.');
 $conn->createTable($tbl);
@@ -608,7 +648,20 @@ $conn->insertArray(
         array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
         array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
         array(Config::OPER_BONUS_PV, 'Bonus for PV.')
+    )
+);
 
+/**
+ * Bonus Calculation Period Type data
+ */
+$conn->insertArray(
+    $tblTypePeriod,
+    array(TypePeriod::ATTR_CODE, TypePeriod::ATTR_NOTE),
+    array(
+        array(Config::PERIOD_DAY, 'Daily calculation.'),
+        array(Config::PERIOD_WEEK, 'Weekly calculation.'),
+        array(Config::PERIOD_MONTH, 'Monthly calculation.'),
+        array(Config::PERIOD_YEAR, 'Yearly calculation.'),
     )
 );
 
