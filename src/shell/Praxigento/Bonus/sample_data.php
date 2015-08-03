@@ -19,10 +19,12 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 {
     const DEFAULT_UPLINE = 100000001;
     const OPT_CREATE = 'create';
+    const OPT_EMULATE = 'emulate';
     /** @var Logger */
     private $_log;
     private $_fileNameCustomers;
     private $_fileNameOrders;
+    private $_fileNamePvTransfers;
     /**
      * Registry to store customer data with Sponsor (Upline) ID as a key.
      *
@@ -44,6 +46,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $this->_log = Praxigento_Log_Logger::getLogger(__CLASS__);
         $this->_fileNameCustomers = dirname($_SERVER['SCRIPT_NAME']) . '/data_customers.csv';
         $this->_fileNameOrders = dirname($_SERVER['SCRIPT_NAME']) . '/data_orders.csv';
+        $this->_fileNamePvTransfers = dirname($_SERVER['SCRIPT_NAME']) . '/data_pv_transfers.csv';
     }
 
     /**
@@ -53,17 +56,23 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     public function run()
     {
         $create = $this->getArg(self::OPT_CREATE);
-        if ($create) {
+        $emulate = $this->getArg(self::OPT_EMULATE);
+        if ($create || $emulate) {
             $this->_log->debug("Sample data generation is started.");
-            $this->_createCatalogCategories();
-            $this->_createProducts();
-            $this->_createCustomers();
-            $this->_createOrders();
-            /* add fake data to bonus module */
+            if ($create) {
+                $this->_createCatalogCategories();
+                $this->_createProducts();
+                $this->_createCustomers();
+                $this->_createOrders();
+            }
+            if ($emulate) {
+                /* add fake data to bonus module */
 //            $this->_populateLogOrder();
-            $this->_emulateOrderOperations();
+                $this->_emulateOrderOperations();
+                $this->_emulatePvTransferOperations();
+            }
             $this->_log->debug("Sample data generation is completed.");
-            echo "Done.\n";
+            echo 'Done.';
         } else {
             echo $this->usageHelp();
         }
@@ -286,6 +295,31 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         return $result;
     }
 
+    /**
+     * Read file with data, parse and return array of Records.
+     * @param $path
+     * @return RecordPvTransfer[]
+     */
+    private function _readDataPvTransfers($path)
+    {
+        $result = array();
+        if (file_exists($path)) {
+            $content = file($path);
+            foreach ($content as $one) {
+                $data = explode(',', trim($one));
+                $obj = new RecordPvTransfer();
+                $obj->date = $data[0];
+                $obj->mlmIdFrom = $data[1];
+                $obj->mlmIdTo = $data[2];
+                $obj->pv = $data[3];
+                $result[] = $obj;
+            }
+        } else {
+            $this->_log->error("Cannot open file '$path'.");
+        }
+        return $result;
+    }
+
     private function _createOrderForCustomer(
         RecordOrder $record,
         Mage_Catalog_Model_Product $product)
@@ -361,6 +395,10 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         }
     }
 
+    /**
+     * @param $code
+     * @return Praxigento_Bonus_Model_Own_Type_Asset
+     */
     private function _getAssetTypeByCode($code)
     {
         if (is_null($this->_cacheAssetTypes)) {
@@ -401,8 +439,51 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 Usage:  php -f sample_data.php [options]
 
   --create      Create sample data.
+  --emulate     Emulate operations.
 
 USAGE;
+    }
+
+    private function _emulatePvTransferOperations()
+    {
+        /** @var  $opType Praxigento_Bonus_Model_Own_Type_Operation */
+        $opType = $this->_getOperationTypeByCode(Praxigento_Bonus_Config::OPER_PV_INT);
+        /** @var  $assetType Praxigento_Bonus_Model_Own_Type_Asset */
+        $assetType = $this->_getAssetTypeByCode(Praxigento_Bonus_Config::ASSET_PV);
+
+        $records = $this->_readDataPvTransfers($this->_fileNamePvTransfers);
+        $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
+        foreach ($records as $one) {
+            $date = $one->date;
+            $customerFrom = Nmmlm_Core_Util::findCustomerByMlmId($one->mlmIdFrom);
+            $customerTo = Nmmlm_Core_Util::findCustomerByMlmId($one->mlmIdTo);
+            $pv = $one->pv;
+            try {
+                $connection->beginTransaction();
+                $accountFrom = $this->_getAssetAccountByCustomerId($assetType->getId(), $customerFrom->getId());
+                $accountTo = $this->_getAssetAccountByCustomerId($assetType->getId(), $customerTo->getId());
+                /* create operation */
+                $operation = Mage::getModel('prxgt_bonus_model/operation');
+                $operation->setDatePerformed($date);
+                $operation->setTypeId($opType->getId());
+                $operation->save();
+                $operationId = $operation->getId();
+                /* don't create transactions for empty operations */
+                if ($pv != 0) {
+                    /* create transaction */
+                    $this->_createTransaction($operationId, $accountFrom->getId(), $accountTo->getId(), $pv, $date);
+                }
+                $connection->commit();
+            } catch (Exception $e) {
+                $connection->rollback();
+            }
+        }
+    }
+
+    private function _getStoreCustomerId()
+    {
+        $result = 1;
+        return $result;
     }
 
     /**
@@ -423,21 +504,10 @@ USAGE;
             $date = $one->getCreatedAtDate();
             try {
                 $connection->beginTransaction();
-                /* select customer account or create new one */
-                /** @var  $account Praxigento_Bonus_Resource_Own_Account_Collection */
-                $accountCollection = Mage::getModel('prxgt_bonus_model/account')->getCollection();
-                $accountCollection->addFieldToFilter(Praxigento_Bonus_Model_Own_Account::ATTR_CUSTOMER_ID, $customerId);
-                /** @var  $account Praxigento_Bonus_Model_Own_Account */
-                $account = Mage::getModel('prxgt_bonus_model/account');
-                if ($accountCollection->getSize()) {
-                    $account = $accountCollection->getFirstItem();
-                } else {
-                    /* create new account */
-                    $account->setCustomerId($customerId);
-                    $account->setAssetId($assetType);
-                    $account->save();
-                }
-                $accountId = $account->getId();
+                $accountStore = $this->_getAssetAccountByCustomerId($assetType->getId(), $this->_getStoreCustomerId());
+                $accountStoreId = $accountStore->getId();
+                $accountCustomer = $this->_getAssetAccountByCustomerId($assetType->getId(), $customerId);
+                $accountCustomerId = $accountCustomer->getId();
                 /* create operation */
                 $operation = Mage::getModel('prxgt_bonus_model/operation');
                 $operation->setDatePerformed($date);
@@ -447,38 +517,77 @@ USAGE;
                 /* don't create transactions for empty operations */
                 if ($pv != 0) {
                     /* create transaction */
-                    /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
-                    $trnx = Mage::getModel('prxgt_bonus_model/transaction');
-                    $trnx->setOperationId($operationId);
-                    $trnx->setDateApplied($date);
-                    $trnx->setDebitAccId($accountId);
-                    $trnx->setCreditAccId($accountId);
-                    $trnx->setValue($pv);
-                    $trnx->save();
-                    /* update balances */
-                    /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
-                    $balanceCollection = Mage::getModel('prxgt_bonus_model/balance')->getCollection();
-                    $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
-                    $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, Praxigento_Bonus_Config::PERIOD_KEY_NOW);
-                    /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
-                    $balance = Mage::getModel('prxgt_bonus_model/balance');
-                    if ($balanceCollection->getSize()) {
-                        $balance = $balanceCollection->getFirstItem();
-                    } else {
-                        /* create new balance record for NOW  */
-                        $balance->setAccountId($accountId);
-                        $balance->setPeriod(Praxigento_Bonus_Config::PERIOD_KEY_NOW);
-                        $balance->save();
-                    }
-                    $val = $balance->getValue() + $pv;
-                    $balance->setValue($val);
-                    $balance->save();
+                    $this->_createTransaction($operationId, $accountStoreId, $accountCustomerId, $pv, $date);
                 }
                 $connection->commit();
             } catch (Exception $e) {
                 $connection->rollback();
             }
         }
+    }
+
+    /**
+     * Select customer account by asset and customer ids or create new one.
+     *
+     * @param $assetId
+     * @param $customerId
+     * @return Praxigento_Bonus_Model_Own_Account|Varien_Object
+     */
+    private function _getAssetAccountByCustomerId($assetId, $customerId)
+    {
+        /*  */
+        /** @var  $account Praxigento_Bonus_Resource_Own_Account_Collection */
+        $accountCollection = Mage::getModel('prxgt_bonus_model/account')->getCollection();
+        $accountCollection->addFieldToFilter(Praxigento_Bonus_Model_Own_Account::ATTR_CUSTOMER_ID, $customerId);
+        $accountCollection->addFieldToFilter(Praxigento_Bonus_Model_Own_Account::ATTR_ASSET_ID, $assetId);
+        /** @var  $account Praxigento_Bonus_Model_Own_Account */
+        $result = Mage::getModel('prxgt_bonus_model/account');
+        if ($accountCollection->getSize()) {
+            $result = $accountCollection->getFirstItem();
+        } else {
+            /* create new account */
+            $result->setCustomerId($customerId);
+            $result->setAssetId($assetId);
+            $result->save();
+        }
+        return $result;
+    }
+
+    private function _updateBalance($accountId, $value, $period = Praxigento_Bonus_Config::PERIOD_KEY_NOW)
+    {
+        /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
+        $balanceCollection = Mage::getModel('prxgt_bonus_model/balance')->getCollection();
+        $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
+        $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, $period);
+        /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
+        $balance = Mage::getModel('prxgt_bonus_model/balance');
+        if ($balanceCollection->getSize()) {
+            $balance = $balanceCollection->getFirstItem();
+        } else {
+            /* create new balance record for NOW  */
+            $balance->setAccountId($accountId);
+            $balance->setPeriod(Praxigento_Bonus_Config::PERIOD_KEY_NOW);
+            $balance->save();
+        }
+        $val = $balance->getValue() + $value;
+        $balance->setValue($val);
+        $balance->save();
+    }
+
+    private function _createTransaction($operationId, $debitId, $creditId, $value, $date)
+    {
+        /* create transaction */
+        /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
+        $trnx = Mage::getModel('prxgt_bonus_model/transaction');
+        $trnx->setOperationId($operationId);
+        $trnx->setDateApplied($date);
+        $trnx->setDebitAccId($debitId);
+        $trnx->setCreditAccId($creditId);
+        $trnx->setValue($value);
+        $trnx->save();
+        /* update balances */
+        $this->_updateBalance($debitId, -$value);
+        $this->_updateBalance($creditId, $value);
     }
 
     private function _getOperationTypeByCode($code)
@@ -543,6 +652,17 @@ class RecordOrder
     public $orderDate;
     public $orderAmount;
     public $orderPv;
+}
+
+/**
+ * Class RecordPvTransfer Bean to group data from data file with internal PV transfers info.
+ */
+class RecordPvTransfer
+{
+    public $date;
+    public $mlmIdFrom;
+    public $mlmIdTo;
+    public $pv;
 }
 
 /* prevent Notice: A session had already been started */
