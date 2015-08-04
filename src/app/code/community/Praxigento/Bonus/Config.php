@@ -40,6 +40,7 @@ class Praxigento_Bonus_Config
 
     const CFG_BLOCK = 'prxgt_bonus_block';
     const CFG_HELPER = 'prxgt_bonus_helper';
+    const CFG_HELPER_PERIOD = 'prxgt_bonus_helper/period';
     const CFG_MODEL = 'prxgt_bonus_model';
 
     /**

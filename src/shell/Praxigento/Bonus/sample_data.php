@@ -93,6 +93,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $periodCode = $helper->cfgPersonalBonusPeriod();
         $typePeriod = $this->_getTypePeriod($periodCode);
         $typeBonus = $this->_getTypeBonus(Praxigento_Bonus_Config::BONUS_PERSONAL);
+        $typeOperPvInt = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_PV_INT);
+        $typeOperPvOrder = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
 
         /* get start of the period */
         $periodStart = null;
@@ -104,8 +106,10 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 
         /** @var  $balance Praxigento_Bonus_Model_Own_Period */
         $period = Mage::getModel('prxgt_bonus_model/period');
+        $periodValue = null;
         if ($periods->getSize()) {
-            $period = $periods->getFirstItem();
+            $periodLast = $periods->getFirstItem();
+            $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodNext($periodLast->getValue(), $periodCode);
         } else {
             /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
             $collection = Mage::getModel('prxgt_bonus_model/transaction')->getCollection();
@@ -120,8 +124,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                     $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_TYPE_ID
                 ),
                 array(
-                    1,
-                    3
+                    $typeOperPvInt->getId(),
+                    $typeOperPvOrder->getId()
                 )
             );
             $collection->setOrder(
@@ -131,9 +135,13 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             $sql = (string)$collection->getSelectSql();
             $item = $collection->getFirstItem();
             $dateApplied = $item->getData(Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED);
-
-
+            $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodCurrent($dateApplied, $periodCode);
         }
+        /* insert new period into DB */
+        $period->setType($typePeriod->getId());
+        $period->setBonusId($typeBonus->getId());
+        $period->setValue($periodValue);
+        $period->save();
 
     }
 
