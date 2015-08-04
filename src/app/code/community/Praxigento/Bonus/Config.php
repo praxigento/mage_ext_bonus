@@ -40,7 +40,9 @@ class Praxigento_Bonus_Config
 
     const CFG_BLOCK = 'prxgt_bonus_block';
     const CFG_HELPER = 'prxgt_bonus_helper';
+    const CFG_HELPER_PERIOD = 'prxgt_bonus_helper/period';
     const CFG_MODEL = 'prxgt_bonus_model';
+    const CFG_SERVICE = 'prxgt_bonus_service';
 
     /**
      * Entities in config.xml:/config/global/models/prxgt_bonus_resource/entities
@@ -57,12 +59,14 @@ class Praxigento_Bonus_Config
     const ENTITY_LOG_ORDER = 'log_order';
     const ENTITY_LOG_PAYOUT = 'log_payout';
     const ENTITY_OPERATION = 'operation';
+    const ENTITY_PERIOD = 'period';
     const ENTITY_SNAP_BONUS = 'snap_bonus';
     const ENTITY_SNAP_DOWNLINE = 'snap_downline';
     const ENTITY_TRANSACTION = 'transaction';
     const ENTITY_TYPE_ASSET = 'type_asset';
     const ENTITY_TYPE_BONUS = 'type_bonus';
     const ENTITY_TYPE_OPER = 'type_oper';
+    const ENTITY_TYPE_PERIOD = 'type_period';
 
     /**
      * Available operations codes.
@@ -84,4 +88,12 @@ class Praxigento_Bonus_Config
     const PERIOD_MONTH = 'month';
     const PERIOD_WEEK = 'week';
     const PERIOD_YEAR = 'year';
+
+    /**
+     * Available states for bonus calculation periods.
+     */
+
+    const STATE_PERIOD_COMPLETE = 'complete';
+    const STATE_PERIOD_PROCESSING = 'processing';
+    const STATE_PERIOD_REVERTED = 'reverted';
 }

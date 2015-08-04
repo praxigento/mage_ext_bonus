@@ -54,6 +54,9 @@
                 <class>Praxigento_Bonus_Model_Own</class>
                 <resourceModel>prxgt_bonus_resource</resourceModel>
             </prxgt_bonus_model>
+            <prxgt_bonus_service>
+                <class>Praxigento_Bonus_Service</class>
+            </prxgt_bonus_service>
             <prxgt_bonus_resource>
                 <class>Praxigento_Bonus_Resource_Own</class>
                 <entities>
@@ -90,6 +93,9 @@
                     <operation>
                         <table>prxgt_bonus_operation</table>
                     </operation>
+                    <period>
+                        <table>prxgt_bonus_period</table>
+                    </period>
                     <!-- snapshots (current and historical) -->
                     <snap_bonus>
                         <table>prxgt_bonus_snap_bonus</table>
@@ -110,6 +116,9 @@
                     <type_oper>
                         <table>prxgt_bonus_type_oper</table>
                     </type_oper>
+                    <type_period>
+                        <table>prxgt_bonus_type_period</table>
+                    </type_period>
                 </entities>
             </prxgt_bonus_resource>
         </models>
