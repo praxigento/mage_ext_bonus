@@ -10,7 +10,7 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-abstract class Praxigento_Bonus_Model_Own_Service_Base_Call
+abstract class Praxigento_Bonus_Service_Base_Call
 {
     /** @var  Praxigento_Bonus_Logger */
     protected $_log;

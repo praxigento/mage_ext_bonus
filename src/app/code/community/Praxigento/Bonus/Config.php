@@ -42,6 +42,7 @@ class Praxigento_Bonus_Config
     const CFG_HELPER = 'prxgt_bonus_helper';
     const CFG_HELPER_PERIOD = 'prxgt_bonus_helper/period';
     const CFG_MODEL = 'prxgt_bonus_model';
+    const CFG_SERVICE = 'prxgt_bonus_service';
 
     /**
      * Entities in config.xml:/config/global/models/prxgt_bonus_resource/entities
@@ -87,4 +88,12 @@ class Praxigento_Bonus_Config
     const PERIOD_MONTH = 'month';
     const PERIOD_WEEK = 'week';
     const PERIOD_YEAR = 'year';
+
+    /**
+     * Available states for bonus calculation periods.
+     */
+
+    const STATE_PERIOD_COMPLETE = 'complete';
+    const STATE_PERIOD_PROCESSING = 'processing';
+    const STATE_PERIOD_REVERTED = 'reverted';
 }

@@ -10,7 +10,7 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-abstract class Praxigento_Bonus_Model_Own_Service_Base_Response
+abstract class Praxigento_Bonus_Service_Base_Response
 {
     const ERR_BONUS_DISABLED = 'bonus_is_disabled';
     const ERR_NO_ERROR = 'no_error';

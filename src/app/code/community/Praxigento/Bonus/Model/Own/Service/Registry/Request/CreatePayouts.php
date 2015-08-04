@@ -7,8 +7,8 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts
-    extends Praxigento_Bonus_Model_Own_Service_Base_Request
+class Praxigento_Bonus_Service_Registry_Request_CreatePayouts
+    extends Praxigento_Bonus_Service_Base_Request
 {
     /** @var  string */
     private $_description;

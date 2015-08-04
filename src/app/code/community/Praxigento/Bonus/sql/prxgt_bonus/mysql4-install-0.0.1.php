@@ -229,6 +229,8 @@ $tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_INTEGER, null, array('nullable' => 
     'Period type.');
 $tbl->addColumn(Period::ATTR_VALUE, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Period value in format [YYYY|YYYYMM|YYYYMMDD]');
+$tbl->addColumn(Period::ATTR_STATE, Ddl::TYPE_TEXT, '255', array('nullable' => false, 'default' => Config::STATE_PERIOD_PROCESSING),
+    'Calculation state (processing, complete, reverted)');
 $tbl->setComment('Bonus calculation periods.');
 $conn->createTable($tbl);
 /* UQs  */

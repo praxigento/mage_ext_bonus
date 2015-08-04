@@ -7,8 +7,8 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder
-    extends Praxigento_Bonus_Model_Own_Service_Base_Request
+class Praxigento_Bonus_Service_Replica_Request_CreateQuoteFromOrder
+    extends Praxigento_Bonus_Service_Base_Request
 {
     /** @var  int */
     private $customerId;

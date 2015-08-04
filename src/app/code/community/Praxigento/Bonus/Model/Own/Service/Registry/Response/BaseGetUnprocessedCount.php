@@ -9,8 +9,8 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-abstract class Praxigento_Bonus_Model_Own_Service_Registry_Response_BaseGetUnprocessedCount
-    extends Praxigento_Bonus_Model_Own_Service_Base_Response
+abstract class Praxigento_Bonus_Service_Registry_Response_BaseGetUnprocessedCount
+    extends Praxigento_Bonus_Service_Base_Response
 {
     private $_count = null;
 

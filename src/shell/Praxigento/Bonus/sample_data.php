@@ -86,6 +86,44 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 
     }
 
+    private function _getCalculationPeriod($periodCode, $periodTypeId, $bonusTypeId, $operTypeIds)
+    {
+        $result = null;
+        $periods = Mage::getModel('prxgt_bonus_model/period')->getCollection();
+        $periods->addFieldToFilter(Praxigento_Bonus_Model_Own_Period::ATTR_TYPE, $periodTypeId);
+        $periods->addFieldToFilter(Praxigento_Bonus_Model_Own_Period::ATTR_BONUS_ID, $bonusTypeId);
+        $periods->addOrder(Praxigento_Bonus_Model_Own_Period::ATTR_ID, Varien_Data_Collection::SORT_ORDER_DESC);
+        if ($periods->getSize()) {
+            $periodLast = $periods->getFirstItem();
+            $result = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodNext($periodLast->getValue(), $periodCode);
+        } else {
+            /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
+            $collection = Mage::getModel('prxgt_bonus_model/transaction')->getCollection();
+            $asOper = 'o';
+            $table = array($asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
+            $cond = 'main_table.' . Praxigento_Bonus_Model_Own_Transaction::ATTR_OPERATION_ID . '='
+                . $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_ID;
+            $collection->join($table, $cond);
+            /* add filter by operation types */
+            $fields = array();
+            $opTypes = array();
+            foreach ($operTypeIds as $one) {
+                $fields[] = $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_TYPE_ID;
+                $opTypes[] = $one;
+            }
+            $collection->addFieldToFilter($fields, $opTypes);
+            $collection->setOrder(
+                Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED,
+                Varien_Data_Collection::SORT_ORDER_ASC
+            );
+            $sql = (string)$collection->getSelectSql();
+            $item = $collection->getFirstItem();
+            $dateApplied = $item->getData(Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED);
+            $result = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodCurrent($dateApplied, $periodCode);
+        }
+        return $result;
+    }
+
     private function _calcBonusPv()
     {
         /** @var  $helper Praxigento_Bonus_Helper_Data */
@@ -95,54 +133,22 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $typeBonus = $this->_getTypeBonus(Praxigento_Bonus_Config::BONUS_PERSONAL);
         $typeOperPvInt = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_PV_INT);
         $typeOperPvOrder = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
-
-        /* get start of the period */
+        /* get calculation period */
         $periodStart = null;
+        $periodTypeId = $typePeriod->getId();
+        $bonusTypeId = $typeBonus->getId();
+        $operTypesIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
+        $periodValue = $this->_getCalculationPeriod($periodCode, $periodTypeId, $bonusTypeId, $operTypesIds);
+        /* get all operations related to Personal Volumes bonus */
 
-        $periods = Mage::getModel('prxgt_bonus_model/period')->getCollection();
-        $periods->addFieldToFilter(Praxigento_Bonus_Model_Own_Period::ATTR_TYPE, $typePeriod->getId());
-        $periods->addFieldToFilter(Praxigento_Bonus_Model_Own_Period::ATTR_BONUS_ID, $typeBonus->getId());
-        $periods->addOrder(Praxigento_Bonus_Model_Own_Period::ATTR_ID, Varien_Data_Collection::SORT_ORDER_DESC);
 
+        /* insert new period into DB */
         /** @var  $balance Praxigento_Bonus_Model_Own_Period */
         $period = Mage::getModel('prxgt_bonus_model/period');
-        $periodValue = null;
-        if ($periods->getSize()) {
-            $periodLast = $periods->getFirstItem();
-            $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodNext($periodLast->getValue(), $periodCode);
-        } else {
-            /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
-            $collection = Mage::getModel('prxgt_bonus_model/transaction')->getCollection();
-            $asOper = 'o';
-            $table = array($asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
-            $cond = 'main_table.' . Praxigento_Bonus_Model_Own_Transaction::ATTR_OPERATION_ID . '='
-                . $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_ID;
-            $collection->join($table, $cond);
-            $collection->addFieldToFilter(
-                array(
-                    $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_TYPE_ID,
-                    $asOper . '.' . Praxigento_Bonus_Model_Own_Operation::ATTR_TYPE_ID
-                ),
-                array(
-                    $typeOperPvInt->getId(),
-                    $typeOperPvOrder->getId()
-                )
-            );
-            $collection->setOrder(
-                Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED,
-                Varien_Data_Collection::SORT_ORDER_ASC
-            );
-            $sql = (string)$collection->getSelectSql();
-            $item = $collection->getFirstItem();
-            $dateApplied = $item->getData(Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED);
-            $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodCurrent($dateApplied, $periodCode);
-        }
-        /* insert new period into DB */
-        $period->setType($typePeriod->getId());
-        $period->setBonusId($typeBonus->getId());
+        $period->setType($periodTypeId);
+        $period->setBonusId($bonusTypeId);
         $period->setValue($periodValue);
-        $period->save();
-
+//        $period->save();
     }
 
     private function _createCatalogCategories()

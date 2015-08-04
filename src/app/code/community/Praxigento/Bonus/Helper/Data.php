@@ -79,7 +79,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
     public function cfgPersonalBonusPayoutDelay($store = null)
     {
         $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/payout_delay', $store);
-        $result = filter_var($result, FILTER_VALIDATE_INT);
+        $result = filter_var($result * 1, FILTER_VALIDATE_INT);
         return $result;
     }
 
