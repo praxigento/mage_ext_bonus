@@ -5,7 +5,7 @@
  */
 use Praxigento_Bonus_Config as Config;
 
-include_once('../phpunit_bootstrap.php');
+include_once(dirname(__FILE__) . '/../phpunit_bootstrap.php');
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
