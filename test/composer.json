@@ -43,7 +43,8 @@
     "praxigento/mage_ext_bonus": "dev-master"
   },
   "require-dev": {
-    "phpunit/phpunit": "3.7.*"
+    "phpunit/phpunit": "3.7.*",
+    "phpunit/php-code-coverage": "~2.0"
   },
   "autoload": {
     "psr-4": {
