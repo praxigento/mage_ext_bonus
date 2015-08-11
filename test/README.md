@@ -94,3 +94,13 @@ Startup composer and create module files links into installed Magento file struc
 ### Web server setup
 Setup web server with root directory pointing to `./mage_ext_bonus/test/mage/`. Open new web instance with
 browser and compete Magento installation worklfow.
+
+## Test
+
+Just tests:
+
+    $ phpunit -c ./mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml
+
+Tests with code coverage:
+
+    $ phpunit -c ./mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml --coverage-html=./build/cover
