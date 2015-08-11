@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Service_Registry_Response_SaveRetailBonus
+class Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus
     extends Praxigento_Bonus_Service_Base_Response
 {
     /** @var  Praxigento_Bonus_Model_Own_Order */
