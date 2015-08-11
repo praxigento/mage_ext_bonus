@@ -12,6 +12,22 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus
 {
     public $periodValue;
 
+    /**
+     * @return string 20150601 | 201506 | 2015
+     */
+    public function getPeriodValue()
+    {
+        return $this->periodValue;
+    }
+
+    /**
+     * @param string $val 20150601 | 201506 | 2015
+     */
+    public function setPeriodValue($val)
+    {
+        $this->periodValue = $val;
+    }
+
     public function isSucceed()
     {
         $result = ($this->getErrorCode() == self::ERR_NO_ERROR);

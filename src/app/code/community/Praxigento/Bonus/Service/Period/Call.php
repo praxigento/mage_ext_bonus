@@ -58,8 +58,8 @@ class Praxigento_Bonus_Service_Period_Call
             /* there is desired period in 'processing' state */
             /** @var  $item Praxigento_Bonus_Model_Own_Period */
             $item = $periods->getFirstItem();
-            $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             $result->periodValue = $item->getValue();
+            $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
         } else {
             /* get the last period in 'complete' status */
             $periods = $this->getPeriodCollection();
@@ -70,8 +70,9 @@ class Praxigento_Bonus_Service_Period_Call
             $sql = (string)$periods->getSelectSql();
             if ($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
-                $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)
+                $result->periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)
                     ->calcPeriodNext($periodLast->getValue(), $periodCode);
+                $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
                 $collection = $this->getTransactionCollection();
@@ -95,7 +96,8 @@ class Praxigento_Bonus_Service_Period_Call
                 $sql = (string)$collection->getSelectSql();
                 $item = $collection->getFirstItem();
                 $dateApplied = $item->getData(Praxigento_Bonus_Model_Own_Transaction::ATTR_DATE_APPLIED);
-                $periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodCurrent($dateApplied, $periodCode);
+                $result->periodValue = Mage::helper(Praxigento_Bonus_Config::CFG_HELPER_PERIOD)->calcPeriodCurrent($dateApplied, $periodCode);
+                $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             }
         }
         return $result;
