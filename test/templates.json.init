@@ -16,6 +16,7 @@
     "CFG_USE_REWRITES": "yes",
     "CFG_USE_SECURE": "no",
     "CFG_SECURE_BASE_URL": "",
+    "CFG_ADMIN_FRONTNAME": "admin",
     "CFG_USE_SECURE_ADMIN": "no",
     "CFG_ADMIN_LASTNAME": "Admin",
     "CFG_ADMIN_FIRSTNAME": "Store",

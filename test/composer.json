@@ -47,16 +47,6 @@
       "Praxigento\\Deploy\\": "bin/deploy"
     }
   },
-  "scripts": {
-    "post-install-cmd": [
-      "find ./bin/ -type f -name \"*.sh\" -exec chmod a+x {} \\;",
-      "rm ./mage/app/etc/local.xml",
-      "Praxigento\\Deploy\\Installer::postInstall"
-    ],
-    "post-update-cmd": [
-      "find ./bin/ -type f -name \"*.sh\" -exec chmod a+x {} \\;"
-    ]
-  },
   "extra": {
     "magento-root-dir": "mage",
     "magento-deploystrategy": "symlink",

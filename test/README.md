@@ -16,7 +16,8 @@ Clone repo from GitHub:
 Create configuration file for current instance:
 
     $ cd ./mage_ext_bonus/test/
-    $ cat > templates.json
+    $ cp templates.json.init templates.json 
+    $ nano templates.json
     {
       "vars": {
         "LOCAL_ROOT": "/home/alex/work/github/mage_ext_bonus/test",
@@ -35,6 +36,7 @@ Create configuration file for current instance:
         "CFG_USE_REWRITES": "yes",
         "CFG_USE_SECURE": "no",
         "CFG_SECURE_BASE_URL": "",
+        "CFG_ADMIN_FRONTNAME": "admin",
         "CFG_USE_SECURE_ADMIN": "no",
         "CFG_ADMIN_LASTNAME": "Admin",
         "CFG_ADMIN_FIRSTNAME": "Store",
@@ -45,18 +47,11 @@ Create configuration file for current instance:
       }
     }
 
-### Install Magento and modules
-Startup composer and create module files links into installed Magento file structure (sample data will be created): 
-    
-    $ composer install
-    $ ./bin/deploy/post_install.sh
-    ...
-    Post installation setup is done.
-
 
 ### Create sample data
-Default downline tree is created on install from file `mage/shell/Praxigento/Bonus/downline_tree.csv`.
-Create CSV file with customers data to add more customers. Format:
+#### Customers tree
+Default downline tree is created on install from file `./mage/shell/Praxigento/Bonus/data_customers.csv`.
+Format:
 
     id,sponsor_id,name_first,name_last,email,group_id
     
@@ -65,9 +60,35 @@ Sample:
     1,,Root,User,user1_bonus_test@prxgt.com,1
     2,1,Customer2,User,user2_bonus_test@prxgt.com,1
 
-Then launch script:
+#### Sales orders
+Sales orders are created on install from file `./mage/shell/Praxigento/Bonus/data_orders.csv`.
+Format:
 
-    $ php ./mage/shell/Praxigento/Bonus/test_data_add.php --source ./mage/shell/Praxigento/Bonus/downline_tree.csv
+    customerMlmId,orderDate,amountTotal,pvTotal
+    
+Sample:
+
+    100000003,2015/06/01 14:00,10.10,60
+    100000006,2015/06/01 14:00,10.10,60
+
+#### PV transfer
+PV transfers are created on install from file `./mage/shell/Praxigento/Bonus/data_pv_transfers.csv`.
+Format:
+
+    transferDate,fromMlmId,toMlmId,pvTransferred
+    
+Sample:
+
+    2015/06/01 14:00,100000003,100000006,20
+
+
+### Install Magento and modules
+Startup composer and create module files links into installed Magento file structure (sample data will be created): 
+    
+    $ composer install
+    $ sh ./bin/deploy/post_install.sh
+    ...
+    Post installation setup is done.
 
 
 ### Web server setup

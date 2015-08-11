@@ -18,6 +18,11 @@ DB_PASS=${CFG_DB_PASS}
 BIN_ROOT=$LOCAL_ROOT/bin/deploy
 
 ##
+echo "Mount magento modules into Magento root."
+##
+php $LOCAL_ROOT/vendor/bin/composerCommandIntegrator.php magento-module-deploy
+
+##
 echo "Change rights to folders and files."
 ##
 mkdir -p $LOCAL_ROOT/mage/var/log
@@ -29,11 +34,12 @@ chmod g+w -R $LOCAL_ROOT/mage/var/
 
 find $LOCAL_ROOT/mage/ -type d -exec chmod g+x {} \;
 
-##
-# Additional config should be performed in the module/etc/local.xml
-##
-#sed -i 's/<\/config>/<nmmlm><factory><class>Praxigento_Bonus_Factory<\/class><\/factory><\/nmmlm><\/config>/g' ./mage/app/etc/local.xml
 
+##
+echo "Install empty Magento database '$DB_NAME'."
+##
+rm $LOCAL_ROOT/mage/app/etc/local.xml
+php $LOCAL_ROOT/bin/deploy/install.php
 
 ##
 echo "Post installation setup for database '$DB_NAME'."
