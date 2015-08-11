@@ -44,7 +44,7 @@ mysql --database=$DB_NAME --user=$DB_USER --password=$DB_PASS -e "source $BIN_RO
 ##
 echo "Create sample data."
 ##
-# php $LOCAL_ROOT/mage/shell/Praxigento/Dcp/test_data_add.php --source $LOCAL_ROOT/mage/shell/Praxigento/Dcp/dcp_customers.csv
+php $LOCAL_ROOT/mage/shell/Praxigento/Bonus/sample_data.php --create
 
 
 ##

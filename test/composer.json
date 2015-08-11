@@ -15,19 +15,11 @@
     },
     {
       "type": "vcs",
-      "url": "https://github.com/praxigento/mage_ext_log4php"
-    },
-    {
-      "type": "vcs",
       "url": "https://github.com/praxigento/mobi_mage_bundle"
     },
     {
       "type": "vcs",
       "url": "https://github.com/praxigento/mobi_mage_core"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/praxigento/mobi_mage_theme"
     },
     {
       "type": "vcs",
@@ -38,7 +30,7 @@
     "magento-hackathon/magento-composer-installer": "*",
     "magento-hackathon/composer-command-integrator": "1.0",
     "praxigento/composer_plugin_templates": "^1.0",
-    "magento/core": "1.9.2.0",
+    "magento/core": "1.9.2.1",
     "astorm/PulsestormModuleList": "^0.2",
     "praxigento/mage_ext_bonus": "dev-master"
   },
