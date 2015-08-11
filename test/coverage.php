@@ -16,8 +16,8 @@ $coverage->start('<name of test>');
 
 $coverage->stop();
 
-$writer = new PHP_CodeCoverage_Report_Clover;
-$writer->process($coverage, './mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml');
+//$writer = new PHP_CodeCoverage_Report_Clover;
+//$writer->process($coverage, './mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml');
 
 $writer = new PHP_CodeCoverage_Report_HTML;
 $writer->process($coverage, './build/code-coverage-report');
