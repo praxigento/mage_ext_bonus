@@ -96,4 +96,22 @@ class Praxigento_Bonus_Config
     const STATE_PERIOD_COMPLETE = 'complete';
     const STATE_PERIOD_PROCESSING = 'processing';
     const STATE_PERIOD_REVERTED = 'reverted';
+
+    /**
+     * @return  \Praxigento_Bonus_Helper_Data
+     */
+    public static function helper()
+    {
+        $result = Mage::helper(self::CFG_HELPER);
+        return $result;
+    }
+
+    /**
+     * @return  \Praxigento_Bonus_Helper_Period
+     */
+    public static function helperPeriod()
+    {
+        $result = Mage::helper(self::CFG_HELPER_PERIOD);
+        return $result;
+    }
 }

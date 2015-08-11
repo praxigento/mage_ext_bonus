@@ -128,7 +128,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $period->setType($periodTypeId);
         $period->setBonusId($bonusTypeId);
         $period->setValue($periodValue);
-//        $period->save();
+        $period->save();
     }
 
     private function _createCatalogCategories()

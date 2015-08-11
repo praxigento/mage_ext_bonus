@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Praxigento_Bonus_Config as Config;
 
 /**
  * Period calculation utilities.
@@ -30,10 +31,10 @@ class Praxigento_Bonus_Helper_Period
         $result = null;
         $dt = $this->_helperCore->convertToDateTime($date);
         switch ($type) {
-            case Praxigento_Bonus_Config::PERIOD_DAY:
+            case Config::PERIOD_DAY:
                 $result = date_format($dt, 'Ymd');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_WEEK:
+            case Config::PERIOD_WEEK:
                 $weekDay = date('w', $dt->getTimestamp());
                 if ($weekDay != 0) {
                     $ts = strtotime('next sunday', $dt->getTimestamp());
@@ -41,10 +42,10 @@ class Praxigento_Bonus_Helper_Period
                 }
                 $result = date_format($dt, 'Ymd');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_MONTH:
+            case Config::PERIOD_MONTH:
                 $result = date_format($dt, 'Ym');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_YEAR:
+            case Config::PERIOD_YEAR:
                 $result = date_format($dt, 'Y');
                 break;
         }
@@ -55,25 +56,25 @@ class Praxigento_Bonus_Helper_Period
     {
         $result = null;
         switch ($type) {
-            case Praxigento_Bonus_Config::PERIOD_DAY:
+            case Config::PERIOD_DAY:
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('next day', $dt->getTimestamp());
                 $dt = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ymd');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_WEEK:
+            case Config::PERIOD_WEEK:
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('next sunday', $dt->getTimestamp());
                 $dt = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ymd');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_MONTH:
+            case Config::PERIOD_MONTH:
                 $dt = date_create_from_format('Ym', $period);
                 $ts = strtotime('next month', $dt->getTimestamp());
                 $dt = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ym');
                 break;
-            case Praxigento_Bonus_Config::PERIOD_YEAR:
+            case Config::PERIOD_YEAR:
                 $dt = date_create_from_format('Y', $period);
                 $ts = strtotime('next year', $dt->getTimestamp());
                 $dt = $this->_helperCore->convertToDateTime($ts);
