@@ -8,20 +8,20 @@ use Praxigento_Bonus_Model_Own_Order as BonusOrder;
 use Praxigento_Bonus_Model_Own_Payout as Payout;
 use Praxigento_Bonus_Model_Own_Payout_Transact as PayoutTransact;
 use Praxigento_Bonus_Service_Base_Response as BaseResponse;
-use Praxigento_Bonus_Service_Registry_Request_CreatePayments as CreatePaymentsRequest;
-use Praxigento_Bonus_Service_Registry_Request_CreatePayouts as CreatePayoutsRequest;
-use Praxigento_Bonus_Service_Registry_Request_CreateTransactions as CreateTransactionsRequest;
-use Praxigento_Bonus_Service_Registry_Request_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountRequest;
-use Praxigento_Bonus_Service_Registry_Request_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountRequest;
-use Praxigento_Bonus_Service_Registry_Request_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountRequest;
-use Praxigento_Bonus_Service_Registry_Request_SaveRetailBonus as SaveRetailBonusRequest;
-use Praxigento_Bonus_Service_Registry_Response_CreatePayments as CreatePaymentsResponse;
-use Praxigento_Bonus_Service_Registry_Response_CreatePayouts as CreatePayoutsResponse;
-use Praxigento_Bonus_Service_Registry_Response_CreateTransactions as CreateTransactionsResponse;
-use Praxigento_Bonus_Service_Registry_Response_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountResponse;
-use Praxigento_Bonus_Service_Registry_Response_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountResponse;
-use Praxigento_Bonus_Service_Registry_Response_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountResponse;
-use Praxigento_Bonus_Service_Registry_Response_SaveRetailBonus as SaveRetailBonusResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayments as CreatePaymentsRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts as CreatePayoutsRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_CreateTransactions as CreateTransactionsRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Request_SaveRetailBonus as SaveRetailBonusRequest;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayments as CreatePaymentsResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts as CreatePayoutsResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_CreateTransactions as CreateTransactionsResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedBonusesCount as GetUnprocessedBonusesCountResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedPayoutsCount as GetUnprocessedPayoutsCountResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount as GetUnprocessedTransactionsCountResponse;
+use Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus as SaveRetailBonusResponse;
 use Praxigento_Bonus_Model_Own_Transact as Transact;
 
 /**
@@ -29,7 +29,7 @@ use Praxigento_Bonus_Model_Own_Transact as Transact;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Service_Registry_Call
+class Praxigento_Bonus_Model_Own_Service_Registry_Call
     extends Praxigento_Bonus_Service_Base_Call
 {
     /* aliases used in selects and result sets */
@@ -177,8 +177,8 @@ WHERE
     }
 
     /**
-     * @param Praxigento_Bonus_Service_Registry_Request_CreatePayments $req
-     * @return Praxigento_Bonus_Service_Registry_Response_CreatePayments
+     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayments $req
+     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayments
      */
     public function createPayments(CreatePaymentsRequest $req)
     {
@@ -219,8 +219,8 @@ WHERE
     }
 
     /**
-     * @param Praxigento_Bonus_Service_Registry_Request_CreatePayouts $req
-     * @return Praxigento_Bonus_Service_Registry_Response_CreatePayouts
+     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_CreatePayouts $req
+     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_CreatePayouts
      */
     public function createPayouts(CreatePayoutsRequest $req)
     {
@@ -378,8 +378,8 @@ WHERE
     /**
      * Calculate retail bonus based on given order and save it to database.
      *
-     * @param Praxigento_Bonus_Service_Registry_Request_SaveRetailBonus $req
-     * @return Praxigento_Bonus_Service_Registry_Response_SaveRetailBonus
+     * @param Praxigento_Bonus_Model_Own_Service_Registry_Request_SaveRetailBonus $req
+     * @return Praxigento_Bonus_Model_Own_Service_Registry_Response_SaveRetailBonus
      */
     public function saveRetailBonus(SaveRetailBonusRequest $req)
     {

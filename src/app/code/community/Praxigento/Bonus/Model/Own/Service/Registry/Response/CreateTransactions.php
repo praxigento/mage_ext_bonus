@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Service_Registry_Response_CreateTransactions
+class Praxigento_Bonus_Model_Own_Service_Registry_Response_CreateTransactions
     extends Praxigento_Bonus_Service_Base_Response
 {
     private $_transactionIds = array();

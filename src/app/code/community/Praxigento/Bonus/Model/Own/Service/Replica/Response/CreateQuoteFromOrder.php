@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Service_Replica_Response_CreateQuoteFromOrder
+class Praxigento_Bonus_Model_Own_Service_Replica_Response_CreateQuoteFromOrder
     extends Praxigento_Bonus_Service_Base_Response
 {
     /** @var  Mage_Sales_Model_Quote */
