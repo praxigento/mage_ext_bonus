@@ -13,10 +13,17 @@ use Praxigento_Bonus_Config as Config;
 class Praxigento_Bonus_Helper_Period
 {
     private $_helperCore;
+    /** @var array Common cache for periods bounds: [period][type][from|to] = ... */
+    private static $_cachePeriodBounds = array();
+    private static $_tzDelta = null;
 
     function __construct()
     {
         $this->_helperCore = Nmmlm_Core_Config::helper();
+        if (is_null(self::$_tzDelta)) {
+            /* initiate Timezone delta once */
+            self::$_tzDelta = Mage::getSingleton('core/date')->getGmtOffset();
+        }
     }
 
     /**
@@ -24,7 +31,7 @@ class Praxigento_Bonus_Helper_Period
      *
      * @param $date
      * @param $type
-     * @return bool|null|string
+     * @return null|string 20150601 | 201506 | 2015
      */
     public function calcPeriodCurrent($date, $type)
     {
@@ -52,6 +59,13 @@ class Praxigento_Bonus_Helper_Period
         return $result;
     }
 
+    /**
+     * Calculate period next for the given.
+     *
+     * @param $period 20150601 | 201506 | 2015
+     * @param $type
+     * @return null|string 20150601 | 201506 | 2015
+     */
     public function calcPeriodNext($period, $type)
     {
         $result = null;
@@ -82,5 +96,83 @@ class Praxigento_Bonus_Helper_Period
                 break;
         }
         return $result;
+    }
+
+    public function calcPeriodFromTs($period, $type)
+    {
+        if (
+            !isset(self::$_cachePeriodBounds[$period]) &&
+            !isset(self::$_cachePeriodBounds[$period][$type])
+        ) {
+            $this->_calcPeriodBounds($period, $type);
+        }
+        $result = self::$_cachePeriodBounds[$period][$type]['from'];
+        return $result;
+    }
+
+    public function calcPeriodToTs($period, $type)
+    {
+        if (
+            !isset(self::$_cachePeriodBounds[$period]) &&
+            !isset(self::$_cachePeriodBounds[$period][$type])
+        ) {
+            $this->_calcPeriodBounds($period, $type);
+        }
+        $result = self::$_cachePeriodBounds[$period][$type]['to'];
+        return $result;
+    }
+
+    /**
+     * Calculate period's from/to bounds (month 201508 = "2015-08-01 02:00:00 / 2015-09-01 01:59:59") and cache it.
+     *
+     * @param $period
+     * @param $type
+     */
+    private function _calcPeriodBounds($period, $type)
+    {
+        $from = null;
+        $to = null;
+
+        switch ($type) {
+            case Config::PERIOD_DAY:
+                $dt = date_create_from_format('Ymd', $period);
+                $ts = strtotime('midnight', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $ts = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                break;
+            case Config::PERIOD_WEEK:
+                /* this should be the last day of the week */
+                $dt = date_create_from_format('Ymd', $period);
+                $ts = strtotime('previous monday midnight', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $ts = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                break;
+            case Config::PERIOD_MONTH:
+                $dt = date_create_from_format('Ym', $period);
+                $ts = strtotime('first day of midnight', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $ts = strtotime('first day of next month midnight -1 second', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                break;
+            case Config::PERIOD_YEAR:
+                $dt = date_create_from_format('Y', $period);
+                $ts = strtotime('first day of January', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $ts = strtotime('first day of January next year midnight -1 second', $dt->getTimestamp());
+                $ts -= self::$_tzDelta;
+                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                break;
+        }
+        self::$_cachePeriodBounds[$period][$type]['from'] = $from;
+        self::$_cachePeriodBounds[$period][$type]['to'] = $to;
     }
 }

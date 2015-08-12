@@ -69,6 +69,12 @@ class Praxigento_Bonus_Config
     const ENTITY_TYPE_PERIOD = 'type_period';
 
     /**
+     * Formats
+     */
+
+    const FROMAT_DATETIME_SQL = 'Y-m-d H:i:s';
+
+    /**
      * Available operations codes.
      */
 
