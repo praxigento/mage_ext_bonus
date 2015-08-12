@@ -161,6 +161,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     public function test_getPeriodForPersonalBonus_isPeriod_Processing()
     {
         $VAL = '20150601';
+        $ID = 256;
         /**
          * Create mocks.
          */
@@ -169,7 +170,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         $mockPeriodColl->expects($this->once())->method('getSize')->will($this->returnValue(500));
         /* add period item to period collection */
         $mockPeriod = $this->mockPeriod();
-        $mockPeriod->expects($this->once())->method('getData')
+        $mockPeriod->expects($this->at(0))->method('getData')
+            ->with($this->equalTo(Period::ATTR_ID))
+            ->will($this->returnValue($ID));
+        $mockPeriod->expects($this->at(1))->method('getData')
             ->with($this->equalTo(Period::ATTR_VALUE))
             ->will($this->returnValue($VAL));
         $mockPeriodColl->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockPeriod));
@@ -191,6 +195,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         $resp = $mockCall->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL, $resp->getPeriodValue());
+        $this->assertEquals($ID, $resp->getExistingPeriodId());
         $this->assertFalse($resp->isNewPeriod());
     }
 

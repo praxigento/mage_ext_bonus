@@ -14,9 +14,27 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus
     const ERR_NOTHING_TO_DO = 'nothing_to_do';
 
     /** @var string 20150601 | 201506 | 2015 */
-    public $periodValue;
+    private $periodValue;
     /** @var bool 'true' - we need register this period on processing */
-    public $isNewPeriod;
+    private $isNewPeriod;
+    /** @var  int ID of the existing period if found. */
+    private $existingPeriodId;
+
+    /**
+     * @return int
+     */
+    public function getExistingPeriodId()
+    {
+        return $this->existingPeriodId;
+    }
+
+    /**
+     * @param int $val
+     */
+    public function setExistingPeriodId($val)
+    {
+        $this->existingPeriodId = $val;
+    }
 
     /**
      * @return boolean 'true' - we need register this period on processing

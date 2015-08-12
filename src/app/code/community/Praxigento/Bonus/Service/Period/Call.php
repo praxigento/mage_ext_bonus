@@ -61,7 +61,9 @@ class Praxigento_Bonus_Service_Period_Call
             /* there is desired period in 'processing' state */
             /** @var  $item Praxigento_Bonus_Model_Own_Period */
             $item = $periods->getFirstItem();
+            $id = $item->getData(Period::ATTR_ID);
             $value = $item->getData(Period::ATTR_VALUE);
+            $result->setExistingPeriodId($id);
             $result->setPeriodValue($value);
             $result->setIsNewPeriod(false);
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);

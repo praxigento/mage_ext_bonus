@@ -5,6 +5,9 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
+use Praxigento_Bonus_Model_Own_Operation as Operation;
+use Praxigento_Bonus_Model_Own_Transaction as Transaction;
+use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonus;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
@@ -63,12 +66,13 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $emulate = $this->getArg(self::OPT_EMULATE);
         $bonusPv = $this->getArg(self::OPT_BONUS_PV);
         if ($create || $emulate || $bonusPv) {
-            $this->_log->debug("Sample data generation is started.");
             if ($create) {
+                $this->_log->debug("Sample data generation is started.");
                 $this->_createCatalogCategories();
                 $this->_createProducts();
                 $this->_createCustomers();
                 $this->_createOrders();
+                $this->_log->debug("Sample data generation is completed.");
             }
             if ($emulate) {
                 /* add fake data to bonus module */
@@ -78,30 +82,11 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             if ($bonusPv) {
                 $this->_calcBonusPv();
             }
-            $this->_log->debug("Sample data generation is completed.");
             echo 'Done.';
         } else {
             echo $this->usageHelp();
         }
 
-    }
-
-    private function _getCalculationPeriod($periodCode, $periodTypeId, $bonusTypeId, $operTypeIds)
-    {
-        $result = null;
-        /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
-        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = $bonusTypeId;
-        $req->operationTypeIds = $operTypeIds;
-        $req->periodCode = $periodCode;
-        $req->periodTypeId = $periodTypeId;
-        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
-        $resp = $call->getPeriodForPersonalBonus($req);
-        if ($resp->isSucceed()) {
-            $result = $resp->getPeriodValue();
-        }
-        return $result;
     }
 
     private function _calcBonusPv()
@@ -113,22 +98,81 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $typeBonus = $this->_getTypeBonus(Praxigento_Bonus_Config::BONUS_PERSONAL);
         $typeOperPvInt = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_PV_INT);
         $typeOperPvOrder = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
+        $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
-        $periodStart = null;
-        $periodTypeId = $typePeriod->getId();
-        $bonusTypeId = $typeBonus->getId();
-        $operTypesIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
-        $periodValue = $this->_getCalculationPeriod($periodCode, $periodTypeId, $bonusTypeId, $operTypesIds);
-        /* get all operations related to Personal Volumes bonus */
+        $result = null;
+        /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
+        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
+        $req->bonusTypeId = $typeBonus->getId();
+        $req->operationTypeIds = $operIds;
+        $req->periodCode = $periodCode;
+        $req->periodTypeId = $typeBonus->getId();
+        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
+        $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
+        $resp = $call->getPeriodForPersonalBonus($req);
+        if ($resp->isSucceed()) {
+            /** @var  $balance Praxigento_Bonus_Model_Own_Period */
+            $period = Mage::getModel('prxgt_bonus_model/period');
+            if ($resp->isNewPeriod()) {
+                /* insert new period into DB */
+                $period->setType($typeBonus->getId());
+                $period->setBonusId($typeBonus->getId());
+                $period->setValue($resp->getPeriodValue());
+                $period->setState(Config::STATE_PERIOD_PROCESSING);
+                $period->save();
+                $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is created to process personal bonus.");
+            } else {
+                $period->load($resp->getExistingPeriodId());
+                $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus.");
+            }
+            /* select all operation for period */
+            $opers = $this->_getOperationsForPersonalBonus($operIds);
 
+        } else {
+            if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
+                $this->_log->warn("There are no periods/operations to calculate personal bonus.");
+            } else {
+                $this->_log->warn("Cannot get period to calculate personal bonus.");
+            }
+        }
+    }
 
-        /* insert new period into DB */
-        /** @var  $balance Praxigento_Bonus_Model_Own_Period */
-        $period = Mage::getModel('prxgt_bonus_model/period');
-        $period->setType($periodTypeId);
-        $period->setBonusId($bonusTypeId);
-        $period->setValue($periodValue);
-        $period->save();
+    private function _getOperationsForPersonalBonus($operIds = array(), $period, $periodType)
+    {
+        /**
+         *
+         * SELECT
+         *
+         * FROM prxgt_bonus_operation pbo
+         * LEFT OUTER JOIN prxgt_bonus_trnx pbt
+         * ON pbo.id = pbt.operation_id
+         * WHERE (
+         * pbo.type_id = 1
+         * OR pbo.type_id = 3
+         * )
+         * AND pbt.date_applied >= '2015-06-01 00:00:00'
+         * AND pbt.date_applied <= '2015-06-01 23:59:59'
+         */
+        $collection = Mage::getModel('prxgt_bonus_model/operation')->getCollection();
+        /* filter by operations types */
+        $fields = array();
+        $values = array();
+        foreach ($operIds as $one) {
+            $fields[] = Operation::ATTR_TYPE_ID;
+            $values[] = $one;
+        }
+        $collection->addFieldToFilter($fields, $values);
+        $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $collection->getSelect()->joinLeft(
+            array('trnx' => $tableTrnx),
+            'main_table.id = trnx.operation_id',
+            '*'
+        );
+        $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
+        $collection->addFieldToFilter($fldDate, array('gteq' => '2015-06-01 00:00:00'));
+        $collection->addFieldToFilter($fldDate, array('lteq' => '2015-06-01 23:59:59'));
+        $sql = $collection->getSelectSql(true);
+        1 + 1;
     }
 
     private function _createCatalogCategories()
@@ -606,7 +650,7 @@ USAGE;
                 /* create operation */
                 $operation = Mage::getModel('prxgt_bonus_model/operation');
                 $operation->setDatePerformed($date);
-                $operation->setTypeId($opType);
+                $operation->setTypeId($opType->getId());
                 $operation->save();
                 $operationId = $operation->getId();
                 /* don't create transactions for empty operations */
