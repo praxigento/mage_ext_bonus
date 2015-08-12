@@ -20,6 +20,7 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         $this->assertTrue(is_numeric($hlp->cfgGeneralDownlineDepth()));
         $this->assertTrue(is_bool($hlp->cfgPersonalBonusEnabled()));
         $this->assertTrue(is_string($hlp->cfgPersonalBonusPeriod()));
+        $this->assertTrue(is_string($hlp->cfgPersonalBonusWeekLastDay()));
         $this->assertTrue(is_int($hlp->cfgPersonalBonusPayoutDelay()));
         $this->assertTrue(is_bool($hlp->cfgRetailBonusEnabled()));
         $this->assertTrue(is_numeric($hlp->cfgRetailBonusFeeFixed()));

@@ -59,6 +59,19 @@
                                 <is_enabled>1</is_enabled>
                             </depends>
                         </period>
+                        <period_last_day translate="label comment">
+                            <label>The Last Day of the Period</label>
+                            <comment>Bonus will be calculated including this day (Friday: from Thursday 00:00:00 up to Friday 23:59:59).</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>prxgt_bonus_model/source_weekday</source_model>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <period>week</period>
+                            </depends>
+                        </period_last_day>
                         <payout_delay translate="label comment">
                             <label>Payout Delay</label>
                             <comment>Number of days to hold calculated bonus before payout.</comment>

@@ -168,6 +168,9 @@
             <general>
                 <downline_depth>3</downline_depth>
             </general>
+            <personal_bonus>
+                <period_last_day>friday</period_last_day>
+            </personal_bonus>
         </nmmlm_core_referrals>
     </default>
     <nmmlm>
