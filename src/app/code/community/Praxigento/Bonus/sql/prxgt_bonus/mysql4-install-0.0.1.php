@@ -19,7 +19,7 @@ use Praxigento_Bonus_Model_Own_Snap_Bonus as SnapBonus;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
-use Praxigento_Bonus_Model_Own_Type_Bonus as TypeBonus;
+use Praxigento_Bonus_Model_Own_Type_Calc as TypeCalc;
 use Praxigento_Bonus_Model_Own_Type_Oper as TypeOper;
 use Praxigento_Bonus_Model_Own_Type_Period as TypePeriod;
 use Varien_Db_Adapter_Interface as Db;
@@ -58,7 +58,7 @@ $tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BO
 $tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
 $tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
 $tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
-$tblTypeBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
+$tblTypeCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_CALC);
 $tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
 $tblTypePeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
 /**
@@ -93,17 +93,17 @@ prxgt_install_create_index_unique($conn, $tblTypeAsset, array(TypeAsset::ATTR_CO
 /** ******************
  * Type Bonus
  ****************** */
-$tbl = $conn->newTable($tblTypeBonus);
-$tbl->addColumn(TypeBonus::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+$tbl = $conn->newTable($tblTypeCalc);
+$tbl->addColumn(TypeCalc::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
-$tbl->addColumn(TypeBonus::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
+$tbl->addColumn(TypeCalc::ATTR_CODE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Code of the bonus type (pv, gv, tv, ...).');
-$tbl->addColumn(TypeBonus::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
+$tbl->addColumn(TypeCalc::ATTR_NOTE, Ddl::TYPE_TEXT, 255, array('nullable' => false),
     'Description of the bonus type (Personal Volume, ...).');
 $tbl->setComment('Types of the available bonuses.');
 $conn->createTable($tbl);
 /* UQs  */
-prxgt_install_create_index_unique($conn, $tblTypeBonus, array(TypeBonus::ATTR_CODE));
+prxgt_install_create_index_unique($conn, $tblTypeCalc, array(TypeCalc::ATTR_CODE));
 
 
 /** ******************
@@ -236,7 +236,7 @@ $conn->createTable($tbl);
 /* UQs  */
 prxgt_install_create_index_unique($conn, $tblPeriod, array(Period::ATTR_BONUS_ID, Period::ATTR_VALUE));
 /* FKs */
-prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_BONUS_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_BONUS_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_TYPE, $tblTypePeriod, TypePeriod::ATTR_ID);
 
 
@@ -389,7 +389,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
@@ -477,7 +477,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
@@ -550,7 +550,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_TYPE_ID, $tblTypeBonus, TypeBonus::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
@@ -625,16 +625,17 @@ $conn->insertArray(
  * Bonus Type data
  */
 $conn->insertArray(
-    $tblTypeBonus,
-    array(TypeBonus::ATTR_CODE, TypeBonus::ATTR_NOTE),
+    $tblTypeCalc,
+    array(TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE),
     array(
-        array(Config::BONUS_PERSONAL, 'Personl Volume bonus.'),
-        array(Config::BONUS_TEAM, 'Team volume bonus.'),
-        array(Config::BONUS_COURTESY, 'Courtesy bonus.'),
-        array(Config::BONUS_OVERRIDE, 'Override bonus.'),
-        array(Config::BONUS_INFINITY, 'Infinity bonus.'),
-        array(Config::BONUS_GROUP, 'Group bonus.'),
-        array(Config::BONUS_RETAIL, 'Retail bonus.')
+        array(Config::CALC_BONUS_PERSONAL, 'Personl Volume bonus.'),
+        array(Config::CALC_BONUS_TEAM, 'Team volume bonus.'),
+        array(Config::CALC_BONUS_COURTESY, 'Courtesy bonus.'),
+        array(Config::CALC_BONUS_OVERRIDE, 'Override bonus.'),
+        array(Config::CALC_BONUS_INFINITY, 'Infinity bonus.'),
+        array(Config::CALC_BONUS_GROUP, 'Group bonus.'),
+        array(Config::CALC_BONUS_RETAIL, 'Retail bonus.'),
+        array(Config::CALC_PV_WRITE_OUT, 'PV write out calculation.')
     )
 );
 
@@ -649,6 +650,7 @@ $conn->insertArray(
         array(Config::OPER_TRANS_EXT, 'Transfer between internal and external customer accounts.'),
         array(Config::OPER_PV_INT, 'PV transfer between customers.'),
         array(Config::OPER_PV_JUMP, 'PV transfer for the same customer from one not closed period to other period in the future.'),
+        array(Config::OPER_PV_WRITE_OUT, 'PV write out from customer accounts in the end of the PV bonus periods.'),
         array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
         array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
         array(Config::OPER_BONUS_PV, 'Bonus for PV.')

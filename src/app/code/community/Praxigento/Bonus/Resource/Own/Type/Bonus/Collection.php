@@ -8,7 +8,7 @@ use Praxigento_Bonus_Config as Config;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Resource_Own_Type_Bonus_Collection
+class Praxigento_Bonus_Resource_Own_Type_Calc_Collection
     extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
     /**
@@ -16,6 +16,6 @@ class Praxigento_Bonus_Resource_Own_Type_Bonus_Collection
      */
     protected function _construct()
     {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_BONUS);
+        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_CALC);
     }
 }

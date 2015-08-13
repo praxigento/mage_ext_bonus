@@ -78,6 +78,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                 /* add fake data to bonus module */
                 $this->_emulateOrderOperations();
                 $this->_emulatePvTransferOperations();
+                $this->_emulatePvPeriodsWriteOff();
             }
             if ($bonusPv) {
                 $this->_calcBonusPv();
@@ -89,34 +90,52 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 
     }
 
+    /**
+     * We should write off PV for every period.
+     */
+    private function _emulatePvPeriodsWriteOff()
+    {
+        /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOut */
+        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPvWriteOut');
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
+        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut */
+        $resp = $call->getPeriodForPvWriteOut($req);
+        if ($resp->isSucceed()) {
+            1 + 1;
+        }
+
+    }
+
     private function _calcBonusPv()
     {
         /** @var  $helper Praxigento_Bonus_Helper_Data */
-        $helper = Mage::helper('prxgt_bonus_helper');
+        $helper = Config::helper();
         $periodCode = $helper->cfgPersonalBonusPeriod();
         $typePeriod = $this->_getTypePeriod($periodCode);
-        $typeBonus = $this->_getTypeBonus(Praxigento_Bonus_Config::BONUS_PERSONAL);
-        $typeOperPvInt = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_PV_INT);
-        $typeOperPvOrder = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
+        $typeCalc = $this->_getTypeCalc(Config::CALC_BONUS_PERSONAL);
+        $typeOperPvInt = $this->_getTypeOperation(Config::OPER_PV_INT);
+        $typeOperPvOrder = $this->_getTypeOperation(Config::OPER_ORDER_PV);
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = $typeBonus->getId();
+        $req->bonusTypeId = $typeCalc->getId();
         $req->operationTypeIds = $operIds;
         $req->periodCode = $periodCode;
-        $req->periodTypeId = $typeBonus->getId();
-        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
+        $req->periodTypeId = $typeCalc->getId();
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
+        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $call->getPeriodForPersonalBonus($req);
         if ($resp->isSucceed()) {
             /** @var  $balance Praxigento_Bonus_Model_Own_Period */
             $period = Mage::getModel('prxgt_bonus_model/period');
             if ($resp->isNewPeriod()) {
                 /* insert new period into DB */
-                $period->setType($typeBonus->getId());
-                $period->setBonusId($typeBonus->getId());
+                $period->setType($typeCalc->getId());
+                $period->setBonusId($typeCalc->getId());
                 $period->setValue($resp->getPeriodValue());
                 $period->setState(Config::STATE_PERIOD_PROCESSING);
                 $period->save();
@@ -126,8 +145,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                 $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus.");
             }
             /* select all operation for period */
-            $opers = $this->_getOperationsForPersonalBonus($operIds);
-
+            $opers = $this->_getOperationsForPersonalBonus($operIds, $period->getValue(), $periodCode);
+            1 + 1;
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
                 $this->_log->warn("There are no periods/operations to calculate personal bonus.");
@@ -137,7 +156,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         }
     }
 
-    private function _getOperationsForPersonalBonus($operIds = array(), $period, $periodType)
+    private function _getOperationsForPersonalBonus($operIds = array(), $period, $periodCode)
     {
         /**
          *
@@ -169,10 +188,12 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             '*'
         );
         $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $collection->addFieldToFilter($fldDate, array('gteq' => '2015-06-01 00:00:00'));
-        $collection->addFieldToFilter($fldDate, array('lteq' => '2015-06-01 23:59:59'));
+        $from = Config::helperPeriod()->calcPeriodFromTs($period, $periodCode);
+        $to = Config::helperPeriod()->calcPeriodToTs($period, $periodCode);
+        $collection->addFieldToFilter($fldDate, array('gteq' => $from));
+        $collection->addFieldToFilter($fldDate, array('lteq' => $to));
         $sql = $collection->getSelectSql(true);
-        1 + 1;
+        return $collection;
     }
 
     private function _createCatalogCategories()
@@ -470,7 +491,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
      */
     private function _populateLogOrder()
     {
-        $bonus = $this->_getTypeBonus(Praxigento_Bonus_Config::BONUS_PERSONAL);
+        $bonus = $this->_getTypeCalc(Config::CALC_BONUS_PERSONAL);
         $bonusId = $bonus->getId();
         /** @var  $helper Nmmlm_Core_Helper_Data */
         $helper = Mage::helper('nmmlm_core_helper');
@@ -512,14 +533,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 
     /**
      * @param $code
-     * @return Praxigento_Bonus_Model_Own_Type_Bonus
+     * @return Praxigento_Bonus_Model_Own_Type_Calc
      */
-    private function _getTypeBonus($code)
+    private function _getTypeCalc($code)
     {
         if (is_null($this->_cacheBonusTypes)) {
             $allTypes = Mage::getModel('prxgt_bonus_model/type_bonus')->getCollection();
             $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Type_Bonus */
+            /** @var  $one Praxigento_Bonus_Model_Own_Type_Calc */
             foreach ($allTypes as $one) {
                 $types[$one->getCode()] = $one;
             }

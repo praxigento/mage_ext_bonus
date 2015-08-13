@@ -110,9 +110,9 @@
                     <type_asset>
                         <table>prxgt_bonus_type_asset</table>
                     </type_asset>
-                    <type_bonus>
-                        <table>prxgt_bonus_type_bonus</table>
-                    </type_bonus>
+                    <type_calc>
+                        <table>prxgt_bonus_type_calc</table>
+                    </type_calc>
                     <type_oper>
                         <table>prxgt_bonus_type_oper</table>
                     </type_oper>

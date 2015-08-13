@@ -22,17 +22,19 @@ class Praxigento_Bonus_Config
     const ASSET_INT = 'INT'; // Retail bonus on hold (before transfer to customer internal or external account)
     const ASSET_PV = 'PV'; // internal money account (base currency)
     const ASSET_RETAIL = 'RETAIL'; // external money account (base currency)
+
     /**
-     * Available bonuses codes.
+     * Available calculations codes.
      */
 
-    const BONUS_COURTESY = 'cb';
-    const BONUS_GROUP = 'gv';
-    const BONUS_INFINITY = 'ib';
-    const BONUS_OVERRIDE = 'ob';
-    const BONUS_PERSONAL = 'pv';
-    const BONUS_RETAIL = 'retail';
-    const BONUS_TEAM = 'tv';
+    const CALC_BONUS_COURTESY = 'cb_bonus';
+    const CALC_BONUS_GROUP = 'gv_bonus';
+    const CALC_BONUS_INFINITY = 'ib_bonus';
+    const CALC_BONUS_OVERRIDE = 'ob_bonus';
+    const CALC_BONUS_PERSONAL = 'pv_bonus';
+    const CALC_BONUS_RETAIL = 'retail_bonus';
+    const CALC_BONUS_TEAM = 'tv_bonus';
+    const CALC_PV_WRITE_OUT = 'pv_write_out';
 
     /**
      * 'config.xml' related constants.
@@ -64,7 +66,7 @@ class Praxigento_Bonus_Config
     const ENTITY_SNAP_DOWNLINE = 'snap_downline';
     const ENTITY_TRANSACTION = 'transaction';
     const ENTITY_TYPE_ASSET = 'type_asset';
-    const ENTITY_TYPE_BONUS = 'type_bonus';
+    const ENTITY_TYPE_CALC = 'type_calc';
     const ENTITY_TYPE_OPER = 'type_oper';
     const ENTITY_TYPE_PERIOD = 'type_period';
 
@@ -83,6 +85,7 @@ class Praxigento_Bonus_Config
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
     const OPER_PV_INT = 'PV_INT';
     const OPER_PV_JUMP = 'PV_JUMP';
+    const OPER_PV_WRITE_OUT = 'PV_WRITE_OUT';
     const OPER_TRANS_EXT = 'TRANS_EXT';
     const OPER_TRANS_INT = 'TRANS_INT';
 

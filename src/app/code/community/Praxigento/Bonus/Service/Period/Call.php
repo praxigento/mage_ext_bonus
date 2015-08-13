@@ -8,7 +8,9 @@ use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusRequest;
+use Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOut as GetPeriodForPvWriteOutRequest;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusResponse;
+use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut as GetPeriodForPvWriteOutResponse;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
@@ -21,7 +23,7 @@ class Praxigento_Bonus_Service_Period_Call
      *
      * @return Praxigento_Bonus_Resource_Own_Period_Collection
      */
-    public function getPeriodCollection()
+    public function initPeriodCollection()
     {
         $result = Mage::getModel('prxgt_bonus_model/period')->getCollection();
         return $result;
@@ -32,13 +34,26 @@ class Praxigento_Bonus_Service_Period_Call
      *
      * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
      */
-    public function getTransactionCollection()
+    public function initTransactionCollection()
     {
         $result = Mage::getModel('prxgt_bonus_model/transaction')->getCollection();
         return $result;
     }
 
     /**
+     * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOut $req
+     * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut
+     */
+    public function getPeriodForPvWriteOut(GetPeriodForPvWriteOutRequest $req)
+    {
+        /** @var  $result GetPeriodForPvWriteOutResponse */
+        $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPvWriteOut');
+        return $result;
+    }
+
+    /**
+     * Get period for PV bonus calculation.
+     *
      * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus $req
      * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus
      */
@@ -52,7 +67,7 @@ class Praxigento_Bonus_Service_Period_Call
         $periodCode = $req->periodCode;
         $operTypeIds = $req->operationTypeIds;
         /* get period in 'processing' state */
-        $periods = $this->getPeriodCollection();
+        $periods = $this->initPeriodCollection();
         $periods->addFieldToFilter(Period::ATTR_BONUS_ID, $bonusTypeId);
         $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
         $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
@@ -69,7 +84,7 @@ class Praxigento_Bonus_Service_Period_Call
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
         } else {
             /* get the last period in 'complete' status */
-            $periods = $this->getPeriodCollection();
+            $periods = $this->initPeriodCollection();
             $periods->addFieldToFilter(Period::ATTR_TYPE, $bonusTypeId);
             $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
             $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_COMPLETE);
@@ -84,7 +99,7 @@ class Praxigento_Bonus_Service_Period_Call
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
-                $collection = $this->getTransactionCollection();
+                $collection = $this->initTransactionCollection();
                 $asOper = 'o';
                 $table = array($asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
                 $cond = 'main_table.' . Transaction::ATTR_OPERATION_ID . '='

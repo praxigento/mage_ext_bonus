@@ -21,8 +21,8 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
         $this->assertNotNull($call);
-        $this->assertTrue($call->getPeriodCollection() instanceof Praxigento_Bonus_Resource_Own_Period_Collection);
-        $this->assertTrue($call->getTransactionCollection() instanceof Praxigento_Bonus_Resource_Own_Transaction_Collection);
+        $this->assertTrue($call->initPeriodCollection() instanceof Praxigento_Bonus_Resource_Own_Period_Collection);
+        $this->assertTrue($call->initTransactionCollection() instanceof Praxigento_Bonus_Resource_Own_Transaction_Collection);
     }
 
     /**
@@ -42,9 +42,9 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /**
          * Compose service.
          */
-        $mockCall = $this->mockCall(array('getPeriodCollection', 'getTransactionCollection'));
-        $mockCall->expects($this->any())->method('getPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('getTransactionCollection')->will($this->returnValue($mockTransactionColl));
+        $mockCall = $this->mockCall(array('initPeriodCollection', 'initTransactionCollection'));
+        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
+        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
         /**
          * Prepare request and perform call.
          */
@@ -136,9 +136,9 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /**
          * Compose service.
          */
-        $mockCall = $this->mockCall(array('getPeriodCollection', 'getTransactionCollection'));
-        $mockCall->expects($this->any())->method('getPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('getTransactionCollection')->will($this->returnValue($mockTransactionColl));
+        $mockCall = $this->mockCall(array('initPeriodCollection', 'initTransactionCollection'));
+        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
+        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
         /**
          * Prepare request and perform call.
          */
@@ -180,8 +180,8 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /**
          * Compose service.
          */
-        $mockCall = $this->mockCall(array('getPeriodCollection'));
-        $mockCall->expects($this->any())->method('getPeriodCollection')->will($this->returnValue($mockPeriodColl));
+        $mockCall = $this->mockCall(array('initPeriodCollection'));
+        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
         /**
          * Prepare request and perform call.
          */
@@ -223,9 +223,9 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /**
          * Compose service.
          */
-        $mockCall = $this->mockCall(array('getPeriodCollection'));
-        $mockCall->expects($this->at(0))->method('getPeriodCollection')->will($this->returnValue($mockPeriodCollP));
-        $mockCall->expects($this->at(1))->method('getPeriodCollection')->will($this->returnValue($mockPeriodCollC));
+        $mockCall = $this->mockCall(array('initPeriodCollection'));
+        $mockCall->expects($this->at(0))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollP));
+        $mockCall->expects($this->at(1))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollC));
         /**
          * Prepare request and perform call.
          */
