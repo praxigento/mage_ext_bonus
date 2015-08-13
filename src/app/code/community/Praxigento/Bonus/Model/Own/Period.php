@@ -10,8 +10,8 @@ use Praxigento_Bonus_Config as Config;
  *
  * User: Alex Gusev <alex@flancer64.com>
  *
- * @method int getBonusId()
- * @method null setBonusId(int $val)
+ * @method int getCalcTypeId()
+ * @method null setCalcTypeId(int $val)
  * @method string getState()
  * @method null setState(string $val)
  * @method string getType()
@@ -22,7 +22,7 @@ use Praxigento_Bonus_Config as Config;
 class Praxigento_Bonus_Model_Own_Period
     extends Mage_Core_Model_Abstract
 {
-    const ATTR_BONUS_ID = 'bonus_id';
+    const ATTR_CALC_TYPE_ID = 'calc_type_id';
     const ATTR_ID = 'id';
     const ATTR_STATE = 'state';
     const ATTR_TYPE = 'type';

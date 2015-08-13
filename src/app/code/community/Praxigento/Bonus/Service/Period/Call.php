@@ -68,7 +68,7 @@ class Praxigento_Bonus_Service_Period_Call
         $operTypeIds = $req->operationTypeIds;
         /* get period in 'processing' state */
         $periods = $this->initPeriodCollection();
-        $periods->addFieldToFilter(Period::ATTR_BONUS_ID, $bonusTypeId);
+        $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $bonusTypeId);
         $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
         $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
         // WHERE (bonus_id = '1') AND (type = '3') AND (state = 'processing')

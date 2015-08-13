@@ -223,7 +223,7 @@ prxgt_install_create_foreign_key($conn, $tblBalance, Balance::ATTR_ACCOUNT_ID, $
 $tbl = $conn->newTable($tblPeriod);
 $tbl->addColumn(Period::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Instance ID.');
-$tbl->addColumn(Period::ATTR_BONUS_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+$tbl->addColumn(Period::ATTR_CALC_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Bonus type related to this period.');
 $tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Period type.');
@@ -234,9 +234,9 @@ $tbl->addColumn(Period::ATTR_STATE, Ddl::TYPE_TEXT, '255', array('nullable' => f
 $tbl->setComment('Bonus calculation periods.');
 $conn->createTable($tbl);
 /* UQs  */
-prxgt_install_create_index_unique($conn, $tblPeriod, array(Period::ATTR_BONUS_ID, Period::ATTR_VALUE));
+prxgt_install_create_index_unique($conn, $tblPeriod, array(Period::ATTR_CALC_TYPE_ID, Period::ATTR_VALUE));
 /* FKs */
-prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_BONUS_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 prxgt_install_create_foreign_key($conn, $tblPeriod, Period::ATTR_TYPE, $tblTypePeriod, TypePeriod::ATTR_ID);
 
 
@@ -364,7 +364,7 @@ $tbl->addColumn(LogBonus::ATTR_DATE_CHANGED, Ddl::TYPE_TIMESTAMP, null, array('n
     'Action performed time.');
 $tbl->addColumn(LogBonus::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Action related customer.');
-$tbl->addColumn(LogBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+$tbl->addColumn(LogBonus::ATTR_CALC_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Action related bonus type.');
 $tbl->addColumn(LogBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
@@ -389,7 +389,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
@@ -452,7 +452,7 @@ $tbl->addColumn(LogOrder::ATTR_DATE_CHANGED, Ddl::TYPE_TIMESTAMP, null, array('n
     'Action performed time.');
 $tbl->addColumn(LogOrder::ATTR_ORDER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Action related sales order.');
-$tbl->addColumn(LogOrder::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+$tbl->addColumn(LogOrder::ATTR_CALC_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Action related bonus type.');
 $tbl->addColumn(LogOrder::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
     'Change value (positive or negative).');
@@ -477,7 +477,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
@@ -523,7 +523,7 @@ $tbl->addColumn(SnapBonus::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
 $tbl->addColumn(SnapBonus::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Related customer.');
-$tbl->addColumn(SnapBonus::ATTR_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+$tbl->addColumn(SnapBonus::ATTR_CALC_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
     'Bonus type.');
 $tbl->addColumn(SnapBonus::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
@@ -550,7 +550,7 @@ $conn->addForeignKey(
 );
 
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
 
 /** ******************
