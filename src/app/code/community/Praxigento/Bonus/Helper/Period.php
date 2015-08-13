@@ -118,27 +118,37 @@ class Praxigento_Bonus_Helper_Period
         return $result;
     }
 
-    public function calcPeriodFromTs($period, $type)
+    /**
+     * @param $period 20150601 | 201506 | 2015
+     * @param $periodCode day | week | month | year
+     * @return string 2015-08-12 12:23:34
+     */
+    public function calcPeriodFromTs($period, $periodCode)
     {
         if (
             !isset(self::$_cachePeriodBounds[$period]) &&
-            !isset(self::$_cachePeriodBounds[$period][$type])
+            !isset(self::$_cachePeriodBounds[$period][$periodCode])
         ) {
-            $this->_calcPeriodBounds($period, $type);
+            $this->_calcPeriodBounds($period, $periodCode);
         }
-        $result = self::$_cachePeriodBounds[$period][$type]['from'];
+        $result = self::$_cachePeriodBounds[$period][$periodCode]['from'];
         return $result;
     }
 
-    public function calcPeriodToTs($period, $type)
+    /**
+     * @param $period 20150601 | 201506 | 2015
+     * @param $periodCode day | week | month | year
+     * @return string 2015-08-12 12:23:34
+     */
+    public function calcPeriodToTs($period, $periodCode)
     {
         if (
             !isset(self::$_cachePeriodBounds[$period]) &&
-            !isset(self::$_cachePeriodBounds[$period][$type])
+            !isset(self::$_cachePeriodBounds[$period][$periodCode])
         ) {
-            $this->_calcPeriodBounds($period, $type);
+            $this->_calcPeriodBounds($period, $periodCode);
         }
-        $result = self::$_cachePeriodBounds[$period][$type]['to'];
+        $result = self::$_cachePeriodBounds[$period][$periodCode]['to'];
         return $result;
     }
 
@@ -213,15 +223,15 @@ class Praxigento_Bonus_Helper_Period
     /**
      * Calculate period's from/to bounds (month 201508 = "2015-08-01 02:00:00 / 2015-09-01 01:59:59") and cache it.
      *
-     * @param $period
-     * @param $type
+     * @param $period 20150601 | 201506 | 2015
+     * @param $periodCode day | week | month | year
      */
-    private function _calcPeriodBounds($period, $type)
+    private function _calcPeriodBounds($period, $periodCode)
     {
         $from = null;
         $to = null;
 
-        switch ($type) {
+        switch ($periodCode) {
             case Config::PERIOD_DAY:
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('midnight', $dt->getTimestamp());
@@ -263,7 +273,7 @@ class Praxigento_Bonus_Helper_Period
                 $to = date(Config::FROMAT_DATETIME_SQL, $ts);
                 break;
         }
-        self::$_cachePeriodBounds[$period][$type]['from'] = $from;
-        self::$_cachePeriodBounds[$period][$type]['to'] = $to;
+        self::$_cachePeriodBounds[$period][$periodCode]['from'] = $from;
+        self::$_cachePeriodBounds[$period][$periodCode]['to'] = $to;
     }
 }

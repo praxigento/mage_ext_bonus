@@ -648,6 +648,7 @@ $conn->insertArray(
         array(Config::OPER_TRANS_INT, 'Internal transfer between customers.'),
         array(Config::OPER_TRANS_EXT, 'Transfer between internal and external customer accounts.'),
         array(Config::OPER_PV_INT, 'PV transfer between customers.'),
+        array(Config::OPER_PV_JUMP, 'PV transfer for the same customer from one not closed period to other period in the future.'),
         array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
         array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
         array(Config::OPER_BONUS_PV, 'Bonus for PV.')

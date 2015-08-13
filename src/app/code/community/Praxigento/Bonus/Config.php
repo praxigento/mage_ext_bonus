@@ -82,6 +82,7 @@ class Praxigento_Bonus_Config
     const OPER_ORDER_PV = 'ORDR_PV';
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
     const OPER_PV_INT = 'PV_INT';
+    const OPER_PV_JUMP = 'PV_JUMP';
     const OPER_TRANS_EXT = 'TRANS_EXT';
     const OPER_TRANS_INT = 'TRANS_INT';
 
@@ -100,6 +101,7 @@ class Praxigento_Bonus_Config
      */
 
     const STATE_PERIOD_COMPLETE = 'complete';
+    const STATE_PERIOD_PLACED = 'placed';
     const STATE_PERIOD_PROCESSING = 'processing';
     const STATE_PERIOD_REVERTED = 'reverted';
 
