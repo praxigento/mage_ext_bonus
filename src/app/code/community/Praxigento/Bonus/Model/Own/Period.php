@@ -12,8 +12,6 @@ use Praxigento_Bonus_Config as Config;
  *
  * @method int getCalcTypeId()
  * @method null setCalcTypeId(int $val)
- * @method string getState()
- * @method null setState(string $val)
  * @method string getType()
  * @method null setType(string $val)
  * @method string getValue()
@@ -24,7 +22,6 @@ class Praxigento_Bonus_Model_Own_Period
 {
     const ATTR_CALC_TYPE_ID = 'calc_type_id';
     const ATTR_ID = 'id';
-    const ATTR_STATE = 'state';
     const ATTR_TYPE = 'type';
     const ATTR_VALUE = 'value';
 

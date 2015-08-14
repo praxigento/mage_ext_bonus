@@ -9,7 +9,7 @@ use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Cfg_Personal as CfgPersonal;
 use Praxigento_Bonus_Model_Own_Details_Retail as DetailsRetail;
 use Praxigento_Bonus_Model_Own_Log_Account as LogAccount;
-use Praxigento_Bonus_Model_Own_Log_Bonus as LogBonus;
+use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
 use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
 use Praxigento_Bonus_Model_Own_Log_Order as LogOrder;
 use Praxigento_Bonus_Model_Own_Log_Payout as LogPayout;
@@ -48,7 +48,7 @@ $tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
 $tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
 $tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
-$tblLogBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_BONUS);
+$tblLogCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
 $tblLogDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
 $tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
 $tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
@@ -229,8 +229,6 @@ $tbl->addColumn(Period::ATTR_TYPE, Ddl::TYPE_INTEGER, null, array('nullable' => 
     'Period type.');
 $tbl->addColumn(Period::ATTR_VALUE, Ddl::TYPE_TEXT, '8', array('nullable' => false),
     'Period value in format [YYYY|YYYYMM|YYYYMMDD]');
-$tbl->addColumn(Period::ATTR_STATE, Ddl::TYPE_TEXT, '255', array('nullable' => false, 'default' => Config::STATE_PERIOD_PROCESSING),
-    'Calculation state (processing, complete, reverted)');
 $tbl->setComment('Bonus calculation periods.');
 $conn->createTable($tbl);
 /* UQs  */
@@ -355,41 +353,22 @@ $conn->addForeignKey(
 
 
 /** ******************
- * Log Bonus
+ * Log Calculations
  ****************** */
-$tbl = $conn->newTable($tblLogBonus);
-$tbl->addColumn(LogBonus::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
+$tbl = $conn->newTable($tblLogCalc);
+$tbl->addColumn(LogCalc::ATTR_ID, Ddl::TYPE_INTEGER, null, $optId,
     'Entity ID.');
-$tbl->addColumn(LogBonus::ATTR_DATE_CHANGED, Ddl::TYPE_TIMESTAMP, null, array('nullable' => false, 'default' => $currentTs),
+$tbl->addColumn(LogCalc::ATTR_DATE_PERFORMED, Ddl::TYPE_TIMESTAMP, null, array('nullable' => false, 'default' => $currentTs),
     'Action performed time.');
-$tbl->addColumn(LogBonus::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Action related customer.');
-$tbl->addColumn(LogBonus::ATTR_CALC_TYPE_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
-    'Action related bonus type.');
-$tbl->addColumn(LogBonus::ATTR_VALUE, Ddl::TYPE_DECIMAL, '12,4', array('nullable' => false),
-    'Change value (positive or negative).');
-$tbl->setComment('Log for bonus transfers.');
+$tbl->addColumn(LogCalc::ATTR_PERIOD_ID, Ddl::TYPE_INTEGER, null, array('nullable' => false, 'unsigned' => true),
+    'Calculation related period.');
+$tbl->addColumn(LogCalc::ATTR_STATE, Ddl::TYPE_TEXT, 255, array('nullable' => false, 'default' => Config::STATE_PERIOD_PROCESSING),
+    'Calculation state (processing | complete | reverted).');
+$tbl->setComment('Log for calculations.');
 $conn->createTable($tbl);
 
-/* FKs */
-$fkName = $conn->getForeignKeyName(
-    $tblLogBonus,
-    LogBonus::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogBonus,
-    LogBonus::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
 /* Bonus type FK */
-prxgt_install_create_foreign_key($conn, $tblLogBonus, LogBonus::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
+prxgt_install_create_foreign_key($conn, $tblLogCalc, LogCalc::ATTR_PERIOD_ID, $tblPeriod, Period::ATTR_ID);
 
 
 /** ******************

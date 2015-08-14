@@ -78,9 +78,9 @@
                     <log_account>
                         <table>prxgt_bonus_log_account</table>
                     </log_account>
-                    <log_bonus>
-                        <table>prxgt_bonus_log_bonus</table>
-                    </log_bonus>
+                    <log_calc>
+                        <table>prxgt_bonus_log_calc</table>
+                    </log_calc>
                     <log_downline>
                         <table>prxgt_bonus_log_downline</table>
                     </log_downline>

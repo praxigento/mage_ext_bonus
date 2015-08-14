@@ -70,7 +70,8 @@ class Praxigento_Bonus_Service_Period_Call
         $periods = $this->initPeriodCollection();
         $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $bonusTypeId);
         $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
-        $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
+        // TODO add state filter
+//        $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
         $sql = $periods->getSelectSql(true);
         // WHERE (bonus_id = '1') AND (type = '3') AND (state = 'processing')
         if ($periods->getSize()) {
@@ -88,7 +89,8 @@ class Praxigento_Bonus_Service_Period_Call
             $periods = $this->initPeriodCollection();
             $periods->addFieldToFilter(Period::ATTR_TYPE, $bonusTypeId);
             $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
-            $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_COMPLETE);
+            // TODO: add filter by state
+//            $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_COMPLETE);
             $periods->addOrder(Period::ATTR_ID, Varien_Data_Collection::SORT_ORDER_ASC);
             $sql = (string)$periods->getSelectSql();
             if ($periods->getSize()) {

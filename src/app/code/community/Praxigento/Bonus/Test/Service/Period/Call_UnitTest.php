@@ -50,10 +50,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = 1;
-        $req->operationTypeIds = array(1);
-        $req->periodCode = Config::PERIOD_DAY;
-        $req->periodTypeId = 3;
+        $req->setCalcTypeId(1);
+        $req->setOperationTypeIds(array(1));
+        $req->setPeriodCode(Config::PERIOD_DAY);
+        $req->setPeriodTypeId(3);
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $mockCall->getPeriodForPersonalBonus($req);
         $this->assertFalse($resp->isSucceed());
@@ -144,10 +144,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = 1;
-        $req->operationTypeIds = array(1);
-        $req->periodCode = Config::PERIOD_DAY;
-        $req->periodTypeId = 3;
+        $req->setCalcTypeId(1);
+        $req->setOperationTypeIds(array(1));
+        $req->setPeriodCode(Config::PERIOD_DAY);
+        $req->setPeriodTypeId(3);
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $mockCall->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
@@ -187,10 +187,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = 1;
-        $req->operationTypeIds = array(1);
-        $req->periodCode = Config::PERIOD_DAY;
-        $req->periodTypeId = 3;
+        $req->setCalcTypeId(1);
+        $req->setOperationTypeIds(array(1));
+        $req->setPeriodCode(Config::PERIOD_DAY);
+        $req->setPeriodTypeId(3);
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $mockCall->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
@@ -231,10 +231,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = 1;
-        $req->operationTypeIds = array(1);
-        $req->periodCode = Config::PERIOD_DAY;
-        $req->periodTypeId = 3;
+        $req->setCalcTypeId(1);
+        $req->setOperationTypeIds(array(1));
+        $req->setPeriodCode(Config::PERIOD_DAY);
+        $req->setPeriodTypeId(3);
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $mockCall->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
