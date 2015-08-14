@@ -6,6 +6,7 @@
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Operation as Operation;
+use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonus;
 
@@ -113,25 +114,57 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $req->setPeriodTypeId($typePeriod->getId());
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
-        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $resp = $call->getPeriodForPersonalBonus($req);
+        /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
+        $resp = $call->getPeriodForPvWriteOff($req);
         if ($resp->isSucceed()) {
-            /** @var  $balance Praxigento_Bonus_Model_Own_Period */
+            $value = $resp->getPeriodValue();
+            $this->_log->debug("Period '$value' should be used for calculation.");
+            /** @var  $period Praxigento_Bonus_Model_Own_Period */
             $period = Mage::getModel('prxgt_bonus_model/period');
+            /** @var  $logCalc Praxigento_Bonus_Model_Own_Log_Calc */
+            $logCalc = Mage::getModel('prxgt_bonus_model/log_calc');
             if ($resp->isNewPeriod()) {
-                /* insert new period into DB */
-                $period->setType($typePeriod->getId());
-                $period->setCalcTypeId($typeCalc->getId());
-                $period->setValue($resp->getPeriodValue());
-                $period->setState(Config::STATE_PERIOD_PROCESSING);
-                $period->save();
-                $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is created to process personal bonus.");
+                $this->_log->debug("New calculation for period '$value' should be registered.");
+                /* insert new calculation period into DB */
+                $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
+                $connection->beginTransaction();
+                try {
+                    /* look up for existing period */
+                    $periods = Config::collectionPeriod();
+                    $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $typeCalc->getId());
+                    $periods->addFieldToFilter(Period::ATTR_VALUE, $resp->getPeriodValue());
+                    if ($periods->getSize() == 0) {
+                        /* add new period */
+                        $period->setType($typePeriod->getId());
+                        $period->setCalcTypeId($typeCalc->getId());
+                        $period->setValue($resp->getPeriodValue());
+                        $period->save();
+                    } else {
+                        $this->_log->debug("Period '$value' already exists.");
+                        $period = $periods->getFirstItem();
+                    }
+                    /* add item to calculation log */
+                    $logCalc->setPeriodId($period->getId());
+                    $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
+                    $logCalc->save();
+                    $connection->commit();
+                    $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is created to process personal bonus.");
+                } catch (Exception $e) {
+                    $this->_log->error(
+                        "Cannot register new calculation period ({$resp->getPeriodValue()}). Error: "
+                        . $e->getMessage()
+                    );
+                    $connection->rollBack();
+
+                }
+
             } else {
                 $period->load($resp->getExistingPeriodId());
                 $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus.");
             }
             /* select all operation for period */
-            $opers = $this->_getOperationsForPersonalBonus($operIds, $period->getValue(), $periodCode);
+            $opers = $this->_getOperationsForPersonalBonus($operIds, $value, $periodCode);
+            /* for all operations we should create */
             1 + 1;
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
@@ -688,8 +721,6 @@ USAGE;
     {
         $opType = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
         $assetType = $this->_getTypeAsset(Praxigento_Bonus_Config::ASSET_PV);
-        /** @var  $helper Nmmlm_Core_Helper_Data */
-        $helper = Mage::helper('nmmlm_core_helper');
         $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
         $allOrders = Mage::getModel('sales/order')->getCollection();
         foreach ($allOrders as $one) {

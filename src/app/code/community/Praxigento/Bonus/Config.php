@@ -27,14 +27,14 @@ class Praxigento_Bonus_Config
      * Available calculations codes.
      */
 
-    const CALC_BONUS_COURTESY = 'cb_bonus';
-    const CALC_BONUS_GROUP = 'gv_bonus';
-    const CALC_BONUS_INFINITY = 'ib_bonus';
-    const CALC_BONUS_OVERRIDE = 'ob_bonus';
-    const CALC_BONUS_PERSONAL = 'pv_bonus';
-    const CALC_BONUS_RETAIL = 'retail_bonus';
-    const CALC_BONUS_TEAM = 'tv_bonus';
-    const CALC_PV_WRITE_OFF = 'pv_write_off';
+    const CALC_BONUS_COURTESY = 'BON_COURTESY';
+    const CALC_BONUS_GROUP = 'BON_GROUP';
+    const CALC_BONUS_INFINITY = 'BON_INFINITY';
+    const CALC_BONUS_OVERRIDE = 'BON_OVERRIDE';
+    const CALC_BONUS_PERSONAL = 'BON_PERSONAL';
+    const CALC_BONUS_RETAIL = 'BON_RETAIL';
+    const CALC_BONUS_TEAM = 'BON_TEAM';
+    const CALC_PV_WRITE_OFF = 'PV_WRITE_OFF';
 
     /**
      * 'config.xml' related constants.
@@ -83,21 +83,22 @@ class Praxigento_Bonus_Config
     const OPER_BONUS_PV = 'BON_PV';
     const OPER_ORDER_PV = 'ORDR_PV';
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
+    const OPER_PV_FWRD = 'PV_FWRD';
     const OPER_PV_INT = 'PV_INT';
-    const OPER_PV_JUMP = 'PV_JUMP';
     const OPER_PV_WRITE_OFF = 'PV_WRITE_OFF';
-    const OPER_TRANS_EXT = 'TRANS_EXT';
+    const OPER_TRANS_EXT_IN = 'TRANS_EXT_IN';
+    const OPER_TRANS_EXT_OUT = 'TRANS_EXT_OUT';
     const OPER_TRANS_INT = 'TRANS_INT';
 
     /**
      * Available bonus calculation periods.
      */
 
-    const PERIOD_DAY = 'day';
+    const PERIOD_DAY = 'DAY';
     const PERIOD_KEY_NOW = 'NOW';
-    const PERIOD_MONTH = 'month';
-    const PERIOD_WEEK = 'week';
-    const PERIOD_YEAR = 'year';
+    const PERIOD_MONTH = 'MONTH';
+    const PERIOD_WEEK = 'WEEK';
+    const PERIOD_YEAR = 'YEAR';
 
     /**
      * Available states for bonus calculation periods.
@@ -123,6 +124,24 @@ class Praxigento_Bonus_Config
     public static function helperPeriod()
     {
         $result = Mage::helper(self::CFG_HELPER_PERIOD);
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Period
+     */
+    public static function modelPeriod()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/period');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Period_Collection
+     */
+    public static function collectionPeriod()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/period')->getCollection();
         return $result;
     }
 }

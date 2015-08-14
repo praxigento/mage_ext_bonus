@@ -593,28 +593,10 @@ $conn->insertArray(
     $tblTypeAsset,
     array(TypeAsset::ATTR_CODE, TypeAsset::ATTR_NOTE),
     array(
-        array(Config::ASSET_EXT, 'External money account (base currency).'),
-        array(Config::ASSET_INT, 'Internal money account (base currency).'),
-        array(Config::ASSET_PV, 'PV account.'),
-        array(Config::ASSET_RETAIL, 'Retail bonus account (base currency).')
-    )
-);
-
-/**
- * Bonus Type data
- */
-$conn->insertArray(
-    $tblTypeCalc,
-    array(TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE),
-    array(
-        array(Config::CALC_BONUS_PERSONAL, 'Personl Volume bonus.'),
-        array(Config::CALC_BONUS_TEAM, 'Team volume bonus.'),
-        array(Config::CALC_BONUS_COURTESY, 'Courtesy bonus.'),
-        array(Config::CALC_BONUS_OVERRIDE, 'Override bonus.'),
-        array(Config::CALC_BONUS_INFINITY, 'Infinity bonus.'),
-        array(Config::CALC_BONUS_GROUP, 'Group bonus.'),
-        array(Config::CALC_BONUS_RETAIL, 'Retail bonus.'),
-        array(Config::CALC_PV_WRITE_OFF, 'PV write off calculation.')
+        array(Config::ASSET_EXT, 'External money (base currency).'),
+        array(Config::ASSET_INT, 'Internal money (base currency).'),
+        array(Config::ASSET_PV, 'PV (volume points).'),
+        array(Config::ASSET_RETAIL, 'Delayed retail bonus (base currency).')
     )
 );
 
@@ -625,19 +607,20 @@ $conn->insertArray(
     $tblTypeOper,
     array(TypeOper::ATTR_CODE, TypeOper::ATTR_NOTE),
     array(
-        array(Config::OPER_TRANS_INT, 'Internal transfer between customers.'),
-        array(Config::OPER_TRANS_EXT, 'Transfer between internal and external customer accounts.'),
+        array(Config::OPER_BONUS_PV, 'PV Bonus enrollment.'),
+        array(Config::OPER_ORDER_PV, 'PV asset from order.'),
+        array(Config::OPER_ORDER_RETAIL, 'Retail asset from order.'),
+        array(Config::OPER_PV_FWRD, 'PV transfer for the same customer from one not closed period to other period in the future.'),
         array(Config::OPER_PV_INT, 'PV transfer between customers.'),
-        array(Config::OPER_PV_JUMP, 'PV transfer for the same customer from one not closed period to other period in the future.'),
         array(Config::OPER_PV_WRITE_OFF, 'PV write off from customer accounts in the end of the PV bonus periods.'),
-        array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
-        array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
-        array(Config::OPER_BONUS_PV, 'Bonus for PV.')
+        array(Config::OPER_TRANS_EXT_IN, 'Incoming transfer from external account to internal account of the customer.'),
+        array(Config::OPER_TRANS_EXT_OUT, 'Outgoing transfer from internal account to external account of the customer.'),
+        array(Config::OPER_TRANS_INT, 'Internal money transfer between customers.')
     )
 );
 
 /**
- * Bonus Calculation Period Type data
+ * Calculation Period Type data
  */
 $conn->insertArray(
     $tblTypePeriod,
@@ -647,6 +630,24 @@ $conn->insertArray(
         array(Config::PERIOD_WEEK, 'Weekly calculation.'),
         array(Config::PERIOD_MONTH, 'Monthly calculation.'),
         array(Config::PERIOD_YEAR, 'Yearly calculation.'),
+    )
+);
+
+/**
+ * Calculation Types data
+ */
+$conn->insertArray(
+    $tblTypeCalc,
+    array(TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE),
+    array(
+        array(Config::CALC_BONUS_COURTESY, 'Courtesy bonus.'),
+        array(Config::CALC_BONUS_GROUP, 'Group bonus.'),
+        array(Config::CALC_BONUS_INFINITY, 'Infinity bonus.'),
+        array(Config::CALC_BONUS_OVERRIDE, 'Override bonus.'),
+        array(Config::CALC_BONUS_PERSONAL, 'Personal Volume bonus.'),
+        array(Config::CALC_BONUS_RETAIL, 'Retail bonus.'),
+        array(Config::CALC_BONUS_TEAM, 'Team volume bonus.'),
+        array(Config::CALC_PV_WRITE_OFF, 'PV write off calculation.')
     )
 );
 
