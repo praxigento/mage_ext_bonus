@@ -635,7 +635,7 @@ $conn->insertArray(
         array(Config::CALC_BONUS_INFINITY, 'Infinity bonus.'),
         array(Config::CALC_BONUS_GROUP, 'Group bonus.'),
         array(Config::CALC_BONUS_RETAIL, 'Retail bonus.'),
-        array(Config::CALC_PV_WRITE_OUT, 'PV write out calculation.')
+        array(Config::CALC_PV_WRITE_OFF, 'PV write off calculation.')
     )
 );
 
@@ -650,7 +650,7 @@ $conn->insertArray(
         array(Config::OPER_TRANS_EXT, 'Transfer between internal and external customer accounts.'),
         array(Config::OPER_PV_INT, 'PV transfer between customers.'),
         array(Config::OPER_PV_JUMP, 'PV transfer for the same customer from one not closed period to other period in the future.'),
-        array(Config::OPER_PV_WRITE_OUT, 'PV write out from customer accounts in the end of the PV bonus periods.'),
+        array(Config::OPER_PV_WRITE_OFF, 'PV write off from customer accounts in the end of the PV bonus periods.'),
         array(Config::OPER_ORDER_PV, 'PV bonus for order.'),
         array(Config::OPER_ORDER_RETAIL, 'Retail bonus for order.'),
         array(Config::OPER_BONUS_PV, 'Bonus for PV.')

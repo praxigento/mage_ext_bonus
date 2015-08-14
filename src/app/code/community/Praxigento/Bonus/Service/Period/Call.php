@@ -8,9 +8,9 @@ use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusRequest;
-use Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOut as GetPeriodForPvWriteOutRequest;
+use Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff as GetPeriodForPvWriteOffRequest;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusResponse;
-use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut as GetPeriodForPvWriteOutResponse;
+use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriodForPvWriteOffResponse;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
@@ -41,13 +41,13 @@ class Praxigento_Bonus_Service_Period_Call
     }
 
     /**
-     * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOut $req
-     * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut
+     * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff $req
+     * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
      */
-    public function getPeriodForPvWriteOut(GetPeriodForPvWriteOutRequest $req)
+    public function getPeriodForPvWriteOff(GetPeriodForPvWriteOffRequest $req)
     {
-        /** @var  $result GetPeriodForPvWriteOutResponse */
-        $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPvWriteOut');
+        /** @var  $result GetPeriodForPvWriteOffResponse */
+        $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPvWriteOff');
         return $result;
     }
 

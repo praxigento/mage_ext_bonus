@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOut
+class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
     extends Praxigento_Bonus_Service_Base_Response
 {
     /** There is no periods and there is no transactions to process */

@@ -34,7 +34,7 @@ class Praxigento_Bonus_Config
     const CALC_BONUS_PERSONAL = 'pv_bonus';
     const CALC_BONUS_RETAIL = 'retail_bonus';
     const CALC_BONUS_TEAM = 'tv_bonus';
-    const CALC_PV_WRITE_OUT = 'pv_write_out';
+    const CALC_PV_WRITE_OFF = 'pv_write_off';
 
     /**
      * 'config.xml' related constants.
@@ -85,7 +85,7 @@ class Praxigento_Bonus_Config
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
     const OPER_PV_INT = 'PV_INT';
     const OPER_PV_JUMP = 'PV_JUMP';
-    const OPER_PV_WRITE_OUT = 'PV_WRITE_OUT';
+    const OPER_PV_WRITE_OFF = 'PV_WRITE_OFF';
     const OPER_TRANS_EXT = 'TRANS_EXT';
     const OPER_TRANS_INT = 'TRANS_INT';
 
