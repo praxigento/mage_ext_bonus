@@ -81,7 +81,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             }
             if ($bonusPv) {
                 $this->_calcPvPeriodsWriteOff();
-                $this->_calcBonusPv();
+//                $this->_calcBonusPv();
             }
             echo 'Done.';
         } else {
@@ -99,18 +99,18 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $helper = Config::helper();
         $periodCode = $helper->cfgPersonalBonusPeriod();
         $typePeriod = $this->_getTypePeriod($periodCode);
-        $typeCalc = $this->_getTypeCalc(Config::CALC_PV_WRITE_OUT);
+        $typeCalc = $this->_getTypeCalc(Config::CALC_PV_WRITE_OFF);
         $typeOperPvInt = $this->_getTypeOperation(Config::OPER_PV_INT);
         $typeOperPvOrder = $this->_getTypeOperation(Config::OPER_ORDER_PV);
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
-        /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
-        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = $typeCalc->getId();
-        $req->operationTypeIds = $operIds;
-        $req->periodCode = $periodCode;
-        $req->periodTypeId = $typeCalc->getId();
+        /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
+        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPvWriteOff');
+        $req->setCalcTypeId($typeCalc->getId());
+        $req->setOperationTypeIds($operIds);
+        $req->setPeriodCode($periodCode);
+        $req->setPeriodTypeId($typePeriod->getId());
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
@@ -156,10 +156,10 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $result = null;
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
-        $req->bonusTypeId = $typeCalc->getId();
-        $req->operationTypeIds = $operIds;
-        $req->periodCode = $periodCode;
-        $req->periodTypeId = $typeCalc->getId();
+        $req->setBonusTypeId($typeCalc->getId());
+        $req->setOperationTypeIds($operIds);
+        $req->setPeriodCode($periodCode);
+        $req->setPeriodTypeId($typeCalc->getId());
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */

@@ -62,15 +62,16 @@ class Praxigento_Bonus_Service_Period_Call
         /** @var  $result GetPeriodForPersonalBonusResponse */
         $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPersonalBonus');
         /* shortcuts for request parameters */
-        $periodTypeId = $req->periodTypeId;
-        $bonusTypeId = $req->bonusTypeId;
-        $periodCode = $req->periodCode;
-        $operTypeIds = $req->operationTypeIds;
+        $periodTypeId = $req->getPeriodTypeId();
+        $bonusTypeId = $req->getCalcTypeId();
+        $periodCode = $req->getPeriodCode();
+        $operTypeIds = $req->getOperationTypeIds();
         /* get period in 'processing' state */
         $periods = $this->initPeriodCollection();
         $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $bonusTypeId);
         $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
         $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
+        $sql = $periods->getSelectSql(true);
         // WHERE (bonus_id = '1') AND (type = '3') AND (state = 'processing')
         if ($periods->getSize()) {
             /* there is desired period in 'processing' state */
