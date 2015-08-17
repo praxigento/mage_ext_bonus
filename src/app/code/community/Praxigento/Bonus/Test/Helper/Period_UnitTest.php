@@ -50,7 +50,6 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals('2015', $hlp->calcPeriodNext('2014', Config::PERIOD_YEAR));
     }
 
-
     public function test_calcPeriodFromToTs()
     {
         /**
@@ -97,19 +96,5 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals(Weekday::WEDNESDAY, $hlp->getNextWeekDay(Weekday::TUESDAY));
         $this->assertEquals(Weekday::THURSDAY, $hlp->getNextWeekDay(Weekday::WEDNESDAY));
         $this->assertEquals(Weekday::FRIDAY, $hlp->getNextWeekDay(Weekday::THURSDAY));
-    }
-
-    /**
-     * Create mock with disabled constructor for class $clazz.
-     * @param $clazz
-     * @return PHPUnit_Framework_MockObject_MockObject
-     */
-    private function mockClass($clazz)
-    {
-        $mockBuilder = $this->getMockBuilder($clazz);
-        $result = $mockBuilder
-            ->disableOriginalConstructor()
-            ->getMock();
-        return $result;
     }
 }

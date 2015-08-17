@@ -42,7 +42,6 @@ class Praxigento_Bonus_Config
 
     const CFG_BLOCK = 'prxgt_bonus_block';
     const CFG_HELPER = 'prxgt_bonus_helper';
-    const CFG_HELPER_PERIOD = 'prxgt_bonus_helper/period';
     const CFG_MODEL = 'prxgt_bonus_model';
     const CFG_SERVICE = 'prxgt_bonus_service';
 
@@ -118,6 +117,16 @@ class Praxigento_Bonus_Config
     private static $_instance;
 
     /**
+     * Praxigento_Bonus_Config constructor.
+     */
+    public function __construct()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = $this;
+        }
+    }
+
+    /**
      * Get singleton instance.
      *
      * @return Praxigento_Bonus_Config
@@ -128,6 +137,16 @@ class Praxigento_Bonus_Config
             self::$_instance = new Praxigento_Bonus_Config();
         }
         return self::$_instance;
+    }
+
+    /**
+     * Set test unit instance with mocked methods.
+     *
+     * @param Praxigento_Bonus_Config $instance
+     */
+    public static function  set(Praxigento_Bonus_Config $instance)
+    {
+        self::$_instance = $instance;
     }
 
     /**
@@ -144,7 +163,16 @@ class Praxigento_Bonus_Config
      */
     public function helperPeriod()
     {
-        $result = Mage::helper(self::CFG_HELPER_PERIOD);
+        $result = Mage::helper('prxgt_bonus_helper/period');
+        return $result;
+    }
+
+    /**
+     * @return  \Praxigento_Bonus_Helper_Type
+     */
+    public function helperType()
+    {
+        $result = Mage::helper('prxgt_bonus_helper/type');
         return $result;
     }
 
@@ -199,6 +227,79 @@ class Praxigento_Bonus_Config
     public function modelTransaction()
     {
         $result = Mage::getModel('prxgt_bonus_model/transaction');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Type_Asset_Collection
+     */
+    public function collectionTypeAsset()
+    {
+        $result = self::modelTypeAsset()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Type_Asset
+     */
+    public function modelTypeAsset()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/type_asset');
+        return $result;
+    }
+
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Type_Calc
+     */
+    public function modelTypeCalc()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/type_calc');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Type_Calc_Collection
+     */
+    public function collectionTypeCalc()
+    {
+        $result = self::modelTypeCalc()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Type_Oper
+     */
+    public function modelTypeOper()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/type_oper');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Type_Oper_Collection
+     */
+    public function collectionTypeOper()
+    {
+        $result = self::modelTypeOper()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Type_Period
+     */
+    public function modelTypePeriod()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/type_period');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Type_Period_Collection
+     */
+    public function collectionTypePeriod()
+    {
+        $result = self::modelTypePeriod()->getCollection();
         return $result;
     }
 
