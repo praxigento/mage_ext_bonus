@@ -39,14 +39,6 @@ class Praxigento_Shell extends Mage_Shell_Abstract
      */
     private $_regUpline = array();
     private $_categoryElectronics;
-    /** @var  array of asset types; 'code' is the key. */
-    private $_cacheAssetTypes;
-    /** @var  array of bonus types; 'code' is the key. */
-    private $_cacheBonusTypes;
-    /** @var  array of operation types; 'code' is the key. */
-    private $_cacheOperationTypes;
-    /** @var  array of bonus calculation types; 'code' is the key. */
-    private $_cachePeriodTypes;
 
     public function __construct()
     {
@@ -97,12 +89,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     private function _calcPvWriteOff()
     {
         /** @var  $helper Praxigento_Bonus_Helper_Data */
-        $helper = Config::helper();
+        $helper = Config::get()->helper();
+        /** @var  $helperType Praxigento_Bonus_Helper_Type */
+        $helperType = Config::get()->helperType();
         $periodCode = $helper->cfgPersonalBonusPeriod();
-        $typePeriod = $this->_getTypePeriod($periodCode);
-        $typeCalc = $this->_getTypeCalc(Config::CALC_PV_WRITE_OFF);
-        $typeOperPvInt = $this->_getTypeOperation(Config::OPER_PV_INT);
-        $typeOperPvOrder = $this->_getTypeOperation(Config::OPER_ORDER_PV);
+        $typePeriod = $helperType->getPeriod($periodCode);
+        $typeCalc = $helperType->getCalc(Config::CALC_PV_WRITE_OFF);
+        $typeOperPvInt = $helperType->getOper(Config::OPER_PV_INT);
+        $typeOperPvOrder = $helperType->getOper(Config::OPER_ORDER_PV);
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
@@ -178,12 +172,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     private function _calcBonusPv()
     {
         /** @var  $helper Praxigento_Bonus_Helper_Data */
-        $helper = Config::helper();
+        $helper = Config::get()->helper();
+        /** @var  $helperType Praxigento_Bonus_Helper_Type */
+        $helperType = Config::get()->helperType();
         $periodCode = $helper->cfgPersonalBonusPeriod();
-        $typePeriod = $this->_getTypePeriod($periodCode);
-        $typeCalc = $this->_getTypeCalc(Config::CALC_BONUS_PERSONAL);
-        $typeOperPvInt = $this->_getTypeOperation(Config::OPER_PV_INT);
-        $typeOperPvOrder = $this->_getTypeOperation(Config::OPER_ORDER_PV);
+        $typePeriod = $helperType->getPeriod($periodCode);
+        $typeCalc = $helperType->getCalc(Config::CALC_BONUS_PERSONAL);
+        $typeOperPvInt = $helperType->getOper(Config::OPER_PV_INT);
+        $typeOperPvOrder = $helperType->getOper(Config::OPER_ORDER_PV);
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
@@ -593,34 +589,6 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $this->_log->debug("Order #" . $order->getIncrementId() . " is created.");
 
     }
-
-    /**
-     * Add random data to orders log.
-     */
-    private function _populateLogOrder()
-    {
-        $bonus = $this->_getTypeCalc(Config::CALC_BONUS_PERSONAL);
-        $bonusId = $bonus->getId();
-        /** @var  $helper Nmmlm_Core_Helper_Data */
-        $helper = Mage::helper('nmmlm_core_helper');
-        $allOrders = Mage::getModel('sales/order')->getCollection();
-        /** @var  $one Mage_Sales_Model_Order */
-        foreach ($allOrders as $one) {
-            $orderId = $one->getId();
-            /** @var  $log Praxigento_Bonus_Model_Own_Log_Order */
-            $log = Mage::getModel('prxgt_bonus_model/log_order');
-            $createdAt = $one->getCreatedAt();
-            $date = $helper->convertToDateTime($createdAt);
-            $formatted = date_format($date, Nmmlm_Core_Config::FORMAT_DATETIME);
-            $log->setDateChanged($formatted);
-            $log->setOrderId($orderId);
-            $log->setTypeId($bonusId);
-            $log->setValue($one->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL));
-            $log->getResource()->save($log);
-        }
-    }
-
-
 
     /**
      * Retrieve Usage Help Message
