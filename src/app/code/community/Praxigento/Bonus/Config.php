@@ -110,9 +110,30 @@ class Praxigento_Bonus_Config
     const STATE_PERIOD_REVERTED = 'reverted';
 
     /**
+     * Itself. Singleton.
+     * We should not use static methods (bad testability).
+     *
+     * @var Praxigento_Bonus_Config
+     */
+    private static $_instance;
+
+    /**
+     * Get singleton instance.
+     *
+     * @return Praxigento_Bonus_Config
+     */
+    public static function  get()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new Praxigento_Bonus_Config();
+        }
+        return self::$_instance;
+    }
+
+    /**
      * @return  \Praxigento_Bonus_Helper_Data
      */
-    public static function helper()
+    public function helper()
     {
         $result = Mage::helper(self::CFG_HELPER);
         return $result;
@@ -121,7 +142,7 @@ class Praxigento_Bonus_Config
     /**
      * @return  \Praxigento_Bonus_Helper_Period
      */
-    public static function helperPeriod()
+    public function helperPeriod()
     {
         $result = Mage::helper(self::CFG_HELPER_PERIOD);
         return $result;
@@ -130,7 +151,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Resource_Own_Period_Collection
      */
-    public static function collectionPeriod()
+    public function collectionPeriod()
     {
         $result = self::modelPeriod()->getCollection();
         return $result;
@@ -139,7 +160,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Model_Own_Period
      */
-    public static function modelPeriod()
+    public function modelPeriod()
     {
         $result = Mage::getModel('prxgt_bonus_model/period');
         return $result;
@@ -148,7 +169,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Resource_Own_Operation_Collection
      */
-    public static function collectionOperation()
+    public function collectionOperation()
     {
         $result = self::modelOperation()->getCollection();
         return $result;
@@ -157,7 +178,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Model_Own_Operation
      */
-    public static function modelOperation()
+    public function modelOperation()
     {
         $result = Mage::getModel('prxgt_bonus_model/operation');
         return $result;
@@ -166,7 +187,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
      */
-    public static function collectionTransaction()
+    public function collectionTransaction()
     {
         $result = self::modelTransaction()->getCollection();
         return $result;
@@ -175,7 +196,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Model_Own_Transaction
      */
-    public static function modelTransaction()
+    public function modelTransaction()
     {
         $result = Mage::getModel('prxgt_bonus_model/transaction');
         return $result;
@@ -185,7 +206,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Service_Operations_Call
      */
-    public static function serviceOperations()
+    public function serviceOperations()
     {
         $result = Mage::getModel('prxgt_bonus_service/operations_call');
         return $result;
@@ -194,7 +215,7 @@ class Praxigento_Bonus_Config
     /**
      * @return Praxigento_Bonus_Service_Period_Call
      */
-    public static function servicePeriod()
+    public function servicePeriod()
     {
         $result = Mage::getModel('prxgt_bonus_service/period_call');
         return $result;

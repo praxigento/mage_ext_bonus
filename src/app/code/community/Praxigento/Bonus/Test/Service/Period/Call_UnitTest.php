@@ -19,7 +19,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     public function test_constructor()
     {
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
-        $call = Config::servicePeriod();
+        $call = Config::get()->servicePeriod();
         $this->assertNotNull($call);
         $this->assertTrue($call->initPeriodCollection() instanceof Praxigento_Bonus_Resource_Own_Period_Collection);
         $this->assertTrue($call->initTransactionCollection() instanceof Praxigento_Bonus_Resource_Own_Transaction_Collection);

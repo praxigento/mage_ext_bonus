@@ -22,7 +22,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $helper = $this->getMock('Praxigento_Bonus_Helper_Data');
         $helper->expects($this->any())->method('cfgPersonalBonusWeekLastDay')->will($this->returnValue(Weekday::SUNDAY));
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
-        $hlp = Config::helperPeriod();
+        $hlp = Config::get()->helperPeriod();
         $hlp->setHelper($helper);
         $date = '2015-01-05 14:32:32';
         /* tests */
@@ -41,7 +41,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $helper = $this->getMock('Praxigento_Bonus_Helper_Data');
         $helper->expects($this->any())->method('cfgPersonalBonusWeekLastDay')->will($this->returnValue(Weekday::SUNDAY));
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
-        $hlp = Config::helperPeriod();
+        $hlp = Config::get()->helperPeriod();
         $hlp->setHelper($helper);
         /* tests */
         $this->assertEquals('20150105', $hlp->calcPeriodNext('20150104', Config::PERIOD_DAY));
@@ -59,7 +59,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $helper = $this->getMock('Praxigento_Bonus_Helper_Data');
         $helper->expects($this->any())->method('cfgPersonalBonusWeekLastDay')->will($this->returnValue(Weekday::SUNDAY));
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
-        $hlp = Config::helperPeriod();
+        $hlp = Config::get()->helperPeriod();
         $hlp->setHelper($helper);
         /* tests for zone "America/Los_Angeles" as set up in test/templates.json */
         $this->assertEquals('2015-08-12 07:00:00', $hlp->calcPeriodFromTs('20150812', Config::PERIOD_DAY));
@@ -76,7 +76,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
     public function test_getPreviousWeekDay()
     {
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
-        $hlp = Config::helperPeriod();
+        $hlp = Config::get()->helperPeriod();
         $this->assertEquals(Weekday::SATURDAY, $hlp->getPreviousWeekDay(Weekday::SUNDAY));
         $this->assertEquals(Weekday::SUNDAY, $hlp->getPreviousWeekDay(Weekday::MONDAY));
         $this->assertEquals(Weekday::MONDAY, $hlp->getPreviousWeekDay(Weekday::TUESDAY));
@@ -89,7 +89,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
     public function test_getNextWeekDay()
     {
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
-        $hlp = Config::helperPeriod();
+        $hlp = Config::get()->helperPeriod();
         $this->assertEquals(Weekday::SATURDAY, $hlp->getNextWeekDay(Weekday::FRIDAY));
         $this->assertEquals(Weekday::SUNDAY, $hlp->getNextWeekDay(Weekday::SATURDAY));
         $this->assertEquals(Weekday::MONDAY, $hlp->getNextWeekDay(Weekday::SUNDAY));

@@ -20,28 +20,29 @@ class Praxigento_Bonus_Model_Own_Source_Weekday
 
     public function toOptionArray()
     {
+        $hlp = Config::get()->helper();
         $result = array(
             array(
                 'value' => self::SUNDAY,
-                'label' => Config::helper()->__('Sunday')
+                'label' => $hlp->__('Sunday')
             ), array(
                 'value' => self::MONDAY,
-                'label' => Config::helper()->__('Monday')
+                'label' => $hlp->__('Monday')
             ), array(
                 'value' => self::TUESDAY,
-                'label' => Config::helper()->__('Tuesday')
+                'label' => $hlp->__('Tuesday')
             ), array(
                 'value' => self::WEDNESDAY,
-                'label' => Config::helper()->__('Wednesday')
+                'label' => $hlp->__('Wednesday')
             ), array(
                 'value' => self::THURSDAY,
-                'label' => Config::helper()->__('Thursday')
+                'label' => $hlp->__('Thursday')
             ), array(
                 'value' => self::FRIDAY,
-                'label' => Config::helper()->__('Friday')
+                'label' => $hlp->__('Friday')
             ), array(
                 'value' => self::SATURDAY,
-                'label' => Config::helper()->__('Saturday')
+                'label' => $hlp->__('Saturday')
             )
         );
         return $result;

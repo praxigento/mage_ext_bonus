@@ -107,7 +107,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         /* get calculation period */
         $result = null;
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
-        $call = Config::servicePeriod();
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
         $req = $call->requestPeriodForPvWriteOff();
         $req->setCalcTypeId($typeCalc->getId());
@@ -188,7 +188,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         /* get calculation period */
         $result = null;
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
-        $call = Config::servicePeriod();
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = $call->requestPeriodForPersonalBonus();
         $req->setBonusTypeId($typeCalc->getId());
@@ -620,81 +620,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         }
     }
 
-    /**
-     * @param $code
-     * @return Praxigento_Bonus_Model_Own_Type_Asset
-     */
-    private function _getTypeAsset($code)
-    {
-        if (is_null($this->_cacheAssetTypes)) {
-            $allTypes = Mage::getModel('prxgt_bonus_model/type_asset')->getCollection();
-            $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Type_Asset */
-            foreach ($allTypes as $one) {
-                $types[$one->getCode()] = $one;
-            }
-            $this->_cacheAssetTypes = $types;
-        }
-        $result = $this->_cacheAssetTypes[$code];
-        return $result;
-    }
 
-    /**
-     * @param $code
-     * @return Praxigento_Bonus_Model_Own_Type_Calc
-     */
-    private function _getTypeCalc($code)
-    {
-        if (is_null($this->_cacheBonusTypes)) {
-            $allTypes = Mage::getModel('prxgt_bonus_model/type_calc')->getCollection();
-            $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Type_Calc */
-            foreach ($allTypes as $one) {
-                $types[$one->getCode()] = $one;
-            }
-            $this->_cacheBonusTypes = $types;
-        }
-        $result = $this->_cacheBonusTypes[$code];
-        return $result;
-    }
-
-    /**
-     * @param $code
-     * @return Praxigento_Bonus_Model_Own_Type_Oper
-     */
-    private function _getTypeOperation($code)
-    {
-        if (is_null($this->_cacheOperationTypes)) {
-            $allTypes = Mage::getModel('prxgt_bonus_model/type_oper')->getCollection();
-            $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Type_Operation */
-            foreach ($allTypes as $one) {
-                $types[$one->getCode()] = $one;
-            }
-            $this->_cacheOperationTypes = $types;
-        }
-        $result = $this->_cacheOperationTypes[$code];
-        return $result;
-    }
-
-    /**
-     * @param $code
-     * @return Praxigento_Bonus_Model_Own_Type_Period
-     */
-    private function _getTypePeriod($code)
-    {
-        if (is_null($this->_cachePeriodTypes)) {
-            $allTypes = Mage::getModel('prxgt_bonus_model/type_period')->getCollection();
-            $types = array();
-            /** @var  $one Praxigento_Bonus_Model_Own_Type_Period */
-            foreach ($allTypes as $one) {
-                $types[$one->getCode()] = $one;
-            }
-            $this->_cachePeriodTypes = $types;
-        }
-        $result = $this->_cachePeriodTypes[$code];
-        return $result;
-    }
 
     /**
      * Retrieve Usage Help Message

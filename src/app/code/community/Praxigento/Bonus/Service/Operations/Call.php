@@ -41,7 +41,7 @@ class Praxigento_Bonus_Service_Operations_Call
          * AND pbt.date_applied >= '2015-06-01 00:00:00'
          * AND pbt.date_applied <= '2015-06-01 23:59:59'
          */
-        $collection = Config::collectionOperation();
+        $collection = Config::get()->collectionOperation();
         /* filter by operations types */
         $fields = array();
         $values = array();
@@ -57,12 +57,11 @@ class Praxigento_Bonus_Service_Operations_Call
             '*'
         );
         $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from = Config::helperPeriod()->calcPeriodFromTs($period, $periodCode);
-        $to = Config::helperPeriod()->calcPeriodToTs($period, $periodCode);
+        $from = Config::get()->helperPeriod()->calcPeriodFromTs($period, $periodCode);
+        $to = Config::get()->helperPeriod()->calcPeriodToTs($period, $periodCode);
         $collection->addFieldToFilter($fldDate, array('gteq' => $from));
         $collection->addFieldToFilter($fldDate, array('lteq' => $to));
         $sql = $collection->getSelectSql(true);
-        return $collection;
 
         return $result;
     }

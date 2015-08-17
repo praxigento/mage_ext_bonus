@@ -16,7 +16,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Fra
     public function test_constructor()
     {
         /** @var  $call Praxigento_Bonus_Service_Operations_Call */
-        $call = Config::serviceOperations();
+        $call = Config::get()->serviceOperations();
         $this->assertNotNull($call);
     }
 

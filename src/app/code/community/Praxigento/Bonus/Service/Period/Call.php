@@ -65,7 +65,7 @@ class Praxigento_Bonus_Service_Period_Call
             if ($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
                 $value = $periodLast->getData(Period::ATTR_VALUE);
-                $next = Config::helperPeriod()->calcPeriodNext($value, $periodCode);
+                $next = Config::get()->helperPeriod()->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
                 $result->setIsNewPeriod(true);
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
@@ -93,7 +93,7 @@ class Praxigento_Bonus_Service_Period_Call
                 if ($collection->getSize()) {
                     $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
-                    $result->setPeriodValue(Config::helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
+                    $result->setPeriodValue(Config::get()->helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
                     $result->setIsNewPeriod(true);
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
                 } else {
@@ -124,7 +124,7 @@ class Praxigento_Bonus_Service_Period_Call
      */
     public function initPeriodCollection()
     {
-        $result = Config::collectionPeriod();
+        $result = Config::get()->collectionPeriod();
         return $result;
     }
 
@@ -135,7 +135,7 @@ class Praxigento_Bonus_Service_Period_Call
      */
     public function initTransactionCollection()
     {
-        $result = Config::collectionTransaction();
+        $result = Config::get()->collectionTransaction();
         return $result;
     }
 
@@ -185,7 +185,7 @@ class Praxigento_Bonus_Service_Period_Call
             if ($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
                 $value = $periodLast->getData(Period::ATTR_VALUE);
-                $next = Config::helperPeriod()->calcPeriodNext($value, $periodCode);
+                $next = Config::get()->helperPeriod()->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
                 $result->setIsNewPeriod(true);
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
@@ -213,7 +213,7 @@ class Praxigento_Bonus_Service_Period_Call
                 if ($collection->getSize()) {
                     $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
-                    $result->setPeriodValue(Config::helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
+                    $result->setPeriodValue(Config::get()->helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
                     $result->setIsNewPeriod(true);
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
                 } else {

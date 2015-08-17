@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Nmmlm_Core_Config as CoreConfig;
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Source_Weekday as Weekday;
 
@@ -34,8 +35,8 @@ class Praxigento_Bonus_Helper_Period
 
     function __construct()
     {
-        $this->_helperCore = Nmmlm_Core_Config::helper();
-        $this->_helper = Config::helper();
+        $this->_helperCore = CoreConfig::helper();
+        $this->_helper = Config::get()->helper();
         if (is_null(self::$_tzDelta)) {
             /* initiate Timezone delta once */
             self::$_tzDelta = Mage::getSingleton('core/date')->getGmtOffset();
