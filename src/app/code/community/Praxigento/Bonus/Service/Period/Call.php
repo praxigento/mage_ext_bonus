@@ -22,6 +22,8 @@ use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriod
 class Praxigento_Bonus_Service_Period_Call
     extends Praxigento_Bonus_Service_Base_Call
 {
+    const AS_LOG_ID = 'log_calc_id';
+
     /**
      * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff $req
      * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
@@ -50,6 +52,7 @@ class Praxigento_Bonus_Service_Period_Call
             $id = $item->getData(Period::ATTR_ID);
             $value = $item->getData(Period::ATTR_VALUE);
             $result->setExistingPeriodId($id);
+            $result->setExistingLogCalcId($item->getData(self::AS_LOG_ID));
             $result->setPeriodValue($value);
             $result->setIsNewPeriod(false);
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
@@ -113,7 +116,12 @@ class Praxigento_Bonus_Service_Period_Call
         $table = array($as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
         $cond = 'main_table.' . Period::ATTR_ID . '='
             . $as . '.' . LogCalc::ATTR_PERIOD_ID;
-        $result->join($table, $cond, array('log_calc_id' => LogCalc::ATTR_ID, LogCalc::ATTR_DATE_PERFORMED, LogCalc::ATTR_STATE));
+        $cols = array(
+            self::AS_LOG_ID => LogCalc::ATTR_ID,
+            LogCalc::ATTR_DATE_PERFORMED,
+            LogCalc::ATTR_STATE
+        );
+        $result->join($table, $cond, $cols);
         return $result;
     }
 

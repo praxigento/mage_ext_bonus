@@ -9,6 +9,7 @@ use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffRequest;
+use Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffResponse;
 
 /**
  *
@@ -19,14 +20,28 @@ use Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff as Ge
 class Praxigento_Bonus_Service_Operations_Call
     extends Praxigento_Bonus_Service_Base_Call
 {
+    /** @var Praxigento_Bonus_Helper_Type */
+    private $_helperType;
+
+    /**
+     * Praxigento_Bonus_Service_Operations_Call constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->_helperType = Config::get()->helperType();
+    }
+
     /**
      * @param Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff $req
-     * @return mixed
+     * @return Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff
      */
     public function getOperationsForPvWriteOff(GetOperationsForPvWriteOffRequest $req)
     {
         $result = Mage::getModel('prxgt_bonus_service/operations_response_getOperationsForPvWriteOff');
-
+        $calcId = $req->getCalcTypeId();
+        $periodValue = $req->getPeriodValue();
+        $periodCode = $req->getPeriodCode();
         /**
          *
          * SELECT
@@ -45,6 +60,7 @@ class Praxigento_Bonus_Service_Operations_Call
         /* filter by operations types */
         $fields = array();
         $values = array();
+        $operIds = $this->_getTypesForPvWriteOff();
         foreach ($operIds as $one) {
             $fields[] = Operation::ATTR_TYPE_ID;
             $values[] = $one;
@@ -57,12 +73,22 @@ class Praxigento_Bonus_Service_Operations_Call
             '*'
         );
         $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from = Config::get()->helperPeriod()->calcPeriodFromTs($period, $periodCode);
-        $to = Config::get()->helperPeriod()->calcPeriodToTs($period, $periodCode);
+        $from = Config::get()->helperPeriod()->calcPeriodFromTs($periodValue, $periodCode);
+        $to = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $periodCode);
         $collection->addFieldToFilter($fldDate, array('gteq' => $from));
         $collection->addFieldToFilter($fldDate, array('lteq' => $to));
         $sql = $collection->getSelectSql(true);
+        $result->setCollection($collection);
+        $result->setErrorCode(GetOperationsForPvWriteOffResponse::ERR_NO_ERROR);
+        return $result;
+    }
 
+    private function _getTypesForPvWriteOff()
+    {
+        $result = array();
+        $result[] = $this->_helperType->getOperId(Config::OPER_ORDER_PV);
+        $result[] = $this->_helperType->getOperId(Config::OPER_PV_INT);
+        $result[] = $this->_helperType->getOperId(Config::OPER_PV_FWRD);
         return $result;
     }
 

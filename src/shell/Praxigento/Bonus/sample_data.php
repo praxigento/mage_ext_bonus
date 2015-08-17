@@ -111,14 +111,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
         $resp = $call->getPeriodForPvWriteOff($req);
         if ($resp->isSucceed()) {
-            $value = $resp->getPeriodValue();
-            $this->_log->debug("Period '$value' should be used for calculation.");
+            $periodValue = $resp->getPeriodValue();
+            $this->_log->debug("Period '$periodValue' should be used for calculation.");
             /** @var  $period Praxigento_Bonus_Model_Own_Period */
             $period = Mage::getModel('prxgt_bonus_model/period');
             /** @var  $logCalc Praxigento_Bonus_Model_Own_Log_Calc */
             $logCalc = Mage::getModel('prxgt_bonus_model/log_calc');
             if ($resp->isNewPeriod()) {
-                $this->_log->debug("New calculation for period '$value' should be registered.");
+                $this->_log->debug("New calculation for period '$periodValue' should be registered.");
                 /* insert new calculation period into DB */
                 $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
                 $connection->beginTransaction();
@@ -134,7 +134,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                         $period->setValue($resp->getPeriodValue());
                         $period->save();
                     } else {
-                        $this->_log->debug("Period '$value' already exists.");
+                        $this->_log->debug("Period '$periodValue' already exists.");
                         $period = $periods->getFirstItem();
                     }
                     /* add item to calculation log */
@@ -154,11 +154,15 @@ class Praxigento_Shell extends Mage_Shell_Abstract
 
             } else {
                 $period->load($resp->getExistingPeriodId());
-                $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus.");
+                $logCalc->load($resp->getExistingLogCalcId());
+                $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus. Calculation #{$logCalc->getId()}.");
             }
             /* select all operation for period */
-            $opers = $this->_getOperationsForPvWriteOff($operIds, $value, $periodCode);
+            $opers = $this->_getOperationsForPvWriteOff($logCalc->getId(), $periodValue, $periodCode);
             /* for all operations we need calculate period balances and create PV write off operations. */
+            foreach ($opers as $item) {
+                $id = $item->getId();
+            }
             1 + 1;
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
@@ -260,44 +264,19 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         return $collection;
     }
 
-    private function _getOperationsForPvWriteOff($operIds = array(), $period, $periodCode)
+    private function _getOperationsForPvWriteOff($logCalcId, $periodValue = null, $periodCode = null)
     {
-        /**
-         *
-         * SELECT
-         *
-         * FROM prxgt_bonus_operation pbo
-         * LEFT OUTER JOIN prxgt_bonus_trnx pbt
-         * ON pbo.id = pbt.operation_id
-         * WHERE (
-         * pbo.type_id = 1
-         * OR pbo.type_id = 3
-         * )
-         * AND pbt.date_applied >= '2015-06-01 00:00:00'
-         * AND pbt.date_applied <= '2015-06-01 23:59:59'
-         */
-        $collection = Config::collectionOperation();
-        /* filter by operations types */
-        $fields = array();
-        $values = array();
-        foreach ($operIds as $one) {
-            $fields[] = Operation::ATTR_TYPE_ID;
-            $values[] = $one;
+        $result = array();
+        $call = Config::get()->serviceOperations();
+        $req = $call->requestOperationsForPvWriteOff();
+        $req->setPeriodValue($periodValue);
+        $req->setPeriodCode($periodCode);
+        $req->setCalcTypeId($logCalcId);
+        $resp = $call->getOperationsForPvWriteOff($req);
+        if ($resp->isSucceed()) {
+            $result = $resp->getCollection();
         }
-        $collection->addFieldToFilter($fields, $values);
-        $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
-        $collection->getSelect()->joinLeft(
-            array('trnx' => $tableTrnx),
-            'main_table.id = trnx.operation_id',
-            '*'
-        );
-        $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from = Config::helperPeriod()->calcPeriodFromTs($period, $periodCode);
-        $to = Config::helperPeriod()->calcPeriodToTs($period, $periodCode);
-        $collection->addFieldToFilter($fldDate, array('gteq' => $from));
-        $collection->addFieldToFilter($fldDate, array('lteq' => $to));
-        $sql = $collection->getSelectSql(true);
-        return $collection;
+        return $result;
     }
 
     private function _createCatalogCategories()

@@ -121,7 +121,7 @@ class Praxigento_Bonus_Helper_Period
 
     /**
      * @param $period 20150601 | 201506 | 2015
-     * @param $periodCode day | week | month | year
+     * @param $periodCode DAY | WEEK | MONTH | YEAR
      * @return string 2015-08-12 12:23:34
      */
     public function calcPeriodFromTs($period, $periodCode)
@@ -138,7 +138,7 @@ class Praxigento_Bonus_Helper_Period
 
     /**
      * @param $period 20150601 | 201506 | 2015
-     * @param $periodCode day | week | month | year
+     * @param $periodCode DAY | WEEK | MONTH | YEAR
      * @return string 2015-08-12 12:23:34
      */
     public function calcPeriodToTs($period, $periodCode)
@@ -225,7 +225,7 @@ class Praxigento_Bonus_Helper_Period
      * Calculate period's from/to bounds (month 201508 = "2015-08-01 02:00:00 / 2015-09-01 01:59:59") and cache it.
      *
      * @param $period 20150601 | 201506 | 2015
-     * @param $periodCode day | week | month | year
+     * @param $periodCode DAY | WEEK | MONTH | YEAR
      */
     private function _calcPeriodBounds($period, $periodCode)
     {

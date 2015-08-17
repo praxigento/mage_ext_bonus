@@ -19,6 +19,24 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
     private $isNewPeriod;
     /** @var  int ID of the existing period if found. */
     private $existingPeriodId;
+    /** @var  int ID of the correspondent calculation log entry */
+    private $existingLogCalcId;
+
+    /**
+     * @return int
+     */
+    public function getExistingLogCalcId()
+    {
+        return $this->existingLogCalcId;
+    }
+
+    /**
+     * @param int $existingLogCalcId
+     */
+    public function setExistingLogCalcId($existingLogCalcId)
+    {
+        $this->existingLogCalcId = $existingLogCalcId;
+    }
 
     /**
      * @return int
