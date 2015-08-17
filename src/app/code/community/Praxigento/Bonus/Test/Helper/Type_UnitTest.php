@@ -32,6 +32,8 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $asset = $hlp->getAsset(self::TEST_CODE);
         $this->assertTrue($asset instanceof Praxigento_Bonus_Model_Own_Type_Asset);
         $this->assertEquals(self::TEST_ID, $asset->getId());
+        $id = $hlp->getAssetId(self::TEST_CODE);
+        $this->assertEquals(self::TEST_ID, $id);
     }
 
     public function test_getCalc()
@@ -46,6 +48,8 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $type = $hlp->getCalc(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Calc);
         $this->assertEquals(self::TEST_ID, $type->getId());
+        $id = $hlp->getCalcId(self::TEST_CODE);
+        $this->assertEquals(self::TEST_ID, $id);
     }
 
     public function test_getOper()
@@ -60,6 +64,8 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $type = $hlp->getOper(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Oper);
         $this->assertEquals(self::TEST_ID, $type->getId());
+        $id = $hlp->getOperId(self::TEST_CODE);
+        $this->assertEquals(self::TEST_ID, $id);
     }
 
     public function test_getPeriod()
@@ -74,6 +80,8 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $type = $hlp->getPeriod(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Period);
         $this->assertEquals(self::TEST_ID, $type->getId());
+        $id = $hlp->getPeriodId(self::TEST_CODE);
+        $this->assertEquals(self::TEST_ID, $id);
     }
 
     /**

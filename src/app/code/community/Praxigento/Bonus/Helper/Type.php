@@ -21,6 +21,16 @@ class Praxigento_Bonus_Helper_Type
     /** @var  array of calculation periods types; 'code' is the key. */
     private $_cachePeriodTypes;
 
+    /**
+     * @param $code
+     * @return int
+     */
+    public function getAssetId($code)
+    {
+        $type = $this->getAsset($code);
+        $result = $type->getId();
+        return $result;
+    }
 
     /**
      * @param $code
@@ -38,6 +48,17 @@ class Praxigento_Bonus_Helper_Type
             $this->_cacheAssetTypes = $types;
         }
         $result = $this->_cacheAssetTypes[$code];
+        return $result;
+    }
+
+    /**
+     * @param $code
+     * @return int
+     */
+    public function getCalcId($code)
+    {
+        $type = $this->getCalc($code);
+        $result = $type->getId();
         return $result;
     }
 
@@ -62,6 +83,17 @@ class Praxigento_Bonus_Helper_Type
 
     /**
      * @param $code
+     * @return int
+     */
+    public function getOperId($code)
+    {
+        $type = $this->getOper($code);
+        $result = $type->getId();
+        return $result;
+    }
+
+    /**
+     * @param $code
      * @return Praxigento_Bonus_Model_Own_Type_Oper
      */
     public function getOper($code)
@@ -76,6 +108,17 @@ class Praxigento_Bonus_Helper_Type
             $this->_cacheOperationTypes = $types;
         }
         $result = $this->_cacheOperationTypes[$code];
+        return $result;
+    }
+
+    /**
+     * @param $code
+     * @return int
+     */
+    public function getPeriodId($code)
+    {
+        $type = $this->getPeriod($code);
+        $result = $type->getId();
         return $result;
     }
 
@@ -97,4 +140,5 @@ class Praxigento_Bonus_Helper_Type
         $result = $this->_cachePeriodTypes[$code];
         return $result;
     }
+
 }
