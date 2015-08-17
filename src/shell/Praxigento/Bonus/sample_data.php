@@ -608,10 +608,12 @@ USAGE;
 
     private function _emulatePvTransferOperations()
     {
+        /** @var  $helperType Praxigento_Bonus_Helper_Type */
+        $helperType = Config::get()->helperType();
         /** @var  $opType Praxigento_Bonus_Model_Own_Type_Operation */
-        $opType = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_PV_INT);
+        $opType = $helperType->getOper(Praxigento_Bonus_Config::OPER_PV_INT);
         /** @var  $assetType Praxigento_Bonus_Model_Own_Type_Asset */
-        $assetType = $this->_getTypeAsset(Praxigento_Bonus_Config::ASSET_PV);
+        $assetType = $helperType->getAsset(Praxigento_Bonus_Config::ASSET_PV);
 
         $records = $this->_readDataPvTransfers($this->_fileNamePvTransfers);
         $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
@@ -653,8 +655,10 @@ USAGE;
      */
     private function _emulateOrderOperations()
     {
-        $opType = $this->_getTypeOperation(Praxigento_Bonus_Config::OPER_ORDER_PV);
-        $assetType = $this->_getTypeAsset(Praxigento_Bonus_Config::ASSET_PV);
+        /** @var  $helperType Praxigento_Bonus_Helper_Type */
+        $helperType = Config::get()->helperType();
+        $opType = $helperType->getOper(Praxigento_Bonus_Config::OPER_ORDER_PV);
+        $assetType = $helperType->getAsset(Praxigento_Bonus_Config::ASSET_PV);
         $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
         $allOrders = Mage::getModel('sales/order')->getCollection();
         foreach ($allOrders as $one) {
