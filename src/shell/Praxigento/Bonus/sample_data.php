@@ -81,7 +81,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                 $this->_emulatePvTransferOperations();
             }
             if ($bonusPv) {
-                $this->_calcPvPeriodsWriteOff();
+                $this->_calcPvWriteOff();
 //                $this->_calcBonusPv();
             }
             echo 'Done.';
@@ -94,7 +94,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     /**
      * We should write off PV for every period.
      */
-    private function _calcPvPeriodsWriteOff()
+    private function _calcPvWriteOff()
     {
         /** @var  $helper Praxigento_Bonus_Helper_Data */
         $helper = Config::helper();
@@ -106,14 +106,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Config::servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPvWriteOff');
+        $req = $call->requestPeriodForPvWriteOff();
         $req->setCalcTypeId($typeCalc->getId());
         $req->setOperationTypeIds($operIds);
         $req->setPeriodCode($periodCode);
         $req->setPeriodTypeId($typePeriod->getId());
-        /** @var  $call Praxigento_Bonus_Service_Period_Call */
-        $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
         $resp = $call->getPeriodForPvWriteOff($req);
         if ($resp->isSucceed()) {
@@ -163,8 +163,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                 $this->_log->debug("Existing period '{$period->getValue()}' (#{$period->getId()}) is used to process personal bonus.");
             }
             /* select all operation for period */
-            $opers = $this->_getOperationsForPersonalBonus($operIds, $value, $periodCode);
-            /* for all operations we should create */
+            $opers = $this->_getOperationsForPvWriteOff($operIds, $value, $periodCode);
+            /* for all operations we need calculate period balances and create PV write off operations. */
             1 + 1;
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
@@ -187,14 +187,14 @@ class Praxigento_Shell extends Mage_Shell_Abstract
         $operIds = array($typeOperPvInt->getId(), $typeOperPvOrder->getId());
         /* get calculation period */
         $result = null;
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Config::servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
-        $req = Mage::getModel(Config::CFG_SERVICE . '/period_request_getPeriodForPersonalBonus');
+        $req = $call->requestPeriodForPersonalBonus();
         $req->setBonusTypeId($typeCalc->getId());
         $req->setOperationTypeIds($operIds);
         $req->setPeriodCode($periodCode);
         $req->setPeriodTypeId($typeCalc->getId());
-        /** @var  $call Praxigento_Bonus_Service_Period_Call */
-        $call = Mage::getModel(Config::CFG_SERVICE . '/period_call');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
         $resp = $call->getPeriodForPersonalBonus($req);
         if ($resp->isSucceed()) {
@@ -241,6 +241,46 @@ class Praxigento_Shell extends Mage_Shell_Abstract
          * AND pbt.date_applied <= '2015-06-01 23:59:59'
          */
         $collection = Mage::getModel('prxgt_bonus_model/operation')->getCollection();
+        /* filter by operations types */
+        $fields = array();
+        $values = array();
+        foreach ($operIds as $one) {
+            $fields[] = Operation::ATTR_TYPE_ID;
+            $values[] = $one;
+        }
+        $collection->addFieldToFilter($fields, $values);
+        $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $collection->getSelect()->joinLeft(
+            array('trnx' => $tableTrnx),
+            'main_table.id = trnx.operation_id',
+            '*'
+        );
+        $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
+        $from = Config::helperPeriod()->calcPeriodFromTs($period, $periodCode);
+        $to = Config::helperPeriod()->calcPeriodToTs($period, $periodCode);
+        $collection->addFieldToFilter($fldDate, array('gteq' => $from));
+        $collection->addFieldToFilter($fldDate, array('lteq' => $to));
+        $sql = $collection->getSelectSql(true);
+        return $collection;
+    }
+
+    private function _getOperationsForPvWriteOff($operIds = array(), $period, $periodCode)
+    {
+        /**
+         *
+         * SELECT
+         *
+         * FROM prxgt_bonus_operation pbo
+         * LEFT OUTER JOIN prxgt_bonus_trnx pbt
+         * ON pbo.id = pbt.operation_id
+         * WHERE (
+         * pbo.type_id = 1
+         * OR pbo.type_id = 3
+         * )
+         * AND pbt.date_applied >= '2015-06-01 00:00:00'
+         * AND pbt.date_applied <= '2015-06-01 23:59:59'
+         */
+        $collection = Config::collectionOperation();
         /* filter by operations types */
         $fields = array();
         $values = array();

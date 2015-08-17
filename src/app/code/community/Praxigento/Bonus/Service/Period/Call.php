@@ -14,43 +14,14 @@ use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPer
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriodForPvWriteOffResponse;
 
 /**
+ *
+ * Calculate periods for various calculations.
+ *
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Period_Call
     extends Praxigento_Bonus_Service_Base_Call
 {
-    /**
-     * This method is mocked in unit tests.
-     *
-     * @return Praxigento_Bonus_Resource_Own_Period_Collection
-     */
-    public function initPeriodCollection()
-    {
-        $result = Mage::getModel('prxgt_bonus_model/period')->getCollection();
-        return $result;
-    }
-
-    /**
-     * This method is mocked in unit tests.
-     *
-     * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
-     */
-    public function initTransactionCollection()
-    {
-        $result = Mage::getModel('prxgt_bonus_model/transaction')->getCollection();
-        return $result;
-    }
-
-    private function  _getCalcPeriodsCollection($as)
-    {
-        $result = $this->initPeriodCollection();
-        $table = array($as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
-        $cond = 'main_table.' . Period::ATTR_ID . '='
-            . $as . '.' . LogCalc::ATTR_PERIOD_ID;
-        $result->join($table, $cond, array('log_calc_id' => LogCalc::ATTR_ID, LogCalc::ATTR_DATE_PERFORMED, LogCalc::ATTR_STATE));
-        return $result;
-    }
-
     /**
      * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff $req
      * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
@@ -58,7 +29,7 @@ class Praxigento_Bonus_Service_Period_Call
     public function getPeriodForPvWriteOff(GetPeriodForPvWriteOffRequest $req)
     {
         /** @var  $result GetPeriodForPvWriteOffResponse */
-        $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPvWriteOff');
+        $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPvWriteOff');
         /* shortcuts for request parameters */
         $periodTypeId = $req->getPeriodTypeId();
         $calcTypeId = $req->getCalcTypeId();
@@ -136,6 +107,38 @@ class Praxigento_Bonus_Service_Period_Call
         return $result;
     }
 
+    private function  _getCalcPeriodsCollection($as)
+    {
+        $result = $this->initPeriodCollection();
+        $table = array($as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
+        $cond = 'main_table.' . Period::ATTR_ID . '='
+            . $as . '.' . LogCalc::ATTR_PERIOD_ID;
+        $result->join($table, $cond, array('log_calc_id' => LogCalc::ATTR_ID, LogCalc::ATTR_DATE_PERFORMED, LogCalc::ATTR_STATE));
+        return $result;
+    }
+
+    /**
+     * This method is mocked in unit tests.
+     *
+     * @return Praxigento_Bonus_Resource_Own_Period_Collection
+     */
+    public function initPeriodCollection()
+    {
+        $result = Config::collectionPeriod();
+        return $result;
+    }
+
+    /**
+     * This method is mocked in unit tests.
+     *
+     * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
+     */
+    public function initTransactionCollection()
+    {
+        $result = Config::collectionTransaction();
+        return $result;
+    }
+
     /**
      * Get period for PV bonus calculation.
      *
@@ -145,7 +148,7 @@ class Praxigento_Bonus_Service_Period_Call
     public function getPeriodForPersonalBonus(GetPeriodForPersonalBonusRequest $req)
     {
         /** @var  $result GetPeriodForPersonalBonusResponse */
-        $result = Mage::getModel(Config::CFG_SERVICE . '/period_response_getPeriodForPersonalBonus');
+        $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPersonalBonus');
         /* shortcuts for request parameters */
         $periodTypeId = $req->getPeriodTypeId();
         $bonusTypeId = $req->getCalcTypeId();
@@ -219,6 +222,28 @@ class Praxigento_Bonus_Service_Period_Call
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * Request model to be populated.
+     *
+     * @return Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff
+     */
+    public function requestPeriodForPvWriteOff()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        return $result;
+    }
+
+    /**
+     * Request model to be populated.
+     *
+     * @return Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus
+     */
+    public function requestPeriodForPersonalBonus()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
         return $result;
     }
 }

@@ -128,6 +128,15 @@ class Praxigento_Bonus_Config
     }
 
     /**
+     * @return Praxigento_Bonus_Resource_Own_Period_Collection
+     */
+    public static function collectionPeriod()
+    {
+        $result = self::modelPeriod()->getCollection();
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Model_Own_Period
      */
     public static function modelPeriod()
@@ -137,11 +146,59 @@ class Praxigento_Bonus_Config
     }
 
     /**
-     * @return Praxigento_Bonus_Resource_Own_Period_Collection
+     * @return Praxigento_Bonus_Resource_Own_Operation_Collection
      */
-    public static function collectionPeriod()
+    public static function collectionOperation()
     {
-        $result = Mage::getModel('prxgt_bonus_model/period')->getCollection();
+        $result = self::modelOperation()->getCollection();
         return $result;
     }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Operation
+     */
+    public static function modelOperation()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/operation');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
+     */
+    public static function collectionTransaction()
+    {
+        $result = self::modelTransaction()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Transaction
+     */
+    public static function modelTransaction()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/transaction');
+        return $result;
+    }
+
+
+    /**
+     * @return Praxigento_Bonus_Service_Operations_Call
+     */
+    public static function serviceOperations()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/operations_call');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Period_Call
+     */
+    public static function servicePeriod()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/period_call');
+        return $result;
+    }
+
+
 }
