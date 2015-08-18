@@ -14,17 +14,19 @@ REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='prxgt_stor
 -- Configure Referral Program
 --
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='nmmlm_core_referrals/general/enabled';
-REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '100000000', path ='nmmlm_core_referrals/general/root_default';
-REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '200000000', path ='nmmlm_core_referrals/general/upline_default';
+REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '100000001', path ='nmmlm_core_referrals/general/root_default';
+REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '100000001', path ='nmmlm_core_referrals/general/upline_default';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1,2,3', path ='nmmlm_core_referrals/group/applied_for';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '3', path ='nmmlm_core_referrals/group/anon_default';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '3', path ='nmmlm_core_referrals/group/anon_ref';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='nmmlm_core_referrals/group/reg_default';
 REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='nmmlm_core_referrals/group/reg_ref';
 --
--- Configure Personal Volume Bonus
+-- Configure Bonus Calculation
 --
-
+REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '100000014', path ='prxgt_bonus/general/accountant_mlmid';
+REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '1', path ='prxgt_bonus/personal_bonus/is_enabled';
+REPLACE INTO ${CFG_DB_PREFIX}core_config_data SET value = '3', path ='prxgt_bonus/personal_bonus/payout_delay';
 --
 -- Switch off Youama AjaxLogin (use default Magento Login form)
 --
