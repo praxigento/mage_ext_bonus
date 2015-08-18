@@ -160,9 +160,23 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             /* select all operation for period */
             $opers = $this->_getOperationsForPvWriteOff($logCalc->getId(), $periodValue, $periodCode);
             /* for all operations we need calculate period balances and create PV write off operations. */
+            $balance = array();
             foreach ($opers as $item) {
-                $id = $item->getId();
+                $debitAccId = $item->getData('debit_acc_id');
+                $creditAccId = $item->getData('credit_acc_id');
+                $value = $item->getData('value');
+                if (isset($balance[$debitAccId])) {
+                    $balance[$debitAccId] -= $value;
+                } else {
+                    $balance[$debitAccId] = -$value;
+                }
+                if (isset($balance[$creditAccId])) {
+                    $balance[$creditAccId] += $value;
+                } else {
+                    $balance[$creditAccId] = $value;
+                }
             }
+            /* update balances */
             1 + 1;
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
