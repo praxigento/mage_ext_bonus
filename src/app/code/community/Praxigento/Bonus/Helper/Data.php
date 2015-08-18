@@ -54,6 +54,13 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
         return $result;
     }
 
+    public function cfgGeneralAccountantMlmId($store = null)
+    {
+        $result = Mage::getStoreConfig('prxgt_bonus/general/accountant_mlmid', $store);
+        $result = ($result) ? $result : 'Please type MLM ID for accountant customer in System / Configuration / Praxigento / Bonus Calculation / General / MLM ID for Accountant Customer';
+        return $result;
+    }
+
     public function cfgGeneralDownlineDepth($store = null)
     {
         $result = Mage::getStoreConfig('prxgt_bonus/general/downline_depth', $store);
