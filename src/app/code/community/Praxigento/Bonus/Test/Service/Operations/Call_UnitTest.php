@@ -40,7 +40,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Fra
         $req->setPeriodCode('20150601');
         $req->setDateApplied('2015-06-01 23:59:59');
         $req->setValue(360);
-        $resp = $call->createOperationPvWriteOff($req);
+//        $resp = $call->createOperationPvWriteOff($req);
         // TODO enable and complete test
 //        $resp = $mockCall->getOperationsForPvWriteOff();
 //        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff);

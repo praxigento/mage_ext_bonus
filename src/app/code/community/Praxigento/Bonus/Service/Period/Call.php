@@ -59,10 +59,11 @@ class Praxigento_Bonus_Service_Period_Call
         } else {
             /* get the last period in 'complete' status */
             $periods = $this->_getCalcPeriodsCollection($asLog);
-            $periods->addFieldToFilter(Period::ATTR_TYPE, $calcTypeId);
+            $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $calcTypeId);
             $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
             $periods->addFieldToFilter($asLog . '.' . LogCalc::ATTR_STATE, Config::STATE_PERIOD_COMPLETE);
-            $periods->addOrder(Period::ATTR_ID, Varien_Data_Collection::SORT_ORDER_ASC);
+            $periods->addOrder(Period::ATTR_ID, Varien_Data_Collection::SORT_ORDER_DESC);
+            $periods->setPageSize(1);
             $sql = (string)$periods->getSelectSql();
             // WHERE (type = '8') AND (type = '1') AND (log.state = 'complete')
             if ($periods->getSize()) {
@@ -159,7 +160,7 @@ class Praxigento_Bonus_Service_Period_Call
         $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPersonalBonus');
         /* shortcuts for request parameters */
         $periodTypeId = $req->getPeriodTypeId();
-        $bonusTypeId = $req->getCalcTypeId();
+        $calcTypeId = $req->getCalcTypeId();
         $periodCode = $req->getPeriodCode();
         $operTypeIds = $req->getOperationTypeIds();
         /* get period in 'processing' state */
@@ -184,7 +185,7 @@ class Praxigento_Bonus_Service_Period_Call
         } else {
             /* get the last period in 'complete' status */
             $periods = $this->initPeriodCollection();
-            $periods->addFieldToFilter(Period::ATTR_TYPE, $bonusTypeId);
+            $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $calcTypeId);
             $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
             // TODO: add filter by state
 //            $periods->addFieldToFilter(Period::ATTR_STATE, Config::STATE_PERIOD_COMPLETE);

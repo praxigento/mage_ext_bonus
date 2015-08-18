@@ -177,7 +177,25 @@ class Praxigento_Shell extends Mage_Shell_Abstract
                 }
             }
             /* update balances */
-            1 + 1;
+            $dateApplied = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $periodCode);
+            $accountantAccId = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
+            $callOp = Config::get()->serviceOperations();
+            foreach ($balance as $accId => $val) {
+                if ($accId == $accountantAccId) continue;
+                $reqOp = $callOp->requestCreateOperationPvWriteOff();
+                $reqOp->setCustomerAccountId($accId);
+                $reqOp->setValue($val);
+                $reqOp->setDateApplied($dateApplied);
+                $respOp = $callOp->createOperationPvWriteOff($reqOp);
+                if ($respOp->isSucceed()) {
+                    // continue
+                } else {
+                    // ???
+                }
+            }
+            /* mark period as processed */
+            $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
+            $logCalc->getResource()->save($logCalc);
         } else {
             if ($resp->getErrorCode() == GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO) {
                 $this->_log->warn("There are no periods/operations to calculate personal bonus.");
