@@ -17,6 +17,7 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
     {
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
         $hlp = Mage::helper(Config::CFG_HELPER);
+        $this->assertTrue(is_string($hlp->cfgGeneralAccountantMlmId()));
         $this->assertTrue(is_numeric($hlp->cfgGeneralDownlineDepth()));
         $this->assertTrue(is_bool($hlp->cfgPersonalBonusEnabled()));
         $this->assertTrue(is_string($hlp->cfgPersonalBonusPeriod()));
