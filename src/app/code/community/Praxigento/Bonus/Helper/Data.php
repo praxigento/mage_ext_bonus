@@ -5,7 +5,7 @@
  */
 
 /**
- * Module's utilities.
+ * Un-categorized module's utilities (access to System/Configuration parameters, etc.).
  *
  * User: Alex Gusev <alex@flancer64.com>
  */

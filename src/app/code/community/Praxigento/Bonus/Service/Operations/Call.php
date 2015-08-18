@@ -8,7 +8,9 @@ use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
 use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
+use Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff as CreateOperationPvWriteOffRequest;
 use Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffRequest;
+use Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff as CreateOperationPvWriteOffResponse;
 use Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffResponse;
 
 /**
@@ -93,9 +95,30 @@ class Praxigento_Bonus_Service_Operations_Call
     }
 
     /**
+     * @param Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff $req
+     * @return Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff
+     */
+    public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req)
+    {
+        /** @var  $result CreateOperationPvWriteOffResponse */
+        $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
+
+        return $result;
+    }
+
+    /**
+     * @return CreateOperationPvWriteOffRequest
+     */
+    public function requestCreateOperationPvWriteOff()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/operations_request_createOperationPvWriteOff');
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff
      */
-    public function requestOperationsForPvWriteOff()
+    public function requestGetOperationsForPvWriteOff()
     {
         $result = Mage::getModel('prxgt_bonus_service/operations_request_getOperationsForPvWriteOff');
         return $result;

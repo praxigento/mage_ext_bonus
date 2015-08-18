@@ -282,7 +282,7 @@ class Praxigento_Shell extends Mage_Shell_Abstract
     {
         $result = array();
         $call = Config::get()->serviceOperations();
-        $req = $call->requestOperationsForPvWriteOff();
+        $req = $call->requestGetOperationsForPvWriteOff();
         $req->setPeriodValue($periodValue);
         $req->setPeriodCode($periodCode);
         $req->setCalcTypeId($logCalcId);
