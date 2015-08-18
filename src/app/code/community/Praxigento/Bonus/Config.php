@@ -222,11 +222,29 @@ class Praxigento_Bonus_Config
     }
 
     /**
+     * @return Praxigento_Bonus_Resource_Own_Balance_Collection
+     */
+    public function collectionBalance()
+    {
+        $result = self::modelBalance()->getCollection();
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Model_Own_Account
      */
     public function modelAccount()
     {
         $result = Mage::getModel('prxgt_bonus_model/account');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Balance
+     */
+    public function modelBalance()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/balance');
         return $result;
     }
 

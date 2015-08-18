@@ -4,6 +4,7 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
+use Praxigento_Bonus_Model_Own_Balance as Balance;
 use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
 use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
@@ -103,7 +104,71 @@ class Praxigento_Bonus_Service_Operations_Call
         /** @var  $result CreateOperationPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
 
+        $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
+
+        $customerAccId = $req->getCustomerAccountId();
+        $value = $req->getValue();
+        $dateApplied = $req->getDateApplied();
+        $accountantAcc = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
+        $accountantAccId = $accountantAcc->getId();
+        $typeOperId = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
+
+        try {
+            $connection->beginTransaction();
+            /* create operation */
+            $operation = Config::get()->modelOperation();
+//            $operation->setDatePerformed($date);
+            $operation->setTypeId($typeOperId);
+            $operation->save();
+            $operationId = $operation->getId();
+            /* don't create transactions for empty operations */
+            if ($value != 0) {
+                /* create transaction */
+                $this->_createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
+            }
+            $connection->commit();
+        } catch (Exception $e) {
+            $connection->rollback();
+        }
+
         return $result;
+    }
+
+    private function _createTransaction($operationId, $debitId, $creditId, $value, $date)
+    {
+        /* create transaction */
+        /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
+        $trnx = Config::get()->modelTransaction();
+        $trnx->setOperationId($operationId);
+        $trnx->setDateApplied($date);
+        $trnx->setDebitAccId($debitId);
+        $trnx->setCreditAccId($creditId);
+        $trnx->setValue($value);
+        $trnx->save();
+        /* update balances */
+        $this->_updateBalance($debitId, -$value);
+        $this->_updateBalance($creditId, $value);
+    }
+
+    private function _updateBalance($accountId, $value, $period = Praxigento_Bonus_Config::PERIOD_KEY_NOW)
+    {
+        /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
+        $balanceCollection = Config::get()->collectionBalance();
+        $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
+        $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, $period);
+        /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
+        $balance = Config::get()->modelBalance();
+        if ($balanceCollection->getSize()) {
+            $balance = $balanceCollection->getFirstItem();
+        } else {
+            /* create new balance record for NOW  */
+            $balance->setAccountId($accountId);
+            $balance->setPeriod($period);
+            $balance->save();
+        }
+        $val = $balance->getValue() + $value;
+        $balance->setValue($val);
+        $balance->save();
     }
 
     /**
