@@ -20,19 +20,19 @@ Create configuration file for current instance:
     $ nano templates.json
     {
       "vars": {
-        "LOCAL_ROOT": "/home/alex/work/github/mage_ext_bonus/test",
+        "LOCAL_ROOT": "/home/magento/instance/mage_ext_bonus/test",
         "LOCAL_OWNER": "user",
         "LOCAL_GROUP": "group",
         "CFG_DB_HOST": "localhost",
         "CFG_DB_NAME": "mage_bonus_local",
         "CFG_DB_USER": "mage_bonus_local",
-        "CFG_DB_PASS": "JvP2gZDrGkBKVESvSjXe",
+        "CFG_DB_PASS": "JvPESvZDrGk2gBKVSjXe",
         "CFG_DB_PREFIX": "",
         "CFG_LICENSE_AGREEMENT_ACCEPTED": "yes",
         "CFG_LOCALE": "en_US",
         "CFG_TIMEZONE": "America/Los_Angeles",
         "CFG_DEFAULT_CURRENCY": "USD",
-        "CFG_URL": "http://bonus.mage.local.prxgt.com:50080/",
+        "CFG_URL": "http://bonus.mage.local.prxgt.com/",
         "CFG_USE_REWRITES": "yes",
         "CFG_USE_SECURE": "no",
         "CFG_SECURE_BASE_URL": "",
@@ -42,7 +42,7 @@ Create configuration file for current instance:
         "CFG_ADMIN_FIRSTNAME": "Store",
         "CFG_ADMIN_EMAIL": "admin@store.com",
         "CFG_ADMIN_USERNAME": "admin",
-        "CFG_ADMIN_PASSWORD": "eE5nmsSX0FfVNQG1v5ld",
+        "CFG_ADMIN_PASSWORD": "5ld5nmseE0FfVNQG1vSX",
         "CFG_SKIP_URL_VALIDATION": "yes"
       }
     }
@@ -99,8 +99,10 @@ browser and compete Magento installation worklfow.
 
 Just tests:
 
+    $ cd ./test/
     $ phpunit -c ./mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml
 
 Tests with code coverage:
 
+    $ cd ./test/
     $ phpunit -c ./mage/app/code/community/Praxigento/Bonus/Test/phpunit.dist.xml --coverage-html=./build/cover
