@@ -639,7 +639,7 @@ USAGE;
 
     private function _getStoreCustomerId()
     {
-        $result = 1;
+        $result = Config::get()->helperAccount()->getAccountantMageId();
         return $result;
     }
 

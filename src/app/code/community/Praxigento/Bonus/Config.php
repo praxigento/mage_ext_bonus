@@ -154,7 +154,16 @@ class Praxigento_Bonus_Config
      */
     public function helper()
     {
-        $result = Mage::helper(self::CFG_HELPER);
+        $result = Mage::helper('prxgt_bonus_helper');
+        return $result;
+    }
+
+    /**
+     * @return Nmmlm_Core_Helper_Data
+     */
+    public function helperCore()
+    {
+        $result = Mage::helper('nmmlm_core_helper');
         return $result;
     }
 
@@ -164,6 +173,15 @@ class Praxigento_Bonus_Config
     public function helperPeriod()
     {
         $result = Mage::helper('prxgt_bonus_helper/period');
+        return $result;
+    }
+
+    /**
+     * @return  \Praxigento_Bonus_Helper_Account
+     */
+    public function helperAccount()
+    {
+        $result = Mage::helper('prxgt_bonus_helper/account');
         return $result;
     }
 
@@ -191,6 +209,24 @@ class Praxigento_Bonus_Config
     public function modelPeriod()
     {
         $result = Mage::getModel('prxgt_bonus_model/period');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Account_Collection
+     */
+    public function collectionAccount()
+    {
+        $result = self::modelAccount()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Model_Own_Account
+     */
+    public function modelAccount()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/account');
         return $result;
     }
 
@@ -248,16 +284,6 @@ class Praxigento_Bonus_Config
         return $result;
     }
 
-
-    /**
-     * @return Praxigento_Bonus_Model_Own_Type_Calc
-     */
-    public function modelTypeCalc()
-    {
-        $result = Mage::getModel('prxgt_bonus_model/type_calc');
-        return $result;
-    }
-
     /**
      * @return Praxigento_Bonus_Resource_Own_Type_Calc_Collection
      */
@@ -268,11 +294,11 @@ class Praxigento_Bonus_Config
     }
 
     /**
-     * @return Praxigento_Bonus_Model_Own_Type_Oper
+     * @return Praxigento_Bonus_Model_Own_Type_Calc
      */
-    public function modelTypeOper()
+    public function modelTypeCalc()
     {
-        $result = Mage::getModel('prxgt_bonus_model/type_oper');
+        $result = Mage::getModel('prxgt_bonus_model/type_calc');
         return $result;
     }
 
@@ -286,11 +312,11 @@ class Praxigento_Bonus_Config
     }
 
     /**
-     * @return Praxigento_Bonus_Model_Own_Type_Period
+     * @return Praxigento_Bonus_Model_Own_Type_Oper
      */
-    public function modelTypePeriod()
+    public function modelTypeOper()
     {
-        $result = Mage::getModel('prxgt_bonus_model/type_period');
+        $result = Mage::getModel('prxgt_bonus_model/type_oper');
         return $result;
     }
 
@@ -303,6 +329,14 @@ class Praxigento_Bonus_Config
         return $result;
     }
 
+    /**
+     * @return Praxigento_Bonus_Model_Own_Type_Period
+     */
+    public function modelTypePeriod()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/type_period');
+        return $result;
+    }
 
     /**
      * @return Praxigento_Bonus_Service_Operations_Call
