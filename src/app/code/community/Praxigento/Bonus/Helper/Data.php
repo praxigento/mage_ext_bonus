@@ -56,7 +56,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function cfgGeneralDownlineDepth($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/general/downline_depth', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/general/downline_depth', $store);
         $result *= 1;
         $result = $result < 1 ? 1 : $result;
         return $result;
@@ -64,28 +64,28 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function cfgPersonalBonusEnabled($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/is_enabled', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/personal_bonus/is_enabled', $store);
         $result = filter_var($result, FILTER_VALIDATE_BOOLEAN);
         return $result;
     }
 
     public function cfgPersonalBonusPeriod($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/period', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/personal_bonus/period', $store);
         $result = ($result) ? $result : Praxigento_Bonus_Config::PERIOD_DAY;
         return $result;
     }
 
     public function cfgPersonalBonusWeekLastDay($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/period_last_day', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/personal_bonus/period_last_day', $store);
         $result = ($result) ? $result : Praxigento_Bonus_Model_Own_Source_Weekday::FRIDAY;
         return $result;
     }
 
     public function cfgPersonalBonusPayoutDelay($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/personal_bonus/payout_delay', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/personal_bonus/payout_delay', $store);
         $result = filter_var($result * 1, FILTER_VALIDATE_INT);
         return $result;
     }
@@ -93,7 +93,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function cfgRetailBonusEnabled($store = null)
     {
-        $result = Mage::getStoreConfig('nmmlm_core_referrals/retail_bonus/is_enabled', $store);
+        $result = Mage::getStoreConfig('prxgt_bonus/retail_bonus/is_enabled', $store);
         $result = filter_var($result, FILTER_VALIDATE_BOOLEAN);
         return $result;
     }

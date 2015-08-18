@@ -59,6 +59,18 @@
                             </prxgt_bonus>
                         </children>
                     </sales>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <prxgt_bonus translate="title" module="prxgt_bonus_helper">
+                                        <title>Praxigento: Bonus Calculation</title>
+                                        <sort_order>10105</sort_order>
+                                    </prxgt_bonus>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
                 </children>
             </admin>
         </resources>

@@ -7,12 +7,16 @@
 -->
 <!-- http://www.magentocommerce.com/wiki/5_-_modules_and_development/admin/xml_structure_for_admin_configurations -->
 <config>
-    <!-- "Praxigento" tab (prxgt) is defined in core module -->
     <sections>
-        <!-- ************************************************* -->
-        <!-- Referral Program section (defined in Core module) -->
-        <!-- ************************************************* -->
-        <nmmlm_core_referrals>
+        <prxgt_bonus translate="label" module="prxgt_bonus_helper">
+            <label>Bonus Calculation</label>
+            <!-- "Praxigento" tab (prxgt) is defined in core module  (Nmmlm_Core) -->
+            <tab>prxgt</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>100</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
             <groups>
                 <!-- "general" group is defined in core module -->
                 <general translate="label">
@@ -179,6 +183,7 @@
                     </fields>
                 </perk_bonus>
             </groups>
-        </nmmlm_core_referrals>
+        </prxgt_bonus>
+
     </sections>
 </config>
