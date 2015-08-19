@@ -141,4 +141,16 @@ class Praxigento_Bonus_Helper_Type
         return $result;
     }
 
+    /**
+     * Return array of operation types ids that are processed in PV Write Off calculation.
+     * @return array
+     */
+    public function getOperIdsForPvWriteOff()
+    {
+        $result = array();
+        $result[] = $this->getOperId(Config::OPER_ORDER_PV);
+        $result[] = $this->getOperId(Config::OPER_PV_INT);
+        $result[] = $this->getOperId(Config::OPER_PV_FWRD);
+        return $result;
+    }
 }

@@ -213,6 +213,24 @@ class Praxigento_Bonus_Config
     }
 
     /**
+     * @return Praxigento_Bonus_Model_Own_Log_Calc
+     */
+    public function modelLogCalc()
+    {
+        $result = Mage::getModel('prxgt_bonus_model/log_calc');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Log_Calc_Collection
+     */
+    public function collectionLogCalc()
+    {
+        $result = self::modelLogCalc()->getCollection();
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Resource_Own_Account_Collection
      */
     public function collectionAccount()
@@ -353,6 +371,15 @@ class Praxigento_Bonus_Config
     public function modelTypePeriod()
     {
         $result = Mage::getModel('prxgt_bonus_model/type_period');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Calculation_Call
+     */
+    public function serviceCalculation()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/calculation_call');
         return $result;
     }
 

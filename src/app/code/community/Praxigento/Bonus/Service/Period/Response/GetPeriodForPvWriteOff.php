@@ -15,12 +15,65 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
 
     /** @var string 20150601 | 201506 | 2015 */
     private $periodValue;
-    /** @var bool 'true' - we need register this period on processing */
-    private $isNewPeriod;
+    /** TODO rename to periodCode */
+    /** @var  string DAY | WEEK | ... */
+    private $periodType;
+    /** @var  int */
+    private $periodTypeId;
+    /** @var  int */
+    private $calculationTypeId;
     /** @var  int ID of the existing period if found. */
     private $existingPeriodId;
     /** @var  int ID of the correspondent calculation log entry */
     private $existingLogCalcId;
+
+    /**
+     * @return int
+     */
+    public function getCalculationTypeId()
+    {
+        return $this->calculationTypeId;
+    }
+
+    /**
+     * @param int $val
+     */
+    public function setCalculationTypeId($val)
+    {
+        $this->calculationTypeId = $val;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPeriodType()
+    {
+        return $this->periodType;
+    }
+
+    /**
+     * @param string $val
+     */
+    public function setPeriodType($val)
+    {
+        $this->periodType = $val;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPeriodTypeId()
+    {
+        return $this->periodTypeId;
+    }
+
+    /**
+     * @param int $val
+     */
+    public function setPeriodTypeId($val)
+    {
+        $this->periodTypeId = $val;
+    }
 
     /**
      * @return int
@@ -31,11 +84,11 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
     }
 
     /**
-     * @param int $existingLogCalcId
+     * @param int $val
      */
-    public function setExistingLogCalcId($existingLogCalcId)
+    public function setExistingLogCalcId($val)
     {
-        $this->existingLogCalcId = $existingLogCalcId;
+        $this->existingLogCalcId = $val;
     }
 
     /**
@@ -52,22 +105,6 @@ class Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
     public function setExistingPeriodId($val)
     {
         $this->existingPeriodId = $val;
-    }
-
-    /**
-     * @return boolean 'true' - we need register this period on processing
-     */
-    public function isNewPeriod()
-    {
-        return $this->isNewPeriod;
-    }
-
-    /**
-     * @param boolean $val 'true' - we need register this period on processing
-     */
-    public function setIsNewPeriod($val)
-    {
-        $this->isNewPeriod = $val;
     }
 
     /**

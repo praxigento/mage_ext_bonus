@@ -16,10 +16,24 @@ abstract class Praxigento_Bonus_Service_Base_Call
     protected $_log;
     /** @var Praxigento_Bonus_Helper_Data */
     protected $_helper;
+    /** @var Praxigento_Bonus_Helper_Account */
+    protected $_helperAccount;
+    /** @var Praxigento_Bonus_Helper_Period */
+    protected $_helperPeriod;
+    /** @var Praxigento_Bonus_Helper_Type */
+    protected $_helperType;
+    /** @var  Nmmlm_Core_Helper_Data */
+    protected $_helperCore;
 
     function __construct()
     {
         $this->_log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
-        $this->_helper = Mage::helper(Config::CFG_HELPER);
+        /* helpers */
+        $this->_helper = Config::get()->helper();
+        $this->_helperAccount = Config::get()->helperAccount();
+        $this->_helperPeriod = Config::get()->helperPeriod();
+        $this->_helperType = Config::get()->helperType();
+        /* Nmmlm_Core helper */
+        $this->_helperCore = Config::get()->helperCore();
     }
 }

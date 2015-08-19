@@ -23,17 +23,6 @@ use Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff as G
 class Praxigento_Bonus_Service_Operations_Call
     extends Praxigento_Bonus_Service_Base_Call
 {
-    /** @var Praxigento_Bonus_Helper_Type */
-    private $_helperType;
-
-    /**
-     * Praxigento_Bonus_Service_Operations_Call constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_helperType = Config::get()->helperType();
-    }
 
     /**
      * @param Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff $req
@@ -42,7 +31,7 @@ class Praxigento_Bonus_Service_Operations_Call
     public function getOperationsForPvWriteOff(GetOperationsForPvWriteOffRequest $req)
     {
         $result = Mage::getModel('prxgt_bonus_service/operations_response_getOperationsForPvWriteOff');
-        $calcId = $req->getCalcTypeId();
+        $logCalcId = $req->getLogCalcId();
         $periodValue = $req->getPeriodValue();
         $periodCode = $req->getPeriodCode();
         /**
@@ -63,7 +52,7 @@ class Praxigento_Bonus_Service_Operations_Call
         /* filter by operations types */
         $fields = array();
         $values = array();
-        $operIds = $this->_getTypesForPvWriteOff();
+        $operIds = $this->_helperType->getOperIdsForPvWriteOff();
         foreach ($operIds as $one) {
             $fields[] = Operation::ATTR_TYPE_ID;
             $values[] = $one;
@@ -83,15 +72,6 @@ class Praxigento_Bonus_Service_Operations_Call
         $sql = $collection->getSelectSql(true);
         $result->setCollection($collection);
         $result->setErrorCode(GetOperationsForPvWriteOffResponse::ERR_NO_ERROR);
-        return $result;
-    }
-
-    private function _getTypesForPvWriteOff()
-    {
-        $result = array();
-        $result[] = $this->_helperType->getOperId(Config::OPER_ORDER_PV);
-        $result[] = $this->_helperType->getOperId(Config::OPER_PV_INT);
-        $result[] = $this->_helperType->getOperId(Config::OPER_PV_FWRD);
         return $result;
     }
 

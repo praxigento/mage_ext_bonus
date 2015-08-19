@@ -10,8 +10,10 @@ use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusRequest;
 use Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff as GetPeriodForPvWriteOffRequest;
+use Praxigento_Bonus_Service_Period_Request_RegisterPeriodCalculation as RegisterPeriodCalculationRequest;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonusResponse;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriodForPvWriteOffResponse;
+use Praxigento_Bonus_Service_Period_Response_RegisterPeriodCalculation as RegisterPeriodCalculationResponse;
 
 /**
  *
@@ -28,15 +30,18 @@ class Praxigento_Bonus_Service_Period_Call
      * @param Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff $req
      * @return Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff
      */
-    public function getPeriodForPvWriteOff(GetPeriodForPvWriteOffRequest $req)
+    public function getPeriodForPvWriteOff(GetPeriodForPvWriteOffRequest $req = null)
     {
         /** @var  $result GetPeriodForPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPvWriteOff');
-        /* shortcuts for request parameters */
-        $periodTypeId = $req->getPeriodTypeId();
-        $calcTypeId = $req->getCalcTypeId();
-        $periodCode = $req->getPeriodCode();
-        $operTypeIds = $req->getOperationTypeIds();
+        /* define parameters for lookup */
+        $calcTypeId = $this->_helperType->getCalcId(Config::CALC_PV_WRITE_OFF);
+        $result->setCalculationTypeId($calcTypeId);
+        $periodCode = $this->_helper->cfgPersonalBonusPeriod();
+        $result->setPeriodType($periodCode);
+        $periodTypeId = $this->_helperType->getPeriodId($periodCode);
+        $result->setPeriodTypeId($periodTypeId);
+        $operTypeIds = $this->_helperType->getOperIdsForPvWriteOff();
         /* get period in 'processing' state */
         $asLog = 'log';
         $periods = $this->_getCalcPeriodsCollection($asLog);
@@ -54,7 +59,6 @@ class Praxigento_Bonus_Service_Period_Call
             $result->setExistingPeriodId($id);
             $result->setExistingLogCalcId($item->getData(self::AS_LOG_ID));
             $result->setPeriodValue($value);
-            $result->setIsNewPeriod(false);
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
         } else {
             /* get the last period in 'complete' status */
@@ -69,9 +73,9 @@ class Praxigento_Bonus_Service_Period_Call
             if ($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
                 $value = $periodLast->getData(Period::ATTR_VALUE);
-                $next = Config::get()->helperPeriod()->calcPeriodNext($value, $periodCode);
+                $next = $this->_helperPeriod->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
-                $result->setIsNewPeriod(true);
+                // TODO add period ID & log calc ID to response
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
@@ -97,8 +101,7 @@ class Praxigento_Bonus_Service_Period_Call
                 if ($collection->getSize()) {
                     $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
-                    $result->setPeriodValue(Config::get()->helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
-                    $result->setIsNewPeriod(true);
+                    $result->setPeriodValue($this->_helperPeriod->calcPeriodCurrent($dateApplied, $periodCode));
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
                 } else {
                     /* there is no transactions, nothing to do */
@@ -106,8 +109,73 @@ class Praxigento_Bonus_Service_Period_Call
                 }
             }
         }
+        return $result;
+    }
 
-
+    /**
+     * Register calculation period or load existing data.
+     *
+     * @param Praxigento_Bonus_Service_Period_Request_RegisterPeriodCalculation $req
+     * @return Praxigento_Bonus_Service_Period_Response_RegisterPeriodCalculation
+     */
+    public function registerPeriodCalculation(RegisterPeriodCalculationRequest $req)
+    {
+        $result = new RegisterPeriodCalculationResponse();
+        $period = Config::get()->modelPeriod();
+        $logCalc = Config::get()->modelLogCalc();
+        /* shortcuts for request data */
+        $periodId = $req->getPeriodId();
+        $periodValue = $req->getPeriodValue();
+        $logCalcId = $req->getLogCalcId();
+        $typeCalcId = $req->getTypeCalcId();
+        $typePeriodId = $req->getTypePeriodId();
+        if (is_null($periodId)) {
+            /* register new calculation period into DB */
+            $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
+            $connection->beginTransaction();
+            try {
+                /* look up for existing period by calculation type and period value */
+                $periods = Config::collectionPeriod();
+                $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $typeCalcId);
+                $periods->addFieldToFilter(Period::ATTR_VALUE, $periodValue);
+                if ($periods->getSize() == 0) {
+                    /* add new period */
+                    $period->setType($typePeriodId);
+                    $period->setCalcTypeId($typeCalcId);
+                    $period->setValue($periodValue);
+                    $period->save();
+                } else {
+                    $this->_log->debug("Period '$periodValue' already exists.");
+                    $period = $periods->getFirstItem();
+                }
+                /* add new entry to calculation log */
+                $logCalc->setPeriodId($period->getId());
+                $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
+                $logCalc->save();
+                $connection->commit();
+                $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is registered.");
+            } catch (Exception $e) {
+                $connection->rollBack();
+                $this->_log->error(
+                    "Cannot register new calculation period ($periodValue). Error: "
+                    . $e->getMessage()
+                );
+            }
+        } else {
+            /* load period data */
+            $period->load($periodId);
+            if (is_null($logCalcId)) {
+                /* add new entry to calculation log */
+                $logCalc->setPeriodId($period->getId());
+                $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
+                $logCalc->save();
+            } else {
+                /* load calculation log data */
+                $logCalc->load($logCalcId);
+            }
+        }
+        $result->setPeriod($period);
+        $result->setLogCalc($logCalc);
         return $result;
     }
 
@@ -180,7 +248,6 @@ class Praxigento_Bonus_Service_Period_Call
             $value = $item->getData(Period::ATTR_VALUE);
             $result->setExistingPeriodId($id);
             $result->setPeriodValue($value);
-            $result->setIsNewPeriod(false);
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
         } else {
             /* get the last period in 'complete' status */
@@ -194,9 +261,8 @@ class Praxigento_Bonus_Service_Period_Call
             if ($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
                 $value = $periodLast->getData(Period::ATTR_VALUE);
-                $next = Config::get()->helperPeriod()->calcPeriodNext($value, $periodCode);
+                $next = $this->_helperPeriod->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
-                $result->setIsNewPeriod(true);
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
@@ -222,8 +288,7 @@ class Praxigento_Bonus_Service_Period_Call
                 if ($collection->getSize()) {
                     $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
-                    $result->setPeriodValue(Config::get()->helperPeriod()->calcPeriodCurrent($dateApplied, $periodCode));
-                    $result->setIsNewPeriod(true);
+                    $result->setPeriodValue($this->_helperPeriod->calcPeriodCurrent($dateApplied, $periodCode));
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
                 } else {
                     /* there is no transactions, nothing to do */
@@ -253,6 +318,17 @@ class Praxigento_Bonus_Service_Period_Call
     public function requestPeriodForPersonalBonus()
     {
         $result = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
+        return $result;
+    }
+
+    /**
+     * Request model to be populated.
+     *
+     * @return Praxigento_Bonus_Service_Period_Request_RegisterPeriodCalculation
+     */
+    public function requestRegisterPeriodCalculation()
+    {
+        $result = Mage::getModel('prxgt_bonus_service/period_request_registerPeriodCalculation');
         return $result;
     }
 }

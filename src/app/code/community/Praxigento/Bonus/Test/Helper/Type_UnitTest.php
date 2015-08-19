@@ -68,6 +68,43 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $this->assertEquals(self::TEST_ID, $id);
     }
 
+    public function test_getOperIdsForPvWriteOff()
+    {
+        /** mock stored items  */
+        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
+        $mockBuilder->setMethods(array('collectionTypeOper'));
+        $mockCfg = $mockBuilder->getMock();
+        /* add item */
+        /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
+        $itemOrdrPv = Config::get()->modelTypeOper();
+        $itemOrdrPv->setData(TypeBase::ATTR_CODE, Config::OPER_ORDER_PV);
+        $itemOrdrPv->setData(TypeBase::ATTR_ID, 100);
+        /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
+        $itemPvInt = Config::get()->modelTypeOper();
+        $itemPvInt->setData(TypeBase::ATTR_CODE, Config::OPER_PV_INT);
+        $itemPvInt->setData(TypeBase::ATTR_ID, 200);
+        /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
+        $itemPvFwrd = Config::get()->modelTypeOper();
+        $itemPvFwrd->setData(TypeBase::ATTR_CODE, Config::OPER_PV_FWRD);
+        $itemPvFwrd->setData(TypeBase::ATTR_ID, 300);
+        /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
+        $itemOther = Config::get()->modelTypeOper();
+        $itemOther->setData(TypeBase::ATTR_CODE, Config::OPER_PV_WRITE_OFF);
+        $itemOther->setData(TypeBase::ATTR_ID, 500);
+        //
+        $mockCfg->expects($this->once())->method('collectionTypeOper')
+            ->will($this->returnValue(array($itemOrdrPv, $itemPvInt, $itemPvFwrd, $itemOther)));
+        Config::set($mockCfg);
+        /** @var  $hlp Praxigento_Bonus_Helper_Type */
+        $hlp = Config::get()->helperType();
+        $types = $hlp->getOperIdsForPvWriteOff();
+        $this->assertTrue(is_array($types));
+        $this->assertContains(100, $types);
+        $this->assertContains(200, $types);
+        $this->assertContains(300, $types);
+        $this->assertNotContains(500, $types);
+    }
+
     public function test_getPeriod()
     {
         /** mock stored items  */
