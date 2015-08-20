@@ -4,6 +4,9 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
+use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
+use Praxigento_Bonus_Model_Own_Period as Period;
+use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Calculation_Request_CalcPvWriteOff as CalcPvWriteOffRequest;
 use Praxigento_Bonus_Service_Calculation_Response_CalcPvWriteOff as CalcPvWriteOffResponse;
 use Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffRequest;
@@ -36,6 +39,7 @@ class Praxigento_Bonus_Service_Calculation_Call
             $resp = $call->getPeriodForPvWriteOff();
             if ($resp->isSucceed()) {
                 $periodValue = $resp->getPeriodValue();
+                $periodCode = $resp->getPeriodType();
                 $this->_log->debug("'PV WriteOff' calculations for period '$periodValue' is started.");
                 /* prepare data to register or load period calculation */
                 $reqR = $call->requestRegisterPeriodCalculation();
@@ -45,6 +49,7 @@ class Praxigento_Bonus_Service_Calculation_Call
                 $reqR->setTypeCalcId($resp->getCalculationTypeId());
                 $reqR->setTypePeriodId($resp->getPeriodTypeId());
                 $respR = $call->registerPeriodCalculation($reqR);
+                $period = $respR->getPeriod();
                 $logCalc = $respR->getLogCalc();
                 /* select all operation for period */
                 $callOp = Config::get()->serviceOperations();
@@ -56,59 +61,88 @@ class Praxigento_Bonus_Service_Calculation_Call
                 /** @var  $respOpGet GetOperationsForPvWriteOffResponse */
                 $respOpGet = $callOp->getOperationsForPvWriteOff($reqOpGet);
                 $opers = $respOpGet->getCollection();
-                /* for all operations we need calculate period balances and create PV write off operations. */
-                $balance = array();
-                foreach ($opers as $item) {
-                    $debitAccId = $item->getData('debit_acc_id');
-                    $creditAccId = $item->getData('credit_acc_id');
-                    $value = $item->getData('value');
-                    if (isset($balance[$debitAccId])) {
-                        $balance[$debitAccId] -= $value;
-                    } else {
-                        $balance[$debitAccId] = -$value;
-                    }
-                    if (isset($balance[$creditAccId])) {
-                        $balance[$creditAccId] += $value;
-                    } else {
-                        $balance[$creditAccId] = $value;
-                    }
-                }
-                /* update balances */
-                $dateApplied = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $resp->getPeriodType());
-                $accountantAccId = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
-
-                foreach ($balance as $accId => $val) {
-                    if ($accId == $accountantAccId) continue;
-                    $reqOp = $callOp->requestCreateOperationPvWriteOff();
-                    $reqOp->setCustomerAccountId($accId);
-                    $reqOp->setValue($val);
-                    $reqOp->setDateApplied($dateApplied);
-                    $respOp = $callOp->createOperationPvWriteOff($reqOp);
-                    if ($respOp->isSucceed()) {
-                        // continue
-                    } else {
-                        // ???
-                    }
-                }
+                /* process found operations, create PvWriteOff operations, update balances and complete period */
+                $this->_pvWriteOffProcessOperations($opers, $periodValue, $periodCode);
                 /* mark period as processed */
                 $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
                 $logCalc->getResource()->save($logCalc);
-
-
             } else {
                 if ($resp->getErrorCode() == GetPeriodForWriteOff::ERR_NOTHING_TO_DO) {
                     $this->_log->warn("There are no periods/operations to calculate PV Write Off.");
                     if ($resp->isNewPeriod()) {
-                    } else {
+                        /* we need registry PV Write Off calc for empty periods. */
+                        $periodValue = $resp->getPeriodValue();
+                        $this->_log->debug("'PV WriteOff' calculations for period '$periodValue' is started.");
+                        /* prepare data to register or load period calculation */
+                        $reqR = $call->requestRegisterPeriodCalculation();
+                        $reqR->setPeriodId($resp->getExistingPeriodId());
+                        $reqR->setLogCalcId($resp->getExistingLogCalcId());
+                        $reqR->setPeriodValue($periodValue);
+                        $reqR->setTypeCalcId($resp->getCalculationTypeId());
+                        $reqR->setTypePeriodId($resp->getPeriodTypeId());
+                        $respR = $call->registerPeriodCalculation($reqR);
+                        /* mark period as processed */
+                        $logCalc = $respR->getLogCalc();
+                        $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
+                        $logCalc->getResource()->save($logCalc);
                     }
                 } else {
                     $this->_log->warn("Cannot get period to calculate PV Write Off.");
                 }
             }
+            $result->setErrorCode(CalcPvWriteOffResponse::ERR_NO_ERROR);
         } else {
             $this->_log->debug("Personal bonus is disabled. PV Write Off calculation cannot be started.");
         }
         return $result;
+    }
+
+    /**
+     * We need to calculate period balances and to create PV write off operations for all elated operations
+     * we are found.
+     */
+    private function _pvWriteOffProcessOperations(
+        Praxigento_Bonus_Resource_Own_Operation_Collection $opers,
+        $periodValue,
+        $periodCode
+    )
+    {
+        $callOp = Config::get()->serviceOperations();
+        $changes = array();
+        foreach ($opers as $item) {
+            $debitAccId = $item->getData(Transaction::ATTR_DEBIT_ACC_ID);
+            $creditAccId = $item->getData(Transaction::ATTR_CREDIT_ACC_ID);
+            $value = $item->getData(Transaction::ATTR_VALUE);
+            if (isset($changes[$debitAccId])) {
+                $changes[$debitAccId] -= $value;
+            } else {
+                $changes[$debitAccId] = -$value;
+            }
+            if (isset($changes[$creditAccId])) {
+                $changes[$creditAccId] += $value;
+            } else {
+                $changes[$creditAccId] = $value;
+            }
+        }
+        /* Create PvWriteOff operations with the last second of the period and update NOW balances. */
+        $dateApplied = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
+        $accountantAccId = $this->_helperAccount->getAccountantAccByAssetCode(Config::ASSET_PV);
+
+        foreach ($changes as $accId => $val) {
+            /* skip Store itself account (it is counterparty of all other transactions) */
+            if ($accId == $accountantAccId) continue;
+            $reqOp = $callOp->requestCreateOperationPvWriteOff();
+            $reqOp->setCustomerAccountId($accId);
+            $reqOp->setValue($val);
+            $reqOp->setDateApplied($dateApplied);
+            $respOp = $callOp->createOperationPvWriteOff($reqOp);
+            if (!$respOp->isSucceed()) {
+                $errCode = $respOp->getErrorCode();
+                Mage::throwException("Cannot create PV Write Off operation for customer acc #$accId "
+                    . "(value=$val, date=$dateApplied). Error code: $errCode");
+            }
+        }
+        return;
     }
 
     /**

@@ -107,6 +107,7 @@ class Praxigento_Bonus_Service_Operations_Call
                 $this->_createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
             }
             $connection->commit();
+            $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
         } catch (Exception $e) {
             $connection->rollback();
         }
