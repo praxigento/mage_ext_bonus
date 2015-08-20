@@ -32,9 +32,11 @@
 
     <?php if ($this->isPersonalBonusEnabled()): ?>
 
-
-        <div class="nmmlmRow">Done.</div>
-
+        <?php if ($this->getIsCalculationDone()): ?>
+            <div class="nmmlmRow">Done successfully.</div>
+        <?php else: ?>
+            <div class="nmmlmRow">Calculation is failed.</div>
+        <?php endif; ?>
 
     <?php else: ?>
 

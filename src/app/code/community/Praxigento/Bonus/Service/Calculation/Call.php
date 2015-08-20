@@ -26,11 +26,11 @@ class Praxigento_Bonus_Service_Calculation_Call
      * Perform one iteration of the PV Write Off calculation.
      *
      * @param Praxigento_Bonus_Service_Calculation_Request_CalcPvWriteOff $req
-     * @return Praxigento_Bonus_Service_Calculation_Request_CalcPvWriteOff
+     * @return Praxigento_Bonus_Service_Calculation_Response_CalcPvWriteOff
      */
     public function calcPvWriteOff(CalcPvWriteOffRequest $req)
     {
-        /** @var  $result CalcPvWriteOffRequest */
+        /** @var  $result CalcPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/calculation_response_calcPvWriteOff');
         if ($this->_helper->cfgPersonalBonusEnabled()) {
             /** @var  $call Praxigento_Bonus_Service_Period_Call */

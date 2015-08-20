@@ -11,15 +11,30 @@
 <style>
     .nmmlmFormLayout {
         margin: 0 auto;
-        width: 400px;
+        width: 600px;
     }
 
     .nmmlmRow {
         width: 100%;
+        float: left;
         border-bottom: 1px solid black;
-        margin-top: 10px;
-        padding-bottom: 10px;
+        margin-top: 5px;
+        padding-bottom: 5px;
         text-align: center;
+    }
+
+    .nmmlmRowLabel {
+        width: 240px;
+        float: left;
+        text-align: right;
+        margin-right: 5px;
+    }
+
+    .nmmlmRowValue {
+        width: 340px;
+        float: left;
+        text-align: left;
+        font-weight: bold;
     }
 
     .nmmlmBtn {
@@ -38,6 +53,16 @@
 
         <form method="post" action="<?php echo $this->getUrl('*/*/post'); ?>" id="<?php $this->uiDomForm() ?>">
             <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+            <div class="nmmlmRow">
+                <div class="nmmlmRowLabel">Period type:</div>
+                <div class="nmmlmRowValue"><?php $this->uiPeriodType() ?></div>
+            </div>
+
+            <div class="nmmlmRow">
+                <div class="nmmlmRowLabel">Period to calculate:</div>
+                <div class="nmmlmRowValue"><?php $this->uiPeriodCurrent() ?></div>
+            </div>
 
             <div class="nmmlmRow">
                 <?php $this->ui('Press \'OK\' to process PV bonus.') ?>
