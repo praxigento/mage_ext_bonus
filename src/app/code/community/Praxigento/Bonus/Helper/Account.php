@@ -14,10 +14,26 @@ use Praxigento_Bonus_Model_Own_Type_Asset as TypeAsset;
  */
 class Praxigento_Bonus_Helper_Account
 {
+    /**
+     * Data for Magento Accountant (The special customer whose accounts are used in transactions as Magento Store
+     * accounts).
+     *
+     * @var array [assetCode] => accountData
+     */
     private static $_cachedAccountantData = array();
+    /**
+     * Entity ID for Magento Accountant customer.
+     *
+     * @var int
+     */
     private static $_cachedAccountantMageId;
 
-
+    /**
+     * Return account data for Magento Accountant by asset code (Praxigento_Bonus_Config::ASSET_).
+     *
+     * @param $assetCode
+     * @return Praxigento_Bonus_Model_Own_Account
+     */
     public function getAccountantAccByAssetCode($assetCode)
     {
         /* get all existing accounts for Accountant */
@@ -32,6 +48,9 @@ class Praxigento_Bonus_Helper_Account
         return $result;
     }
 
+    /**
+     * Load accounts from db and cache it.
+     */
     private function _loadAccounts()
     {
         $all = Config::get()->collectionAccount();
@@ -45,12 +64,15 @@ class Praxigento_Bonus_Helper_Account
         $cols = array(TypeAsset::ATTR_CODE);
         $all->join($table, $cond, $cols);
         foreach ($all as $one) {
-            $account = Config::get()->modelAccount();
-            $account->setId($one->getData(Account::ATTR_ID));
-            $account->setAssetId($one->getData(Account::ATTR_ASSET_ID));
-            $account->setCustomerId($one->getData(Account::ATTR_CUSTOMER_ID));
+            $accId = $one->getData(Account::ATTR_ID);
+            $assetId = $one->getData(Account::ATTR_ASSET_ID);
+            $custId = $one->getData(Account::ATTR_CUSTOMER_ID);
             $code = $one->getData(TypeAsset::ATTR_CODE);
-            self::$_cachedAccountantData[$code] = $account;
+            $item = new Varien_Object();
+            $item->setId($accId);
+            $item->setAssetId($assetId);
+            $item->setCustomerId($custId);
+            self::$_cachedAccountantData[$code] = $item;
         }
     }
 
