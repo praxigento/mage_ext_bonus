@@ -248,6 +248,7 @@ class Praxigento_Bonus_Service_Period_Call
             $value = $item->getData(Period::ATTR_VALUE);
             $result->setExistingPeriodId($id);
             $result->setPeriodValue($value);
+            $result->setIsNewPeriod(false);
             $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
         } else {
             /* get the last period in 'complete' status */
@@ -263,6 +264,7 @@ class Praxigento_Bonus_Service_Period_Call
                 $value = $periodLast->getData(Period::ATTR_VALUE);
                 $next = $this->_helperPeriod->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
+                $result->setIsNewPeriod(true);
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
@@ -289,6 +291,7 @@ class Praxigento_Bonus_Service_Period_Call
                     $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
                     $result->setPeriodValue($this->_helperPeriod->calcPeriodCurrent($dateApplied, $periodCode));
+                    $result->setIsNewPeriod(true);
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
                 } else {
                     /* there is no transactions, nothing to do */

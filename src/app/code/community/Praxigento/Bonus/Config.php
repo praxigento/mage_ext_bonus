@@ -127,6 +127,24 @@ class Praxigento_Bonus_Config
     }
 
     /**
+     * Reset cached and static properties in tests.
+     */
+    public static function cacheReset()
+    {
+        self::$_instance = null;
+        self::_resetHelper('prxgt_bonus_helper');
+        self::_resetHelper('prxgt_bonus_helper/account');
+        self::_resetHelper('prxgt_bonus_helper/period');
+        self::_resetHelper('prxgt_bonus_helper/type');
+        self::_resetHelper('nmmlm_core_helper');
+    }
+
+    private static function _resetHelper($name)
+    {
+        if (Mage::registry('_helper/' . $name)) Mage::unregister('_helper/' . $name);
+    }
+
+    /**
      * Get singleton instance.
      *
      * @return Praxigento_Bonus_Config
