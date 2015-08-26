@@ -134,6 +134,18 @@ class Praxigento_Bonus_Config
         if (Mage::registry('_helper/' . $name)) Mage::unregister('_helper/' . $name);
     }
 
+
+    /**
+     * Use this method to get singletons from Mage. This method may be overridden in tests.
+     *
+     * @return mixed
+     */
+    public function model($modelClass = '', $arguments = array())
+    {
+        $result = Mage::getModel($modelClass, $arguments);
+        return $result;
+    }
+
     /**
      * Use this method to get singletons from Mage registry. This method may be overridden in tests.
      *
