@@ -135,6 +135,19 @@ class Praxigento_Bonus_Config
     }
 
     /**
+     * Use this method to get singletons from Mage registry. This method may be overridden in tests.
+     *
+     * @param $modelClass
+     * @param $args
+     * @return mixed
+     */
+    public function singleton($modelClass, $args)
+    {
+        $result = Mage::getSingleton($modelClass, $args);
+        return $result;
+    }
+
+    /**
      * Get singleton instance.
      *
      * @return Praxigento_Bonus_Config
