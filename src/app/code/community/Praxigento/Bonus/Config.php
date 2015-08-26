@@ -117,19 +117,9 @@ class Praxigento_Bonus_Config
     private static $_instance;
 
     /**
-     * Praxigento_Bonus_Config constructor.
-     */
-    public function __construct()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = $this;
-        }
-    }
-
-    /**
      * Reset cached and static properties in tests.
      */
-    public static function cacheReset()
+    private static function cacheReset()
     {
         self::$_instance = null;
         self::_resetHelper('prxgt_bonus_helper');
@@ -164,6 +154,7 @@ class Praxigento_Bonus_Config
      */
     public static function  set(Praxigento_Bonus_Config $instance)
     {
+        self::cacheReset();
         self::$_instance = $instance;
     }
 

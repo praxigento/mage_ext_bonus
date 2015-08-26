@@ -3,18 +3,36 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Nmmlm_Core_Config as ConfigCore;
+use Praxigento_Bonus_Config as Config;
 
 /**
  * Un-categorized module's utilities (access to System/Configuration parameters, etc.).
+ *
+ * This class also separates Core Helper methods from this module. We can use core helper (Nmmlm_Core_Helper_Data)
+ * and we will have a code dependency to core class, or we can create intermediary methods in this helper
+ * (less dependency).
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    /**
+     * @var Nmmlm_Core_Helper_Data
+     */
+    private $_helperCore;
+
+
+    function __construct()
+    {
+        $this->_helperCore = Config::get()->helperCore();
+    }
+
 
     public function formatAmount($value, $decimal = '.', $group = '')
     {
-        return number_format($value, 2, $decimal, $group);
+        $result = $this->_helperCore->formatAmount($value, $decimal, $group);
+        return $result;
     }
 
     /**
@@ -25,9 +43,9 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getUplineForCustomer(Mage_Customer_Model_Customer $customer)
     {
-        $uplineMlmId = $customer->getNmmlmCoreMlmUpline();
+        $uplineMlmId = $customer->getData(ConfigCore::ATTR_CUST_MLM_UPLINE);
         /** @var  $result Mage_Customer_Model_Customer */
-        $result = Nmmlm_Core_Util::findCustomerByMlmId($uplineMlmId);
+        $result = $this->_helperCore->findCustomerByMlmId($uplineMlmId);
         return $result;
     }
 
@@ -38,7 +56,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getDateGmtNow($format = null)
     {
-        $result = Nmmlm_Core_Util::dateGmtNow($format);
+        $result = $this->_helperCore->dateGmtNow($format);
         return $result;
     }
 

@@ -31,6 +31,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     const TEST_ID = 21;
     const TEST_NOTE = 'note';
 
+    public function setUp()
+    {
+        Config::set(null);
+    }
+
     public function test_getAsset()
     {
         /** mock stored items  */

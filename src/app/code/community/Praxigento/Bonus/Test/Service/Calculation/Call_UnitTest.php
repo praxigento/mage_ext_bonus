@@ -13,6 +13,10 @@ include_once('../../phpunit_bootstrap.php');
 class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
     extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        Config::set(null);
+    }
 
     public function test_constructor()
     {
@@ -23,7 +27,6 @@ class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
 
     public function test_getOperationsForPvWriteOff()
     {
-        Config::cacheReset();
         /** @var  $call Praxigento_Bonus_Service_Calculation_Call */
         $call = Config::get()->serviceCalculation();
         /** @var  $resp Praxigento_Bonus_Service_Calculation_Request_CalcPvWriteOff */
