@@ -39,7 +39,7 @@ class Praxigento_Bonus_Service_Calculation_Call
             $resp = $call->getPeriodForPvWriteOff();
             if ($resp->isSucceed()) {
                 $periodValue = $resp->getPeriodValue();
-                $periodCode = $resp->getPeriodType();
+                $periodCode = $resp->getPeriodTypeCode();
                 $this->_log->debug("'PV WriteOff' calculations for period '$periodValue' is started.");
                 /* prepare data to register or load period calculation */
                 $reqR = $call->requestRegisterPeriodCalculation();
@@ -56,7 +56,7 @@ class Praxigento_Bonus_Service_Calculation_Call
                 /** @var  $reqOpGet GetOperationsForPvWriteOffRequest */
                 $reqOpGet = $callOp->requestGetOperationsForPvWriteOff();
                 $reqOpGet->setPeriodValue($periodValue);
-                $reqOpGet->setPeriodCode($resp->getPeriodType());
+                $reqOpGet->setPeriodCode($resp->getPeriodTypeCode());
                 $reqOpGet->setLogCalcId($logCalc->getId());
                 /** @var  $respOpGet GetOperationsForPvWriteOffResponse */
                 $respOpGet = $callOp->getOperationsForPvWriteOff($reqOpGet);
