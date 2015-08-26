@@ -4,6 +4,7 @@
  * All rights reserved.
  */
 use Praxigento_Bonus_Config as Config;
+use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonus;
@@ -38,6 +39,110 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         $this->assertTrue($req instanceof Praxigento_Bonus_Service_Period_Request_RegisterPeriodCalculation);
     }
 
+
+    public function test_registerPeriodCalculation_isPeriod_isLog()
+    {
+        $PERIOD_ID = 21;
+        $LOG_ID = 34;
+        /**
+         * Create mocks.
+         */
+        /* Period Model */
+        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array('load'))
+            ->getMock();
+        $mockPeriod
+            ->expects($this->once())
+            ->method('load')
+            ->with($this->equalTo($PERIOD_ID));
+        $mockPeriod->setId($PERIOD_ID);
+        /* Log Calc Model */
+        $mockLogCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array('load'))
+            ->getMock();
+        $mockLogCalc
+            ->expects($this->once())
+            ->method('load')
+            ->with($this->equalTo($LOG_ID));
+        $mockLogCalc->setId($LOG_ID);
+        /* config */
+        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
+        $mockBuilder->setMethods(array('modelPeriod', 'modelLogCalc'));
+        $mockCfg = $mockBuilder->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelPeriod')
+            ->will($this->returnValue($mockPeriod));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelLogCalc')
+            ->will($this->returnValue($mockLogCalc));
+        /* setup Config */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Config::get()->servicePeriod();
+        $req = $call->requestRegisterPeriodCalculation();
+        $req->setPeriodId($PERIOD_ID);
+        $req->setLogCalcId($LOG_ID);
+        $resp = $call->registerPeriodCalculation($req);
+        $this->assertEquals($PERIOD_ID, $resp->getPeriod()->getId());
+        $this->assertEquals($LOG_ID, $resp->getLogCalc()->getId());
+    }
+
+    public function test_registerPeriodCalculation_isPeriod_noLog()
+    {
+        $PERIOD_ID = 21;
+        $LOG_ID = 34;
+        /**
+         * Create mocks.
+         */
+        /* Period Model */
+        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array('load'))
+            ->getMock();
+        $mockPeriod
+            ->expects($this->once())
+            ->method('load')
+            ->with($this->equalTo($PERIOD_ID));
+        $mockPeriod->setId($PERIOD_ID);
+        /* Log Calc Model */
+        $mockLogCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array('setData', 'getId', 'save'))
+            ->getMock();
+        $mockLogCalc
+            ->expects($this->at(0))
+            ->method('setData')
+            ->with($this->equalTo(LogCalc::ATTR_PERIOD_ID), $this->equalTo($PERIOD_ID));
+        $mockLogCalc
+            ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($LOG_ID));
+        $mockLogCalc
+            ->expects($this->once())
+            ->method('save');
+        /* config */
+        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
+        $mockBuilder->setMethods(array('modelPeriod', 'modelLogCalc'));
+        $mockCfg = $mockBuilder->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelPeriod')
+            ->will($this->returnValue($mockPeriod));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelLogCalc')
+            ->will($this->returnValue($mockLogCalc));
+        /* setup Config */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Config::get()->servicePeriod();
+        $req = $call->requestRegisterPeriodCalculation();
+        $req->setPeriodId($PERIOD_ID);
+        $req->setLogCalcId(null);
+        $resp = $call->registerPeriodCalculation($req);
+        $this->assertEquals($PERIOD_ID, $resp->getPeriod()->getId());
+        $this->assertEquals($LOG_ID, $resp->getLogCalc()->getId());
+    }
 
     /**
      * We should return first period in 'complete' status.
@@ -95,9 +200,12 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      * Create empty mock with disabled constructor.
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPeriod()
+    private function mockPeriod($methods = null)
     {
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period');
+        if (is_array($methods)) {
+            $mockBuilder->setMethods($methods);
+        }
         $result = $mockBuilder
             ->disableOriginalConstructor()
             ->getMock();
