@@ -10,8 +10,8 @@
 class Praxigento_Bonus_Service_Period_Request_RegisterPeriodCalculation
     extends Praxigento_Bonus_Service_Base_Request
 {
-    private $_periodId;
     private $_logCalcId;
+    private $_periodId;
     private $_periodValue;
     private $_typeCalcId;
     private $_typePeriodId;

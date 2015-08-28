@@ -186,52 +186,67 @@ class Praxigento_Bonus_Service_Period_Call
         $typeCalcId = $req->getTypeCalcId();
         $typePeriodId = $req->getTypePeriodId();
         if (is_null($periodId)) {
-            /* register new calculation period into DB */
-            $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
-            $connection->beginTransaction();
-            try {
-                /* look up for existing period by calculation type and period value */
-                $periods = Config::collectionPeriod();
-                $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $typeCalcId);
-                $periods->addFieldToFilter(Period::ATTR_VALUE, $periodValue);
-                if ($periods->getSize() == 0) {
+            /* look up for existing period by calculation type and period value */
+            $periods = Config::get()->collectionPeriod();
+            $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $typeCalcId);
+            $periods->addFieldToFilter(Period::ATTR_TYPE, $typePeriodId);
+            $periods->addFieldToFilter(Period::ATTR_VALUE, $periodValue);
+            if ($periods->getSize() == 0) {
+                /* noPeriod_noLog : register new calculation period into DB */
+                $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
+                $connection->beginTransaction();
+                try {
                     /* add new period */
                     $period->setType($typePeriodId);
                     $period->setCalcTypeId($typeCalcId);
                     $period->setValue($periodValue);
                     $period->save();
-                } else {
-                    $this->_log->debug("Period '$periodValue' already exists.");
-                    $period = $periods->getFirstItem();
+                    /* add new entry to calculation log */
+                    $logCalc->setPeriodId($period->getId());
+                    $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
+                    $logCalc->save();
+                    $connection->commit();
+                    $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is registered.");
+                } catch (Exception $e) {
+                    $connection->rollBack();
+                    $this->_log->error(
+                        "Cannot register new calculation period ($periodValue). Error: "
+                        . $e->getMessage()
+                    );
                 }
-                /* add new entry to calculation log */
-                $logCalc->setPeriodId($period->getId());
-                $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
-                $logCalc->save();
-                $connection->commit();
-                $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is registered.");
-            } catch (Exception $e) {
-                $connection->rollBack();
-                $this->_log->error(
-                    "Cannot register new calculation period ($periodValue). Error: "
-                    . $e->getMessage()
-                );
+            } else {
+                $this->_log->debug("Period '$periodValue' (type: $typePeriodId) for calculation $typeCalcId already exists.");
+                $period = $periods->getFirstItem();
+                /* look up for related calculation in PROCESSING state */
+                $calcs = Config::get()->collectionLogCalc();
+                $calcs->addFieldToFilter(LogCalc::ATTR_PERIOD_ID, $period->getId());
+                $calcs->addFieldToFilter(LogCalc::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
+                if ($calcs->getSize() == 0) {
+                    /* foundPeriod_noLog */
+                    $logCalc->setPeriodId($period->getId());
+                    $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
+                    $logCalc->save();
+                } else {
+                    /* foundPeriod_isLog */
+                    $logCalc = $calcs->getFirstItem();
+                }
             }
         } else {
             /* load period data */
             $period->load($periodId);
             if (is_null($logCalcId)) {
-                /* add new entry to calculation log */
+                /* isPeriod_noLog : add new entry to calculation log */
                 $logCalc->setData(LogCalc::ATTR_PERIOD_ID, $period->getId());
                 $logCalc->setData(LogCalc::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
                 $logCalc->save();
             } else {
-                /* load calculation log data */
+                /* isPeriod_isLog : load calculation log data */
                 $logCalc->load($logCalcId);
             }
         }
         $result->setPeriod($period);
         $result->setLogCalc($logCalc);
+        $result->setErrorCode(RegisterPeriodCalculationResponse::ERR_NO_ERROR);
         return $result;
     }
 
