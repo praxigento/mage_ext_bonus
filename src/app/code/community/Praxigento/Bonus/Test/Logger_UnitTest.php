@@ -11,11 +11,9 @@ include_once('phpunit_bootstrap.php');
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Logger_UnitTest extends PHPUnit_Framework_TestCase
-{
+class Praxigento_Bonus_Test_Logger_UnitTest extends PHPUnit_Framework_TestCase {
 
-    public function test_logger()
-    {
+    public function test_logger() {
         $log = Praxigento_Bonus_Logger::getLogger('test logger');
         $this->assertTrue($log instanceof Praxigento_Bonus_Logger);
     }

@@ -7,7 +7,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-if (!function_exists('prxgt_install_recreate_column')) {
+if(!function_exists('prxgt_install_recreate_column')) {
     /**
      * Backup data for existing column, re-create column and move data back. Removes 'columnOld' in case of new name
      * for the column was applied.
@@ -16,21 +16,20 @@ if (!function_exists('prxgt_install_recreate_column')) {
      * @param                             $table
      * @param                             $column
      * @param                             $columnDef
-     * @param null $columnOld old name for the column
+     * @param null                        $columnOld old name for the column
      */
-    function prxgt_install_recreate_column(Varien_Db_Adapter_Pdo_Mysql $conn, $table, $column, $columnDef, $columnOld = null)
-    {
+    function prxgt_install_recreate_column(Varien_Db_Adapter_Pdo_Mysql $conn, $table, $column, $columnDef, $columnOld = null) {
         $columnTmp = $column . '_tmp';
-        $fetched = $conn->fetchAll("SELECT * FROM $table LIMIT 1");
+        $fetched   = $conn->fetchAll("SELECT * FROM $table LIMIT 1");
 
         // analyze old named column data
         $oldColumnExists = (!is_null($columnOld) && is_array($fetched) && isset($fetched[0]) && array_key_exists($columnOld, $fetched[0]));
         // analyze current column data
         $columnExists = (is_array($fetched) && isset($fetched[0]) && array_key_exists($column, $fetched[0]));
         // create backup column and backup data
-        if ($columnExists || $oldColumnExists) {
+        if($columnExists || $oldColumnExists) {
             $conn->addColumn($table, $columnTmp, $columnDef);
-            if ($oldColumnExists) {
+            if($oldColumnExists) {
                 // backup old column data
                 $conn->query("UPDATE  $table SET  $columnTmp = $columnOld");
             } else {
@@ -42,19 +41,19 @@ if (!function_exists('prxgt_install_recreate_column')) {
         $conn->dropColumn($table, $column);
         $conn->addColumn($table, $column, $columnDef);
         // restore column data from backup
-        if ($columnExists || $oldColumnExists) {
+        if($columnExists || $oldColumnExists) {
             // restore existed data
             $conn->query("UPDATE  $table SET $column = $columnTmp");
             $conn->dropColumn($table, $columnTmp);
         }
         // drop old column (for case of empty table)
-        if (!is_null($columnOld) && ($oldColumnExists) && ($columnOld != $column)) {
+        if(!is_null($columnOld) && ($oldColumnExists) && ($columnOld != $column)) {
             $conn->dropColumn($table, $columnOld);
         }
     }
 }
 
-if (!function_exists('prxgt_install_create_index_unique')) {
+if(!function_exists('prxgt_install_create_index_unique')) {
 
     /**
      * Create unique index.
@@ -63,24 +62,23 @@ if (!function_exists('prxgt_install_create_index_unique')) {
      * @param $table string Table name.
      * @param $fields array Fields names to include in index.
      */
-    function prxgt_install_create_index_unique(Varien_Db_Adapter_Interface $conn, $table, $fields)
-    {
+    function prxgt_install_create_index_unique(Varien_Db_Adapter_Interface $conn, $table, $fields) {
         $ndxName = $conn->getIndexName($table, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE);
         $conn->addIndex($table, $ndxName, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE);
     }
 }
-if (!function_exists('prxgt_install_create_foreign_key')) {
+if(!function_exists('prxgt_install_create_foreign_key')) {
 
     /**
      * Create foreign key.
      *
      * @param Varien_Db_Adapter_Interface $conn
-     * @param $priTableName
-     * @param $priColumnName
-     * @param $refTableName
-     * @param $refColumnName
-     * @param string $onDelete
-     * @param string $onUpdate
+     * @param                             $priTableName
+     * @param                             $priColumnName
+     * @param                             $refTableName
+     * @param                             $refColumnName
+     * @param string                      $onDelete
+     * @param string                      $onUpdate
      */
     function prxgt_install_create_foreign_key(
         Varien_Db_Adapter_Interface $conn,
@@ -90,8 +88,7 @@ if (!function_exists('prxgt_install_create_foreign_key')) {
         $refColumnName,
         $onDelete = Varien_Db_Adapter_Interface::FK_ACTION_RESTRICT,
         $onUpdate = Varien_Db_Adapter_Interface::FK_ACTION_RESTRICT
-    )
-    {
+    ) {
         $fkName = $conn->getForeignKeyName($priTableName, $priColumnName, $refTableName, $refColumnName);
         $conn->addForeignKey($fkName, $priTableName, $priColumnName, $refTableName, $refColumnName, $onDelete, $onUpdate);
     }

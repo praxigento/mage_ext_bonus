@@ -15,8 +15,7 @@ include_once('../phpunit_bootstrap.php');
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_TestCase
-{
+class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_TestCase {
     const ACCOUNTANT_MAGE_ID = 14;
     const ACCOUNTANT_MLM_ID = '100000014';
     const ACC_PV_ASSET_ID = 100;
@@ -24,32 +23,28 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
     const ACC_RETAIL_ASSET_ID = 300;
     const ACC_RETAIL_ID = 400;
 
-    public function setUp()
-    {
+    public function setUp() {
         Config::set(null);
     }
 
-    public function test_constructor()
-    {
+    public function test_constructor() {
         $hlp = Config::get()->helperAccount();
         $this->assertNotNull($hlp);
         $this->assertTrue($hlp instanceof Praxigento_Bonus_Helper_Account);
     }
 
-    public function test_getAccountantAccByAssetCode_existingAccount()
-    {
+    public function test_getAccountantAccByAssetCode_existingAccount() {
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_existingAccount();
         /* test the method */
-        $hlp = Config::get()->helperAccount();
+        $hlp     = Config::get()->helperAccount();
         $account = $hlp->getAccountantAccByAssetCode(Config::ASSET_PV);
         $this->assertEquals(self::ACC_PV_ASSET_ID, $account->getData(Account::ATTR_ASSET_ID));
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $account->getData(Account::ATTR_CUSTOMER_ID));
         $this->assertEquals(self::ACC_PV_ID, $account->getData(Account::ATTR_ID));
     }
 
-    private function _mockConfig_getAccountantAccByAssetCode_existingAccount()
-    {
+    private function _mockConfig_getAccountantAccByAssetCode_existingAccount() {
         /* One Account Item (joined) */
         $item = new Varien_Object();
         $item->setData(Account::ATTR_ID, self::ACC_PV_ID);
@@ -58,18 +53,18 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         $item->setData(TypeAsset::ATTR_CODE, Config::ASSET_PV);
         /* Accounts collection */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Account_Collection');
-        $mockBuilder->setMethods(array('getIterator'));
+        $mockBuilder->setMethods(array( 'getIterator' ));
         $mockAccounts = $mockBuilder->getMock();
         $mockAccounts
             ->expects($this->any())
             ->method('getIterator')
-            ->will($this->returnValue(new ArrayIterator(array($item))));
+            ->will($this->returnValue(new ArrayIterator(array( $item ))));
         /* Accountant customer model */
         $accountantCust = new Varien_Object();
         $accountantCust->setId(self::ACCOUNTANT_MAGE_ID);
         /* helper */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Helper_Data');
-        $mockBuilder->setMethods(array('cfgGeneralAccountantMlmId'));
+        $mockBuilder->setMethods(array( 'cfgGeneralAccountantMlmId' ));
         $mockHelper = $mockBuilder->getMock();
         $mockHelper
             ->expects($this->any())
@@ -77,7 +72,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
             ->will($this->returnValue(self::ACCOUNTANT_MLM_ID));
         /* core helper */
         $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array('findCustomerByMlmId'));
+        $mockBuilder->setMethods(array( 'findCustomerByMlmId' ));
         $mockHelperCore = $mockBuilder->getMock();
         $mockHelperCore
             ->expects($this->any())
@@ -107,23 +102,21 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         Config::set($mockCfg);
     }
 
-    public function test_getAccountantAccByAssetCode_newAccount()
-    {
+    public function test_getAccountantAccByAssetCode_newAccount() {
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_newAccount();
         /* test the method */
-        $hlp = Config::get()->helperAccount();
+        $hlp     = Config::get()->helperAccount();
         $account = $hlp->getAccountantAccByAssetCode(Config::ASSET_RETAIL);
         $this->assertEquals(self::ACC_RETAIL_ASSET_ID, $account->getData(Account::ATTR_ASSET_ID));
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $account->getData(Account::ATTR_CUSTOMER_ID));
         $this->assertEquals(self::ACC_RETAIL_ID, $account->getData(Account::ATTR_ID));
     }
 
-    private function _mockConfig_getAccountantAccByAssetCode_newAccount()
-    {
+    private function _mockConfig_getAccountantAccByAssetCode_newAccount() {
         /* Account model */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Account');
-        $mockBuilder->setMethods(array('getData', 'save'));
+        $mockBuilder->setMethods(array( 'getData', 'save' ));
         $mockModelAccount = $mockBuilder->getMock();
         $mockModelAccount
             ->expects($this->once())
@@ -152,18 +145,18 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         $item->setData(TypeAsset::ATTR_CODE, Config::ASSET_PV);
         /* Accounts collection */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Account_Collection');
-        $mockBuilder->setMethods(array('getIterator'));
+        $mockBuilder->setMethods(array( 'getIterator' ));
         $mockAccounts = $mockBuilder->getMock();
         $mockAccounts
             ->expects($this->any())
             ->method('getIterator')
-            ->will($this->returnValue(new ArrayIterator(array($item))));
+            ->will($this->returnValue(new ArrayIterator(array( $item ))));
         /* Accountant customer model */
         $accountantCust = new Varien_Object();
         $accountantCust->setId(self::ACCOUNTANT_MAGE_ID);
         /* helper */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Helper_Data');
-        $mockBuilder->setMethods(array('cfgGeneralAccountantMlmId'));
+        $mockBuilder->setMethods(array( 'cfgGeneralAccountantMlmId' ));
         $mockHelper = $mockBuilder->getMock();
         $mockHelper
             ->expects($this->any())
@@ -171,7 +164,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
             ->will($this->returnValue(self::ACCOUNTANT_MLM_ID));
         /* helper type */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Helper_Data_Type');
-        $mockBuilder->setMethods(array('getAssetId'));
+        $mockBuilder->setMethods(array( 'getAssetId' ));
         $mockHelperType = $mockBuilder->getMock();
         $mockHelperType
             ->expects($this->any())
@@ -179,7 +172,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
             ->will($this->returnValue(self::ACC_RETAIL_ASSET_ID));
         /* core helper */
         $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array('findCustomerByMlmId'));
+        $mockBuilder->setMethods(array( 'findCustomerByMlmId' ));
         $mockHelperCore = $mockBuilder->getMock();
         $mockHelperCore
             ->expects($this->any())
@@ -219,24 +212,22 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         Config::set($mockCfg);
     }
 
-    public function test_getAccountantMageId()
-    {
+    public function test_getAccountantMageId() {
         /* mock environment */
         $this->_mockConfig_getAccountantMageId();
         /* test the method */
-        $hlp = Config::get()->helperAccount();
+        $hlp    = Config::get()->helperAccount();
         $mageId = $hlp->getAccountantMageId();
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $mageId);
     }
 
-    private function _mockConfig_getAccountantMageId()
-    {
+    private function _mockConfig_getAccountantMageId() {
         /* Accountant customer model */
         $accountantCust = new Varien_Object();
         $accountantCust->setId(self::ACCOUNTANT_MAGE_ID);
         /* helper */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Helper_Data');
-        $mockBuilder->setMethods(array('cfgGeneralAccountantMlmId'));
+        $mockBuilder->setMethods(array( 'cfgGeneralAccountantMlmId' ));
         $mockHelper = $mockBuilder->getMock();
         $mockHelper
             ->expects($this->any())
@@ -244,7 +235,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
             ->will($this->returnValue(self::ACCOUNTANT_MLM_ID));
         /* core helper */
         $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array('findCustomerByMlmId'));
+        $mockBuilder->setMethods(array( 'findCustomerByMlmId' ));
         $mockHelperCore = $mockBuilder->getMock();
         $mockHelperCore
             ->expects($this->any())
@@ -252,7 +243,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
             ->will($this->returnValue($accountantCust));
         /* config */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array('helper', 'helperCore'));
+        $mockBuilder->setMethods(array( 'helper', 'helperCore' ));
         $mockCfg = $mockBuilder->getMock();
         $mockCfg
             ->expects($this->any())

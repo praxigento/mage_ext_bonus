@@ -8,7 +8,6 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Calculation_Request_CalcPvWriteOff
-    extends Praxigento_Bonus_Service_Base_Request
-{
+    extends Praxigento_Bonus_Service_Base_Request {
 
 }

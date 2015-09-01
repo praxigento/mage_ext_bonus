@@ -11,18 +11,15 @@ include_once(dirname(__FILE__) . '/../phpunit_bootstrap.php');
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestCase
-{
+class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestCase {
     /**
      * Reset Config before each test.
      */
-    public function setUp()
-    {
+    public function setUp() {
         Config::set(null);
     }
 
-    public function test_cfg()
-    {
+    public function test_cfg() {
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
         $hlp = Config::get()->helper();
         $this->assertTrue(is_string($hlp->cfgGeneralAccountantMlmId()));
@@ -38,17 +35,15 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         $this->assertTrue(is_numeric($hlp->cfgRetailBonusFeePercent()));
     }
 
-    public function test_formatAmount()
-    {
+    public function test_formatAmount() {
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
         $hlp = Config::get()->helper();
         $this->assertEquals('1$234@57', $hlp->formatAmount(1234.5678, '@', '$'));
     }
 
-    public function test_getUplineForCustomer()
-    {
+    public function test_getUplineForCustomer() {
         $CUST_MLMID = 'mlmId';
-        $CUST_ID = 21;
+        $CUST_ID    = 21;
         /**
          * Mock config class and core helper.
          */
@@ -57,7 +52,7 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         $mockCustomer->setId($CUST_ID);
         /* Core Helper */
         $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array('findCustomerByMlmId'));
+        $mockBuilder->setMethods(array( 'findCustomerByMlmId' ));
         $mockHelperCore = $mockBuilder->getMock();
         $mockHelperCore
             ->expects($this->once())
@@ -67,8 +62,8 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* Config */
         $mockBuilder = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array('helperCore'));
-        $mockCfg = $mockBuilder->getMock();
+            ->setMethods(array( 'helperCore' ));
+        $mockCfg     = $mockBuilder->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('helperCore')
@@ -76,7 +71,7 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* setup Config */
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
-        $hlp = Config::get()->helper();
+        $hlp      = Config::get()->helper();
         $customer = Mage::getModel('customer/customer');
         $customer->setData(ConfigCore::ATTR_CUST_MLM_UPLINE, 'UplineMlmId');
         $upliner = $hlp->getUplineForCustomer($customer);
@@ -84,16 +79,15 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         $this->assertEquals($CUST_ID, $upliner->getId());
     }
 
-    public function test_getDateGmtNow()
-    {
+    public function test_getDateGmtNow() {
         $FORMAT = 'Ymd-His';
-        $TIME = '20150831-121314';
+        $TIME   = '20150831-121314';
         /**
          * Mock config class and core helper.
          */
         /* Core Helper */
         $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array('dateGmtNow'));
+        $mockBuilder->setMethods(array( 'dateGmtNow' ));
         $mockHelperCore = $mockBuilder->getMock();
         $mockHelperCore
             ->expects($this->once())
@@ -103,8 +97,8 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* Config */
         $mockBuilder = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array('helperCore'));
-        $mockCfg = $mockBuilder->getMock();
+            ->setMethods(array( 'helperCore' ));
+        $mockCfg     = $mockBuilder->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('helperCore')
@@ -112,22 +106,21 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* setup Config */
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
-        $hlp = Config::get()->helper();
+        $hlp       = Config::get()->helper();
         $formatted = $hlp->getDateGmtNow($FORMAT);
         $this->assertEquals($TIME, $formatted);
     }
 
 
-    public function test_getUplineFromSession()
-    {
-        $PROC_CLASS = 'nmmlm_core_model/own_referral_customer_processor';
-        $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Model_Customer_Customer');
+    public function test_getUplineFromSession() {
+        $PROC_CLASS   = 'nmmlm_core_model/own_referral_customer_processor';
+        $mockBuilder  = $this->getMockBuilder('Nmmlm_Core_Model_Customer_Customer');
         $mockCustomer = $mockBuilder->getMock();
         /* Processor */
         $mockBuilder = $this
             ->getMockBuilder('Nmmlm_Core_Model_Own_Referral_Customer_Processor')
-            ->setMethods(array('sessionGetUpline'));
-        $mockProc = $mockBuilder->getMock();
+            ->setMethods(array( 'sessionGetUpline' ));
+        $mockProc    = $mockBuilder->getMock();
         $mockProc
             ->expects($this->once())
             ->method('sessionGetUpline')
@@ -135,8 +128,8 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* Config */
         $mockBuilder = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array('singleton'));
-        $mockCfg = $mockBuilder->getMock();
+            ->setMethods(array( 'singleton' ));
+        $mockCfg     = $mockBuilder->getMock();
         $mockCfg
             ->expects($this->once())
             ->method('singleton')
@@ -145,7 +138,7 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /* setup Config */
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
-        $hlp = Config::get()->helper();
+        $hlp  = Config::get()->helper();
         $cust = $hlp->getUplineFromSession();
         $this->assertTrue($cust instanceof Nmmlm_Core_Model_Customer_Customer);
     }

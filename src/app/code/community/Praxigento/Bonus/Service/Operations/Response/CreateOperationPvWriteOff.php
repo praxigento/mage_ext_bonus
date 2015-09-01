@@ -8,10 +8,8 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff
-    extends Praxigento_Bonus_Service_Base_Response
-{
-    public function isSucceed()
-    {
+    extends Praxigento_Bonus_Service_Base_Response {
+    public function isSucceed() {
         $result = ($this->getErrorCode() == self::ERR_NO_ERROR);
         return $result;
     }

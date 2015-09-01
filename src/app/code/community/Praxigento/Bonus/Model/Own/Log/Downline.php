@@ -18,15 +18,13 @@ use Praxigento_Bonus_Config as Config;
  * @method null setParentId(int $val)
  *
  */
-class Praxigento_Bonus_Model_Own_Log_Downline extends Mage_Core_Model_Abstract
-{
+class Praxigento_Bonus_Model_Own_Log_Downline extends Mage_Core_Model_Abstract {
     const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_DATE_CHANGED = 'date_changed';
     const ATTR_ID = 'id';
     const ATTR_PARENT_ID = 'parent_id';
 
-    protected function _construct()
-    {
+    protected function _construct() {
         $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
     }
 

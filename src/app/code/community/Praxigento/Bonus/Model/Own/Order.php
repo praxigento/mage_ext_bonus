@@ -29,8 +29,7 @@ use Praxigento_Bonus_Config as Config;
  * @method int getUplineId()
  * @method null setUplineId(int $val)
  */
-class Praxigento_Bonus_Model_Own_Order extends Mage_Core_Model_Abstract
-{
+class Praxigento_Bonus_Model_Own_Order extends Mage_Core_Model_Abstract {
     const ATTR_AMOUNT = 'amount';
     const ATTR_CURR = 'currency';
     const ATTR_FEE = 'fee';
@@ -43,8 +42,7 @@ class Praxigento_Bonus_Model_Own_Order extends Mage_Core_Model_Abstract
     const ATTR_TRANSACT_ID = 'transact_id';
     const ATTR_UPLINE_ID = 'upline_id';
 
-    protected function _construct()
-    {
+    protected function _construct() {
         $this->_init(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
     }
 

@@ -12,8 +12,7 @@ use Praxigento_Bonus_Model_Own_Source_Weekday as Weekday;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Helper_Period
-{
+class Praxigento_Bonus_Helper_Period {
     /** @var Nmmlm_Core_Helper_Data */
     private $_helperCore;
     /** @var Praxigento_Bonus_Helper_Data */
@@ -24,8 +23,7 @@ class Praxigento_Bonus_Helper_Period
      *
      * @param Praxigento_Bonus_Helper_Data $helper
      */
-    public function setHelper($helper)
-    {
+    public function setHelper($helper) {
         $this->_helper = $helper;
     }
 
@@ -33,11 +31,10 @@ class Praxigento_Bonus_Helper_Period
     private static $_cachePeriodBounds = array();
     private static $_tzDelta = null;
 
-    function __construct()
-    {
+    function __construct() {
         $this->_helperCore = CoreConfig::helper();
-        $this->_helper = Config::get()->helper();
-        if (is_null(self::$_tzDelta)) {
+        $this->_helper     = Config::get()->helper();
+        if(is_null(self::$_tzDelta)) {
             /* initiate Timezone delta once */
             self::$_tzDelta = Mage::getSingleton('core/date')->getGmtOffset();
         }
@@ -48,23 +45,23 @@ class Praxigento_Bonus_Helper_Period
      *
      * @param $date
      * @param $type
+     *
      * @return null|string 20150601 | 201506 | 2015
      */
-    public function calcPeriodCurrent($date, $type)
-    {
+    public function calcPeriodCurrent($date, $type) {
         $result = null;
-        $dt = $this->_helperCore->convertToDateTime($date);
-        switch ($type) {
+        $dt     = $this->_helperCore->convertToDateTime($date);
+        switch($type) {
             case Config::PERIOD_DAY:
                 $result = date_format($dt, 'Ymd');
                 break;
             case Config::PERIOD_WEEK:
                 $weekDay = date('w', $dt->getTimestamp());
-                if ($weekDay != 0) {
+                if($weekDay != 0) {
                     /* week period ends on ...  */
                     $end = $this->_helper->cfgPersonalBonusWeekLastDay();
-                    $ts = strtotime("next $end", $dt->getTimestamp());
-                    $dt = $this->_helperCore->convertToDateTime($ts);
+                    $ts  = strtotime("next $end", $dt->getTimestamp());
+                    $dt  = $this->_helperCore->convertToDateTime($ts);
                 }
                 $result = date_format($dt, 'Ymd');
                 break;
@@ -83,36 +80,36 @@ class Praxigento_Bonus_Helper_Period
      *
      * @param $period 20150601 | 201506 | 2015
      * @param $type
+     *
      * @return null|string 20150601 | 201506 | 2015
      */
-    public function calcPeriodNext($period, $type)
-    {
+    public function calcPeriodNext($period, $type) {
         $result = null;
-        switch ($type) {
+        switch($type) {
             case Config::PERIOD_DAY:
-                $dt = date_create_from_format('Ymd', $period);
-                $ts = strtotime('next day', $dt->getTimestamp());
-                $dt = $this->_helperCore->convertToDateTime($ts);
+                $dt     = date_create_from_format('Ymd', $period);
+                $ts     = strtotime('next day', $dt->getTimestamp());
+                $dt     = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ymd');
                 break;
             case Config::PERIOD_WEEK:
                 /* week period ends on ...  */
-                $end = $this->_helper->cfgPersonalBonusWeekLastDay();
-                $dt = date_create_from_format('Ymd', $period);
-                $ts = strtotime("next $end", $dt->getTimestamp());
-                $dt = $this->_helperCore->convertToDateTime($ts);
+                $end    = $this->_helper->cfgPersonalBonusWeekLastDay();
+                $dt     = date_create_from_format('Ymd', $period);
+                $ts     = strtotime("next $end", $dt->getTimestamp());
+                $dt     = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ymd');
                 break;
             case Config::PERIOD_MONTH:
-                $dt = date_create_from_format('Ym', $period);
-                $ts = strtotime('next month', $dt->getTimestamp());
-                $dt = $this->_helperCore->convertToDateTime($ts);
+                $dt     = date_create_from_format('Ym', $period);
+                $ts     = strtotime('next month', $dt->getTimestamp());
+                $dt     = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Ym');
                 break;
             case Config::PERIOD_YEAR:
-                $dt = date_create_from_format('Y', $period);
-                $ts = strtotime('next year', $dt->getTimestamp());
-                $dt = $this->_helperCore->convertToDateTime($ts);
+                $dt     = date_create_from_format('Y', $period);
+                $ts     = strtotime('next year', $dt->getTimestamp());
+                $dt     = $this->_helperCore->convertToDateTime($ts);
                 $result = date_format($dt, 'Y');
                 break;
         }
@@ -122,46 +119,47 @@ class Praxigento_Bonus_Helper_Period
     /**
      * @param $period 20150601 | 201506 | 2015
      * @param $periodCode DAY | WEEK | MONTH | YEAR
+     *
      * @return string 2015-08-12 12:23:34
      */
-    public function calcPeriodFromTs($period, $periodCode)
-    {
-        if (
-            !isset(self::$_cachePeriodBounds[$period]) &&
-            !isset(self::$_cachePeriodBounds[$period][$periodCode])
+    public function calcPeriodFromTs($period, $periodCode) {
+        if(
+            !isset(self::$_cachePeriodBounds[ $period ]) &&
+            !isset(self::$_cachePeriodBounds[ $period ][ $periodCode ])
         ) {
             $this->_calcPeriodBounds($period, $periodCode);
         }
-        $result = self::$_cachePeriodBounds[$period][$periodCode]['from'];
+        $result = self::$_cachePeriodBounds[ $period ][ $periodCode ]['from'];
         return $result;
     }
 
     /**
      * @param $period 20150601 | 201506 | 2015
      * @param $periodCode DAY | WEEK | MONTH | YEAR
+     *
      * @return string 2015-08-12 12:23:34
      */
-    public function calcPeriodToTs($period, $periodCode)
-    {
-        if (
-            !isset(self::$_cachePeriodBounds[$period]) &&
-            !isset(self::$_cachePeriodBounds[$period][$periodCode])
+    public function calcPeriodToTs($period, $periodCode) {
+        if(
+            !isset(self::$_cachePeriodBounds[ $period ]) &&
+            !isset(self::$_cachePeriodBounds[ $period ][ $periodCode ])
         ) {
             $this->_calcPeriodBounds($period, $periodCode);
         }
-        $result = self::$_cachePeriodBounds[$period][$periodCode]['to'];
+        $result = self::$_cachePeriodBounds[ $period ][ $periodCode ]['to'];
         return $result;
     }
 
     /**
      * Return "friday" for "saturday", etc.
+     *
      * @param $day
+     *
      * @return string
      */
-    public function getPreviousWeekDay($day)
-    {
+    public function getPreviousWeekDay($day) {
         $result = null;
-        switch (strtolower($day)) {
+        switch(strtolower($day)) {
             case Weekday::SUNDAY:
                 $result = Weekday::SATURDAY;
                 break;
@@ -189,13 +187,14 @@ class Praxigento_Bonus_Helper_Period
 
     /**
      * Return "saturday" for "friday", etc.
+     *
      * @param $day
+     *
      * @return string
      */
-    public function getNextWeekDay($day)
-    {
+    public function getNextWeekDay($day) {
         $result = null;
-        switch (strtolower($day)) {
+        switch(strtolower($day)) {
             case Weekday::SUNDAY:
                 $result = Weekday::MONDAY;
                 break;
@@ -227,31 +226,30 @@ class Praxigento_Bonus_Helper_Period
      * @param $period 20150601 | 201506 | 2015
      * @param $periodCode DAY | WEEK | MONTH | YEAR
      */
-    private function _calcPeriodBounds($period, $periodCode)
-    {
+    private function _calcPeriodBounds($period, $periodCode) {
         $from = null;
-        $to = null;
+        $to   = null;
 
-        switch ($periodCode) {
+        switch($periodCode) {
             case Config::PERIOD_DAY:
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('midnight', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $from = date(Config::FROMAT_DATETIME_SQL, $ts);
-                $ts = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
+                $ts   = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $to = date(Config::FROMAT_DATETIME_SQL, $ts);
                 break;
             case Config::PERIOD_WEEK:
                 /* week period ends on ...  */
-                $end = $this->_helper->cfgPersonalBonusWeekLastDay();
+                $end  = $this->_helper->cfgPersonalBonusWeekLastDay();
                 $prev = $this->getNextWeekDay($end);
                 /* this should be the last day of the week */
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime("previous $prev midnight", $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $from = date(Config::FROMAT_DATETIME_SQL, $ts);
-                $ts = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
+                $ts   = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $to = date(Config::FROMAT_DATETIME_SQL, $ts);
                 break;
@@ -260,7 +258,7 @@ class Praxigento_Bonus_Helper_Period
                 $ts = strtotime('first day of midnight', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $from = date(Config::FROMAT_DATETIME_SQL, $ts);
-                $ts = strtotime('first day of next month midnight -1 second', $dt->getTimestamp());
+                $ts   = strtotime('first day of next month midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $to = date(Config::FROMAT_DATETIME_SQL, $ts);
                 break;
@@ -269,12 +267,12 @@ class Praxigento_Bonus_Helper_Period
                 $ts = strtotime('first day of January', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $from = date(Config::FROMAT_DATETIME_SQL, $ts);
-                $ts = strtotime('first day of January next year midnight -1 second', $dt->getTimestamp());
+                $ts   = strtotime('first day of January next year midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
                 $to = date(Config::FROMAT_DATETIME_SQL, $ts);
                 break;
         }
-        self::$_cachePeriodBounds[$period][$periodCode]['from'] = $from;
-        self::$_cachePeriodBounds[$period][$periodCode]['to'] = $to;
+        self::$_cachePeriodBounds[ $period ][ $periodCode ]['from'] = $from;
+        self::$_cachePeriodBounds[ $period ][ $periodCode ]['to']   = $to;
     }
 }

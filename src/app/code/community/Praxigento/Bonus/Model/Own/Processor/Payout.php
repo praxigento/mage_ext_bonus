@@ -10,9 +10,7 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Processor_Payout extends Mage_Core_Model_Abstract
-{
-    public function getUnprocessedBonuses()
-    {
+class Praxigento_Bonus_Model_Own_Processor_Payout extends Mage_Core_Model_Abstract {
+    public function getUnprocessedBonuses() {
     }
 }

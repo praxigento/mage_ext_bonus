@@ -12,8 +12,7 @@ use Praxigento_Bonus_Model_Own_Transact as Transact;
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
-    extends Mage_Adminhtml_Block_Widget_Grid
-{
+    extends Mage_Adminhtml_Block_Widget_Grid {
     const AS_BONUS_CUST_ID = 'customer_inc';
     const AS_BONUS_CUST_NAME = 'bonus_cust_name';
     const AS_CUST_NAME = 'customer_name';
@@ -23,13 +22,12 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
     const AS_PAYOUT = 'payout';
     const AS_TMP_EMAIL = 'tmp_email';
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->setId('prxgt_bonus_grid_transact');
         $this->setDefaultSort(Transact::ATTR_ID);
         $this->setDefaultDir('DESC');
-//        $this->setSaveParametersInSession(true);
+        //        $this->setSaveParametersInSession(true);
     }
 
     /*
@@ -68,67 +66,67 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
     /**
      * @return $this
      */
-    protected function _prepareCollection()
-    {
+    protected function _prepareCollection() {
         /** @var  $collection Praxigento_Bonus_Resource_Own_Transact_Collection */
         $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_transact_collection');
-        $rsrc = $collection->getResource();
-        $conn = $rsrc->getReadConnection();
+        $rsrc       = $collection->getResource();
+        $conn       = $rsrc->getReadConnection();
         /* JOIN customer_entity */
-        $tbl = array('cust' => 'customer/entity');
+        $tbl  = array( 'cust' => 'customer/entity' );
         $cond = 'main_table.' . Transact::ATTR_CUSTOMER_ID . '=cust.entity_id';
         $cols = array(
             self::AS_BONUS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID
         );
         $collection->join($tbl, $cond, $cols);
         /* JOIN prxgt_bonus_order */
-        $tbl = array('bord' => Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
+        $tbl  = array( 'bord' => Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER );
         $cond = 'main_table.' . Transact::ATTR_ID . '=bord.' . Order::ATTR_TRANSACT_ID;
         $cols = array();
         $collection->join($tbl, $cond, $cols);
         /* JOIN sales_flat_order */
-        $tbl = array('sord' => $rsrc->getTable('sales/order'));
+        $tbl  = array( 'sord' => $rsrc->getTable('sales/order') );
         $cond = 'bord.' . Order::ATTR_ORDER_ID . '=sord.entity_id';
         $cols = array(
-            self::AS_ORDER_INC_ID => 'increment_id',
+            self::AS_ORDER_INC_ID    => 'increment_id',
             self::AS_ORDER_CUST_NAME =>
                 'CONCAT(sord.customer_firstname, \' \', sord.customer_lastname, \' <\', LOWER(sord.customer_email), \'>\')'
         );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN customer_entity as order customer*/
-        $tbl = array('ocust' => $rsrc->getTable('customer/entity'));
+        $tbl  = array( 'ocust' => $rsrc->getTable('customer/entity') );
         $cond = 'sord.customer_id=ocust.entity_id';
         $cols = array(
             self::AS_ORDER_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID
         );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN payout_transact */
-        $tbl = array('pt' => $rsrc->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT));
+        $tbl  = array( 'pt' => $rsrc->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT) );
         $cond = 'main_table.' . Transact::ATTR_ID . '=pt.' . PayoutTransact::ATTR_TRANSACT_ID;
-        $cols = array(self::AS_PAYOUT => PayoutTransact::ATTR_PAYOUT_ID);
+        $cols = array( self::AS_PAYOUT => PayoutTransact::ATTR_PAYOUT_ID );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /**
          * JOIN bonus customer first and last names
          */
         /* JOIN first name */
-        $tbl = array('bfirsta' => $rsrc->getTable('eav/attribute'));
+        $tbl  = array( 'bfirsta' => $rsrc->getTable('eav/attribute') );
         $cond = 'bfirsta.entity_type_id=1 AND bfirsta.attribute_code=\'firstname\'';
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
-        $tbl = array('bfirst' => $conn->getTableName('customer_entity_varchar'));
+        $tbl  = array( 'bfirst' => $conn->getTableName('customer_entity_varchar') );
         $cond = 'bfirst.attribute_id=bfirsta.attribute_id AND bfirst.entity_id=main_table.' . Transact::ATTR_CUSTOMER_ID;
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN last name */
-        $tbl = array('blasta' => $rsrc->getTable('eav/attribute'));
+        $tbl  = array( 'blasta' => $rsrc->getTable('eav/attribute') );
         $cond = 'blasta.entity_type_id=1 AND blasta.attribute_code=\'lastname\'';
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
-        $tbl = array('blast' => $conn->getTableName('customer_entity_varchar'));
+        $tbl  = array( 'blast' => $conn->getTableName('customer_entity_varchar') );
         $cond = 'blast.attribute_id=blasta.attribute_id AND blast.entity_id=main_table.' . Transact::ATTR_CUSTOMER_ID;
         $cols = array(
             self::AS_BONUS_CUST_NAME =>
-                "CONCAT(bfirst.`value`, ' ', blast.`value`, ' <', cust.email,'>')");
+                "CONCAT(bfirst.`value`, ' ', blast.`value`, ' <', cust.email,'>')"
+        );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* prepare collection */
         $sql = $collection->getSelectSql(true);
@@ -137,67 +135,66 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
         return $this;
     }
 
-    protected function _prepareColumns()
-    {
-        $helper = Mage::helper(Config::CFG_HELPER);
+    protected function _prepareColumns() {
+        $helper   = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
         $this->addColumn(Transact::ATTR_ID, array(
             'header' => $helper->__('#'),
             'filter' => false,
-            'index' => Transact::ATTR_ID
+            'index'  => Transact::ATTR_ID
         ));
 
         $this->addColumn(Transact::ATTR_DATE_CREATED, array(
             'header' => $helper->__('Created at'),
             'filter' => false,
-            'index' => Transact::ATTR_DATE_CREATED,
-            'type' => 'datetime'
+            'index'  => Transact::ATTR_DATE_CREATED,
+            'type'   => 'datetime'
         ));
 
         $this->addColumn(self::AS_ORDER_INC_ID, array(
             'header' => $helper->__('Order #'),
             'filter' => false,
-            'index' => self::AS_ORDER_INC_ID
+            'index'  => self::AS_ORDER_INC_ID
         ));
 
         $this->addColumn(self::AS_ORDER_CUST_NAME, array(
             'header' => $helper->__('Order Customer'),
             'filter' => false,
-            'index' => self::AS_ORDER_CUST_NAME
+            'index'  => self::AS_ORDER_CUST_NAME
         ));
 
         $this->addColumn(self::AS_ORDER_CUST_ID, array(
             'header' => $helper->__('Order Customer #'),
             'filter' => false,
-            'index' => self::AS_ORDER_CUST_ID
+            'index'  => self::AS_ORDER_CUST_ID
         ));
 
         $this->addColumn(self::AS_BONUS_CUST_ID, array(
             'header' => $helper->__('Bonus Customer #'),
             'filter' => false,
-            'index' => self::AS_BONUS_CUST_ID
+            'index'  => self::AS_BONUS_CUST_ID
         ));
 
         $this->addColumn(self::AS_BONUS_CUST_NAME, array(
             'header' => $helper->__('Bonus Customer'),
             'filter' => false,
-            'index' => self::AS_BONUS_CUST_NAME
+            'index'  => self::AS_BONUS_CUST_NAME
         ));
 
 
         $this->addColumn(Transact::ATTR_AMOUNT, array(
-            'header' => $helper->__('Amount'),
-            'index' => Transact::ATTR_AMOUNT,
-            'type' => 'currency',
-            'filter' => false,
+            'header'        => $helper->__('Amount'),
+            'index'         => Transact::ATTR_AMOUNT,
+            'type'          => 'currency',
+            'filter'        => false,
             'currency_code' => $currency
         ));
 
         $this->addColumn(self::AS_PAYOUT, array(
             'header' => $helper->__('Payout #'),
             'filter' => false,
-            'index' => self::AS_PAYOUT
+            'index'  => self::AS_PAYOUT
         ));
 
         return parent::_prepareColumns();

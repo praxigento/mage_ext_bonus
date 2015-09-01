@@ -9,7 +9,6 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-abstract class Praxigento_Bonus_Service_Base_Bean extends stdClass
-{
+abstract class Praxigento_Bonus_Service_Base_Bean extends stdClass {
 
 }

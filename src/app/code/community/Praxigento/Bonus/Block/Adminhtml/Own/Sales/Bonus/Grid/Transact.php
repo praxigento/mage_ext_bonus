@@ -9,11 +9,9 @@ use Praxigento_Bonus_Config as Config;
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact
-    extends Mage_Adminhtml_Block_Widget_Grid_Container
-{
+    extends Mage_Adminhtml_Block_Widget_Grid_Container {
 
-    function __construct()
-    {
+    function __construct() {
         $this->_blockGroup = Config::CFG_BLOCK;
         $this->_controller = 'adminhtml_own_sales_bonus_grid_transact';
         $this->_headerText = $this->__('Bonus Transactions');

@@ -14,8 +14,7 @@ include_once('../phpunit_bootstrap.php');
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestCase
-{
+class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestCase {
 
     const OPER_ID_BONUS_PV = 1;
     const OPER_ID_ORDER_PV = 2;
@@ -31,19 +30,17 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     const TEST_ID = 21;
     const TEST_NOTE = 'note';
 
-    public function setUp()
-    {
+    public function setUp() {
         Config::set(null);
     }
 
-    public function test_getAsset()
-    {
+    public function test_getAsset() {
         /** mock stored items  */
-        $item = Config::get()->modelTypeAsset();
+        $item    = Config::get()->modelTypeAsset();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypeAsset', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp = Config::get()->helperType();
+        $hlp   = Config::get()->helperType();
         $asset = $hlp->getAsset(self::TEST_CODE);
         $this->assertTrue($asset instanceof Praxigento_Bonus_Model_Own_Type_Asset);
         $this->assertEquals(self::TEST_ID, $asset->getId());
@@ -53,31 +50,31 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
 
     /**
      * Create mock with disabled constructor for class $clazz.
+     *
      * @param $clazz
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockClass($clazz, $method, $item)
-    {
+    private function mockClass($clazz, $method, $item) {
         $mockBuilder = $this->getMockBuilder($clazz);
-        $mockBuilder->setMethods(array($method));
+        $mockBuilder->setMethods(array( $method ));
         $result = $mockBuilder->getMock();
         /* add item */
         $item->setData(TypeBase::ATTR_CODE, self::TEST_CODE);
         $item->setData(TypeBase::ATTR_ID, self::TEST_ID);
         $item->setData(TypeBase::ATTR_NOTE, self::TEST_NOTE);
-        $result->expects($this->once())->method($method)->will($this->returnValue(array($item)));
+        $result->expects($this->once())->method($method)->will($this->returnValue(array( $item )));
         return $result;
     }
 
-    public function test_getCalc()
-    {
+    public function test_getCalc() {
         /** mock stored items  */
         /** @var  $item */
-        $item = Config::get()->modelTypeCalc();
+        $item    = Config::get()->modelTypeCalc();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypeCalc', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp = Config::get()->helperType();
+        $hlp  = Config::get()->helperType();
         $type = $hlp->getCalc(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Calc);
         $this->assertEquals(self::TEST_ID, $type->getId());
@@ -85,12 +82,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $this->assertEquals(self::TEST_ID, $id);
     }
 
-    public function test_getOper()
-    {
+    public function test_getOper() {
         /** mock stored items  */
         $this->_mockConfigOper();
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp = Config::get()->helperType();
+        $hlp  = Config::get()->helperType();
         $type = $hlp->getOper(Config::OPER_BONUS_PV);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Oper);
         $this->assertEquals(self::OPER_ID_BONUS_PV, $type->getId());
@@ -98,12 +94,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $this->assertEquals(self::OPER_ID_TRANS_INT, $id);
     }
 
-    public function test_getOperIdsForPvWriteOff()
-    {
+    public function test_getOperIdsForPvWriteOff() {
         /** mock stored items  */
         $this->_mockConfigOper();
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp = Config::get()->helperType();
+        $hlp   = Config::get()->helperType();
         $types = $hlp->getOperIdsForPvWriteOff();
         $this->assertTrue(is_array($types));
         $this->assertContains(self::OPER_ID_ORDER_PV, $types);
@@ -115,13 +110,12 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     /**
      * Mock Praxigento_Bonus_Config to return
      */
-    private function _mockConfigOper()
-    {
+    private function _mockConfigOper() {
         /** mock config class with collection for operations types  */
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array('collectionTypeOper'));
+        $mockBuilder->setMethods(array( 'collectionTypeOper' ));
         $mockCfg = $mockBuilder->getMock();
-        $items = array();
+        $items   = array();
         /* add operation types */
         /* OPER_BONUS_PV */
         /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
@@ -171,19 +165,18 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $items[] = $item;
         //
         $mockCfg->expects($this->any())->method('collectionTypeOper')
-            ->will($this->returnValue($items));
+                ->will($this->returnValue($items));
         Config::set($mockCfg);
     }
 
-    public function test_getPeriod()
-    {
+    public function test_getPeriod() {
         /** mock stored items  */
         /** @var  $item */
-        $item = Config::get()->modelTypePeriod();
+        $item    = Config::get()->modelTypePeriod();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypePeriod', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp = Config::get()->helperType();
+        $hlp  = Config::get()->helperType();
         $type = $hlp->getPeriod(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Period);
         $this->assertEquals(self::TEST_ID, $type->getId());

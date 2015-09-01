@@ -9,13 +9,11 @@ use Praxigento_Bonus_Model_Own_Log_Calc as Model;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Resource_Own_Log_Calc extends Mage_Core_Model_Mysql4_Abstract
-{
+class Praxigento_Bonus_Resource_Own_Log_Calc extends Mage_Core_Model_Mysql4_Abstract {
     /**
      * Resource initialization
      */
-    protected function _construct()
-    {
+    protected function _construct() {
         $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC, Model::ATTR_ID);
     }
 

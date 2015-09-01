@@ -7,11 +7,9 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Source_Period
-{
+class Praxigento_Bonus_Model_Own_Source_Period {
 
-    public function toOptionArray()
-    {
+    public function toOptionArray() {
         $result = array(
             array(
                 'value' => Praxigento_Bonus_Config::PERIOD_DAY,

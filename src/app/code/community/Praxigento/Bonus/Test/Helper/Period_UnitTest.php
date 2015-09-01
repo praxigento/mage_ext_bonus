@@ -11,11 +11,9 @@ include_once('../phpunit_bootstrap.php');
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_TestCase
-{
+class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_TestCase {
 
-    public function test_calcPeriodCurrent()
-    {
+    public function test_calcPeriodCurrent() {
         /**
          * Create mocks.
          */
@@ -33,8 +31,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals('2015', $hlp->calcPeriodCurrent($date, Config::PERIOD_YEAR));
     }
 
-    public function test_calcPeriodNext()
-    {
+    public function test_calcPeriodNext() {
         /**
          * Create mocks.
          */
@@ -50,8 +47,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals('2015', $hlp->calcPeriodNext('2014', Config::PERIOD_YEAR));
     }
 
-    public function test_calcPeriodFromToTs()
-    {
+    public function test_calcPeriodFromToTs() {
         /**
          * Create mocks.
          */
@@ -72,8 +68,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals('2015-01-01 07:00:00', $hlp->calcPeriodFromTs('2015', Config::PERIOD_YEAR));
     }
 
-    public function test_getPreviousWeekDay()
-    {
+    public function test_getPreviousWeekDay() {
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
         $hlp = Config::get()->helperPeriod();
         $this->assertEquals(Weekday::SATURDAY, $hlp->getPreviousWeekDay(Weekday::SUNDAY));
@@ -85,8 +80,7 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals(Weekday::FRIDAY, $hlp->getPreviousWeekDay(Weekday::SATURDAY));
     }
 
-    public function test_getNextWeekDay()
-    {
+    public function test_getNextWeekDay() {
         /** @var  $hlp Praxigento_Bonus_Helper_Period */
         $hlp = Config::get()->helperPeriod();
         $this->assertEquals(Weekday::SATURDAY, $hlp->getNextWeekDay(Weekday::FRIDAY));

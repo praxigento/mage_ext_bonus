@@ -8,19 +8,18 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Model_Own_Backend_Connector
-    extends Nmmlm_Core_Datasource_Backend_Connector_Base
-{
+    extends Nmmlm_Core_Datasource_Backend_Connector_Base {
     /**
      * Add funds to the Customer's account.
      *
      * @param  Nmmlm_Core_Wrapper_Customer $wrapper
-     * @param  $amount positive value to increase balance
-     * @param  $message
-     * @param null $currCode
+     * @param                              $amount positive value to increase balance
+     * @param                              $message
+     * @param null                         $currCode
+     *
      * @return mixed
      */
-    public function creditFundsCredit(Nmmlm_Core_Wrapper_Customer $wrapper, $amount, $message, $currCode = null)
-    {
+    public function creditFundsCredit(Nmmlm_Core_Wrapper_Customer $wrapper, $amount, $message, $currCode = null) {
         // TODO: Implement creditFundsCredit() method.
     }
 
@@ -28,13 +27,13 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Deduct funds from the Customer's account.
      *
      * @param  Nmmlm_Core_Wrapper_Customer $wrapper
-     * @param  $amount positive value to decrease balance
-     * @param  $message
-     * @param null $currCode
+     * @param                              $amount positive value to decrease balance
+     * @param                              $message
+     * @param null                         $currCode
+     *
      * @return mixed
      */
-    public function creditFundsDebit(Nmmlm_Core_Wrapper_Customer $wrapper, $amount, $message, $currCode = null)
-    {
+    public function creditFundsDebit(Nmmlm_Core_Wrapper_Customer $wrapper, $amount, $message, $currCode = null) {
         // TODO: Implement creditFundsDebit() method.
     }
 
@@ -42,11 +41,11 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Returns credit balance for the customer.
      *
      * @param Nmmlm_Core_Wrapper_Customer $wrapper
-     * @param null $currCode
+     * @param null                        $currCode
+     *
      * @return number
      */
-    public function creditGetBalance(Nmmlm_Core_Wrapper_Customer $wrapper, $currCode = null)
-    {
+    public function creditGetBalance(Nmmlm_Core_Wrapper_Customer $wrapper, $currCode = null) {
         return 0;
     }
 
@@ -59,14 +58,14 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * @param Nmmlm_Core_Model_Dict_Customer_Address $address
      * @param                                        $password
      * @param                                        $isOrderTriggered
+     *
      * @return Nmmlm_Core_Model_Dict_Customer_Profile
      */
     public function customerAddNew(
         Nmmlm_Core_Model_Dict_Customer_Profile $profile,
         Nmmlm_Core_Model_Dict_Customer_Address $address,
         $password = null, $isOrderTriggered = false
-    )
-    {
+    ) {
         // TODO: Implement customerAddNew() method.
     }
 
@@ -75,10 +74,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      *
      * @param $mlmId
      * @param $password
+     *
      * @return bool
      */
-    public function customerAuthenticate($mlmId, $password)
-    {
+    public function customerAuthenticate($mlmId, $password) {
         // TODO: Implement customerAuthenticate() method.
     }
 
@@ -89,20 +88,21 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      *
      * @param      $id
      * @param bool $isBendId
+     *
      * @return Nmmlm_Core_Model_Dict_Customer_Profile
      */
-    public function customerGetProfile($id, $isBendId = true)
-    {
+    public function customerGetProfile($id, $isBendId = true) {
         // TODO: Implement customerGetProfile() method.
     }
 
     /**
      * Return 'true' if $email can be used on backend to registry new customers.
+     *
      * @param $email
+     *
      * @return boolean
      */
-    public function customerIsEmailAllowed($email)
-    {
+    public function customerIsEmailAllowed($email) {
         // TODO: Implement customerIsEmailAllowed() method.
     }
 
@@ -111,10 +111,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      *
      * @param $mlmId
      * @param $newPassword
+     *
      * @return string password (current or new)
      */
-    public function customerPasswordReset($mlmId, $newPassword = null)
-    {
+    public function customerPasswordReset($mlmId, $newPassword = null) {
         // TODO: Implement customerPasswordReset() method.
     }
 
@@ -122,10 +122,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Remove customer data from backends.
      *
      * @param Nmmlm_Core_Wrapper_Customer $wrapper
+     *
      * @return mixed
      */
-    public function customerRemove(Nmmlm_Core_Wrapper_Customer $wrapper)
-    {
+    public function customerRemove(Nmmlm_Core_Wrapper_Customer $wrapper) {
         // TODO: Implement customerRemove() method.
     }
 
@@ -133,10 +133,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Update customer data on Magento model save.
      *
      * @param Nmmlm_Core_Wrapper_Customer $wrapper
+     *
      * @return mixed
      */
-    public function customerUpdate(Nmmlm_Core_Wrapper_Customer $wrapper)
-    {
+    public function customerUpdate(Nmmlm_Core_Wrapper_Customer $wrapper) {
         // TODO: Implement customerUpdate() method.
     }
 
@@ -144,10 +144,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Returns order's invoices data from backend.
      *
      * @param Nmmlm_Core_Model_Dict_Sales_Order $order
+     *
      * @return Nmmlm_Core_Model_Dict_Sales_Invoice
      */
-    public function orderGetInvoiceData(Nmmlm_Core_Model_Dict_Sales_Order $order)
-    {
+    public function orderGetInvoiceData(Nmmlm_Core_Model_Dict_Sales_Order $order) {
         // TODO: Implement orderGetInvoiceData() method.
     }
 
@@ -155,10 +155,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Returns order's shipment data from backend.
      *
      * @param Nmmlm_Core_Model_Dict_Sales_Order $order
+     *
      * @return Nmmlm_Core_Model_Dict_Sales_Shipment
      */
-    public function orderGetShipmentData(Nmmlm_Core_Model_Dict_Sales_Order $order)
-    {
+    public function orderGetShipmentData(Nmmlm_Core_Model_Dict_Sales_Order $order) {
         // TODO: Implement orderGetShipmentData() method.
     }
 
@@ -166,10 +166,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Add project specific conditions in order replication selection.
      *
      * @param Varien_Data_Collection_Db $collection
+     *
      * @return Mage_Sales_Model_Entity_Order_Collection
      */
-    public function orderPropagateCollectionToSync(Varien_Data_Collection_Db $collection)
-    {
+    public function orderPropagateCollectionToSync(Varien_Data_Collection_Db $collection) {
         // TODO: Implement orderPropagateCollectionToSync() method.
     }
 
@@ -177,10 +177,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Updates state of the already registered order in the Backend.
      *
      * @param Nmmlm_Core_Model_Dict_Sales_Order $order
+     *
      * @return bool
      */
-    public function orderUpdateState(Nmmlm_Core_Model_Dict_Sales_Order $order)
-    {
+    public function orderUpdateState(Nmmlm_Core_Model_Dict_Sales_Order $order) {
         // TODO: Implement orderUpdateState() method.
     }
 
@@ -190,8 +190,7 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      *
      * @return Nmmlm_Core_Model_Dict_Catalog_Product[] with key 'mageSKU'
      */
-    public function productGetAll()
-    {
+    public function productGetAll() {
         // TODO: Implement productGetAll() method.
     }
 
@@ -201,10 +200,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * is responsible for the collection composition according to the backend rules.
      *
      * @param $mageSku
+     *
      * @return Nmmlm_Core_Model_Dict_Catalog_Product[] with key 'mageSKU'
      */
-    public function productGetBySku($mageSku)
-    {
+    public function productGetBySku($mageSku) {
         // TODO: Implement productGetBySku() method.
     }
 
@@ -212,10 +211,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Converts core Product ID to Magento SKU.
      *
      * @param Nmmlm_Core_Model_Dict_Catalog_ProductId $id
+     *
      * @return string
      */
-    public function promoConvertIdToMageSku(Nmmlm_Core_Model_Dict_Catalog_ProductId $id)
-    {
+    public function promoConvertIdToMageSku(Nmmlm_Core_Model_Dict_Catalog_ProductId $id) {
         // TODO: Implement promoConvertIdToMageSku() method.
     }
 
@@ -225,10 +224,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * @deprecated TODO: remove this functionality when Nmmlm_Lot will be completed
      *
      * @param $mageSku string
+     *
      * @return Nmmlm_Core_Model_Dict_Catalog_ProductId
      */
-    public function promoConvertMageSkuToId($mageSku)
-    {
+    public function promoConvertMageSkuToId($mageSku) {
         // TODO: Implement promoConvertMageSkuToId() method.
     }
 
@@ -236,10 +235,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Replicates Magento Credit Memo to other backends.
      *
      * @param Nmmlm_Core_Wrapper_Sales_Order_Creditmemo $wrappedMemo
+     *
      * @return mixed
      */
-    public function refundReplicate(Nmmlm_Core_Wrapper_Sales_Order_Creditmemo $wrappedMemo)
-    {
+    public function refundReplicate(Nmmlm_Core_Wrapper_Sales_Order_Creditmemo $wrappedMemo) {
         // TODO: Implement refundReplicate() method.
     }
 
@@ -247,10 +246,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Returns 'true' in case of customer exists in backend.
      *
      * @param Nmmlm_Core_Model_Dict_Customer_Profile $profile
+     *
      * @return bool
      */
-    protected function baseIsCustomerExist(Nmmlm_Core_Model_Dict_Customer_Profile $profile)
-    {
+    protected function baseIsCustomerExist(Nmmlm_Core_Model_Dict_Customer_Profile $profile) {
         // TODO: Implement baseIsCustomerExist() method.
     }
 
@@ -258,10 +257,10 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      * Adds new order to backend(s).
      *
      * @param Nmmlm_Core_Model_Dict_Sales_Order $order
+     *
      * @return Nmmlm_Core_Datasource_Backend_OrderSyncResult
      */
-    protected function baseOrderAdd(Nmmlm_Core_Model_Dict_Sales_Order $order)
-    {
+    protected function baseOrderAdd(Nmmlm_Core_Model_Dict_Sales_Order $order) {
         // TODO: Implement baseOrderAdd() method.
     }
 
@@ -270,13 +269,13 @@ class Praxigento_Bonus_Model_Own_Backend_Connector
      *
      * @param Nmmlm_Core_Model_Dict_Customer_Profile $profile
      * @param Nmmlm_Core_Model_Dict_Customer_Address $address
+     *
      * @return Nmmlm_Core_Model_Dict_Customer_Profile
      */
     protected function baseCustomerAddOnNewOrder(
         Nmmlm_Core_Model_Dict_Customer_Profile $profile,
         Nmmlm_Core_Model_Dict_Customer_Address $address
-    )
-    {
+    ) {
         // TODO: Implement baseCustomerAddOnNewOrder() method.
     }
 }

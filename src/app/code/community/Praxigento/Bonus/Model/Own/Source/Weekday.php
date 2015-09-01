@@ -8,8 +8,7 @@ use Praxigento_Bonus_Config as Config;
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Source_Weekday
-{
+class Praxigento_Bonus_Model_Own_Source_Weekday {
     const FRIDAY = 'friday';
     const MONDAY = 'monday';
     const SATURDAY = 'saturday';
@@ -18,9 +17,8 @@ class Praxigento_Bonus_Model_Own_Source_Weekday
     const TUESDAY = 'tuesday';
     const WEDNESDAY = 'wednesday';
 
-    public function toOptionArray()
-    {
-        $hlp = Config::get()->helper();
+    public function toOptionArray() {
+        $hlp    = Config::get()->helper();
         $result = array(
             array(
                 'value' => self::SUNDAY,

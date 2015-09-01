@@ -8,6 +8,5 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Model_Own_Service_Registry_Request_CreateTransactions
-    extends Praxigento_Bonus_Service_Base_Request
-{
+    extends Praxigento_Bonus_Service_Base_Request {
 }

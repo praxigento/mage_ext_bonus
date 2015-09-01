@@ -7,13 +7,11 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
-{
+class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer {
     /** @var \Praxigento_Bonus_Logger */
     private $_log;
 
-    function __construct()
-    {
+    function __construct() {
         $this->_log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
     }
 
@@ -22,17 +20,16 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
      *
      * @param Varien_Event_Observer $event
      */
-    public function onSalesOrderPlaceAfter(Varien_Event_Observer $event)
-    {
+    public function onSalesOrderPlaceAfter(Varien_Event_Observer $event) {
         /** @var  $order Mage_Sales_Model_Order */
         $order = $event->getData('order');
         /** @var  $call Praxigento_Bonus_Model_Own_Service_Registry_Call */
         $call = Mage::getModel('prxgt_bonus_model/service_registry_call');
-        $req = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
+        $req  = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
         $req->setOrder($order);
         try {
             $resp = $call->saveRetailBonus($req);
-        } catch (Exception $e) {
+        } catch(Exception $e) {
             $orderId = $order->getId();
             $this->_log->error("Cannot create retail bonus for order #$orderId.");
         }
@@ -43,16 +40,15 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer
      *
      * @param Varien_Event_Observer $event
      */
-    public function onPrxgtCoreCustomerUplineChange(Varien_Event_Observer $event)
-    {
+    public function onPrxgtCoreCustomerUplineChange(Varien_Event_Observer $event) {
         /** @var  $parent Nmmlm_Core_Model_Customer_Customer */
-        $parent = $event->getParent();
+        $parent   = $event->getParent();
         $parentId = $parent->getId();
         /* dont' process if parent is missed - this is first save, w/o parent data */
-        if ($parentId) {
+        if($parentId) {
             /** @var  $customer Nmmlm_Core_Model_Customer_Customer */
-            $customer = $event->getCustomer();
-            $customerId = $customer->getId();
+            $customer     = $event->getCustomer();
+            $customerId   = $customer->getId();
             $customerPath = $customer->getNmmlmCoreMlmPath();
             /**
              * Save log record.

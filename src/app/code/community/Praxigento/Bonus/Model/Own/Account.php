@@ -15,14 +15,12 @@ use Praxigento_Bonus_Config as Config;
  * @method int getCustomerId()
  * @method null setCustomerId(int $val)
  */
-class Praxigento_Bonus_Model_Own_Account extends Mage_Core_Model_Abstract
-{
+class Praxigento_Bonus_Model_Own_Account extends Mage_Core_Model_Abstract {
     const ATTR_ASSET_ID = 'asset_id';
     const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_ID = 'id';
 
-    protected function _construct()
-    {
+    protected function _construct() {
         $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
     }
 }

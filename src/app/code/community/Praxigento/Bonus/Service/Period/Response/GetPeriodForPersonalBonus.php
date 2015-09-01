@@ -8,6 +8,5 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus
-    extends Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonusBase
-{
+    extends Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonusBase {
 }

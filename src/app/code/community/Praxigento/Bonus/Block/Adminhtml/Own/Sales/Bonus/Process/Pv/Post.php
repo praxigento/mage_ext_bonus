@@ -11,7 +11,6 @@
  * @method null setIsCalculationDone(boolean $val)
  */
 class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Process_Pv_Post
-    extends Praxigento_Bonus_Block_Adminhtml_Own_Base
-{
+    extends Praxigento_Bonus_Block_Adminhtml_Own_Base {
 
 }

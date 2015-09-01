@@ -16,8 +16,7 @@ use Praxigento_Bonus_Config as Config;
  * @method null setNote(string $val)
  */
 abstract class Praxigento_Bonus_Model_Own_Type_Base
-    extends Mage_Core_Model_Abstract
-{
+    extends Mage_Core_Model_Abstract {
     const ATTR_CODE = 'code';
     const ATTR_ID = 'id';
     const ATTR_NOTE = 'note';

@@ -8,8 +8,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff
-    extends Praxigento_Bonus_Service_Base_Request
-{
+    extends Praxigento_Bonus_Service_Base_Request {
     private $logCalcId;
     private $periodCode;
     private $periodValue;
@@ -17,48 +16,42 @@ class Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff
     /**
      * @return mixed
      */
-    public function getPeriodValue()
-    {
+    public function getPeriodValue() {
         return $this->periodValue;
     }
 
     /**
      * @param mixed $val
      */
-    public function setPeriodValue($val)
-    {
+    public function setPeriodValue($val) {
         $this->periodValue = $val;
     }
 
     /**
      * @return mixed
      */
-    public function getPeriodCode()
-    {
+    public function getPeriodCode() {
         return $this->periodCode;
     }
 
     /**
      * @param mixed $val
      */
-    public function setPeriodCode($val)
-    {
+    public function setPeriodCode($val) {
         $this->periodCode = $val;
     }
 
     /**
      * @return mixed
      */
-    public function getLogCalcId()
-    {
+    public function getLogCalcId() {
         return $this->logCalcId;
     }
 
     /**
      * @param mixed $val
      */
-    public function setLogCalcId($val)
-    {
+    public function setLogCalcId($val) {
         $this->logCalcId = $val;
     }
 }

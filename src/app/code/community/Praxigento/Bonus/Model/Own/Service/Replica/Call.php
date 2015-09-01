@@ -11,22 +11,21 @@ use Praxigento_Bonus_Model_Own_Service_Replica_Response_CreateQuoteFromOrder as 
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Model_Own_Service_Replica_Call
-    extends Praxigento_Bonus_Service_Base_Call
-{
+    extends Praxigento_Bonus_Service_Base_Call {
     /**
      * Create quote for a given customer from a sample order.
      *
      * @param Praxigento_Bonus_Model_Own_Service_Replica_Request_CreateQuoteFromOrder $req
+     *
      * @return Praxigento_Bonus_Model_Own_Service_Replica_Response_CreateQuoteFromOrder
      */
-    public function createQuoteFromOrder(CreateQuoteFromOrderRequest $req)
-    {
+    public function createQuoteFromOrder(CreateQuoteFromOrderRequest $req) {
         $result = Mage::getModel('prxgt_bonus_model/service_replica_response_createQuoteFromOrder');
         /* extract data from request and load data models */
-        $customer = $this->_initCustomer($req->getCustomerId(), $req->getCustomer());
+        $customer        = $this->_initCustomer($req->getCustomerId(), $req->getCustomer());
         $customerGroupId = $customer->getGroupId();
-        $order = $this->_initOrder($req->getOrderId(), $req->getOrder());
-        $storeId = $order->getStoreId();
+        $order           = $this->_initOrder($req->getOrderId(), $req->getOrder());
+        $storeId         = $order->getStoreId();
         /**
          * Populate quote with order's data.
          */
@@ -51,24 +50,24 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
     }
 
     /**
-     * @param int $id
+     * @param int                          $id
      * @param Mage_Customer_Model_Customer $model
+     *
      * @return Mage_Customer_Model_Customer|null
      */
-    private function _initCustomer($id = null, $model = null)
-    {
+    private function _initCustomer($id = null, $model = null) {
         $result = null;
-        if (
+        if(
             !is_null($model) &&
             ($model instanceof Mage_Customer_Model_Customer) &&
             ($model->getId())
         ) {
             /* there is model data in the request */
             $result = $model;
-        } else if (!is_null($id)) {
+        } else if(!is_null($id)) {
             /* there is customer id in the request, load model data */
             $loaded = Mage::getModel('customer/customer')->load($id);
-            if ($loaded->getId()) {
+            if($loaded->getId()) {
                 $result = $loaded;
             }
         } else {
@@ -78,24 +77,24 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
     }
 
     /**
-     * @param int $id
+     * @param int                    $id
      * @param Mage_Sales_Model_Order $model
+     *
      * @return Mage_Sales_Model_Order|null
      */
-    private function _initOrder($id = null, $model = null)
-    {
+    private function _initOrder($id = null, $model = null) {
         $result = null;
-        if (
+        if(
             !is_null($model) &&
             ($model instanceof Mage_Sales_Model_Order) &&
             ($model->getId())
         ) {
             /* there is model data in the request */
             $result = $model;
-        } else if (!is_null($id)) {
+        } else if(!is_null($id)) {
             /* there is customer id in the request, load model data */
             $loaded = Mage::getModel('sales/order')->load($id);
-            if ($loaded->getId()) {
+            if($loaded->getId()) {
                 $result = $loaded;
             }
         } else {
@@ -107,38 +106,36 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
     /**
      * Initialize data for price rules (see \Mage_Adminhtml_Model_Sales_Order_Create::_initRuleData)
      */
-    protected function _initRuleData($customerGroupId, $storeId)
-    {
+    protected function _initRuleData($customerGroupId, $storeId) {
 
         $registryKey = 'rule_data';
         $currentData = Mage::registry($registryKey);
-        if (!is_null($currentData)) {
+        if(!is_null($currentData)) {
             /* unregister rules data */
             Mage::unregister($registryKey);
         }
-        $store = Mage::getModel('core/store')->load($storeId);
+        $store         = Mage::getModel('core/store')->load($storeId);
         $ruleDataArray = array(
-            'store_id' => $store->getId(),
-            'website_id' => $store->getWebsiteId(),
+            'store_id'          => $store->getId(),
+            'website_id'        => $store->getWebsiteId(),
             'customer_group_id' => $customerGroupId,
         );
-        $ruleData = new Varien_Object($ruleDataArray);
+        $ruleData      = new Varien_Object($ruleDataArray);
         Mage::register($registryKey, $ruleData);
     }
 
     /**
      * @param Mage_Sales_Model_Quote $quote
      * @param Mage_Sales_Model_Order $order
-     * @param $storeId
-     * @param $customerGid
+     * @param                        $storeId
+     * @param                        $customerGid
      */
     private function _initQuoteItems(
         Mage_Sales_Model_Quote $quote,
         Mage_Sales_Model_Order $order,
         $storeId,
         $customerGid
-    )
-    {
+    ) {
         /* transfer order items */
         $items = $order->getItemsCollection(
             array_keys(Mage::getConfig()->getNode('adminhtml/sales/order/create/available_product_types')->asArray()),
@@ -146,16 +143,16 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
         );
         /* AD-336 */
         $i = 0;
-        foreach ($items as $orderItem) {
+        foreach($items as $orderItem) {
             /* @var $orderItem Mage_Sales_Model_Order_Item */
-            if (!$orderItem->getParentItem()) {
+            if(!$orderItem->getParentItem()) {
                 $qty = $orderItem->getQtyOrdered();
-                if ($qty > 0) {
+                if($qty > 0) {
                     $item = $this->_initQuoteItemFromOrderItem($quote, $orderItem, $storeId, $qty, $customerGid);
                     /* AD-336 */
                     $item->setId($i);
                     $i++;
-                    if (is_string($item)) {
+                    if(is_string($item)) {
                         Mage::throwException($item);
                     }
                 }
@@ -165,11 +162,12 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
     }
 
     /**
-     * @param Mage_Sales_Model_Quote $quote
+     * @param Mage_Sales_Model_Quote      $quote
      * @param Mage_Sales_Model_Order_Item $orderItem
-     * @param $storeId
-     * @param null $qty
-     * @param $customerGid
+     * @param                             $storeId
+     * @param null                        $qty
+     * @param                             $customerGid
+     *
      * @return $this|null
      */
     private function _initQuoteItemFromOrderItem(
@@ -177,9 +175,9 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
         Mage_Sales_Model_Order_Item $orderItem,
         $storeId,
         $qty = null,
-        $customerGid)
-    {
-        if (!$orderItem->getId()) {
+        $customerGid
+    ) {
+        if(!$orderItem->getId()) {
             return $this;
         }
 
@@ -187,30 +185,30 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
         /** @var  $product Mage_Catalog_Model_Product */
         $product = Mage::getModel('catalog/product');
         $product->setStoreId($storeId);
-        $sku = $orderItem->getSku();
+        $sku       = $orderItem->getSku();
         $productId = $product->getIdBySku($sku);
         $product->load($productId);
         /** INTR-706: customer group is used in \Amasty_Table_Model_Carrier_Table::collectRates */
         $product->setCustomerGroupId($customerGid);
 
-        if ($product->getId()) {
+        if($product->getId()) {
             $product->setSkipCheckRequiredOption(true);
             $buyRequest = $orderItem->getBuyRequest();
-            if (is_numeric($qty)) {
+            if(is_numeric($qty)) {
                 $buyRequest->setQty($qty);
             }
             $item = $quote->addProduct($product, $buyRequest);
 
-            if (is_string($item)) {
+            if(is_string($item)) {
                 return $item;
             }
 
-            if ($additionalOptions = $orderItem->getProductOptionByCode('additional_options')) {
+            if($additionalOptions = $orderItem->getProductOptionByCode('additional_options')) {
                 $item->addOption(new Varien_Object(
                     array(
                         'product' => $item->getProduct(),
-                        'code' => 'additional_options',
-                        'value' => serialize($additionalOptions)
+                        'code'    => 'additional_options',
+                        'value'   => serialize($additionalOptions)
                     )
                 ));
             }
@@ -229,8 +227,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
      * @param Mage_Sales_Model_Quote $quote
      * @param Mage_Sales_Model_Order $order
      */
-    protected function _initBillingAddressFromOrder(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order)
-    {
+    protected function _initBillingAddressFromOrder(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order) {
         $quote->getBillingAddress()->setCustomerAddressId($order->getBillingAddressId());
         Mage::helper('core')->copyFieldset(
             'sales_copy_order_billing_address',
@@ -239,12 +236,11 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
             $quote->getBillingAddress()
         );
         /** INTR-800, INTR-948 */
-//        $quote->getBillingAddress()->save();
+        //        $quote->getBillingAddress()->save();
         //$quote->getBillingAddress()->setData('address_id', $order->getBillingAddressId());
     }
 
-    protected function _initShippingAddressFromOrder(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order)
-    {
+    protected function _initShippingAddressFromOrder(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order) {
         $quote->getShippingAddress()->setCustomerAddressId('');
         Mage::helper('core')->copyFieldset(
             'sales_copy_order_shipping_address',
@@ -253,7 +249,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
             $quote->getShippingAddress()
         );
         /** INTR-800 */
-//        $quote->getShippingAddress()->save();
+        //        $quote->getShippingAddress()->save();
         // $this->_quote->getShippingAddress()->setData('address_id', $order->getShippingAddressId());
     }
 }

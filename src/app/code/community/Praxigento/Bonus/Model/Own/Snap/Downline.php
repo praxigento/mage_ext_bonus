@@ -19,16 +19,14 @@ use Praxigento_Bonus_Config as Config;
  * @method string getPeriod()
  * @method null setPeriod(string $val)
  */
-class Praxigento_Bonus_Model_Own_Snap_Downline extends Mage_Core_Model_Abstract
-{
+class Praxigento_Bonus_Model_Own_Snap_Downline extends Mage_Core_Model_Abstract {
     const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_ID = 'id';
     const ATTR_PARENT_ID = 'parent_id';
     const ATTR_PATH = 'path';
     const ATTR_PERIOD = 'period';
 
-    protected function _construct()
-    {
+    protected function _construct() {
         $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
     }
 

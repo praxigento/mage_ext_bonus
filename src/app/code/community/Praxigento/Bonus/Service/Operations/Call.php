@@ -21,19 +21,18 @@ use Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff as G
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Service_Operations_Call
-    extends Praxigento_Bonus_Service_Base_Call
-{
+    extends Praxigento_Bonus_Service_Base_Call {
 
     /**
      * @param Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff $req
+     *
      * @return Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff
      */
-    public function getOperationsForPvWriteOff(GetOperationsForPvWriteOffRequest $req)
-    {
-        $result = Mage::getModel('prxgt_bonus_service/operations_response_getOperationsForPvWriteOff');
-        $logCalcId = $req->getLogCalcId();
+    public function getOperationsForPvWriteOff(GetOperationsForPvWriteOffRequest $req) {
+        $result      = Mage::getModel('prxgt_bonus_service/operations_response_getOperationsForPvWriteOff');
+        $logCalcId   = $req->getLogCalcId();
         $periodValue = $req->getPeriodValue();
-        $periodCode = $req->getPeriodCode();
+        $periodCode  = $req->getPeriodCode();
         /**
          *
          * SELECT
@@ -50,25 +49,25 @@ class Praxigento_Bonus_Service_Operations_Call
          */
         $collection = Config::get()->collectionOperation();
         /* filter by operations types */
-        $fields = array();
-        $values = array();
+        $fields  = array();
+        $values  = array();
         $operIds = $this->_helperType->getOperIdsForPvWriteOff();
-        foreach ($operIds as $one) {
+        foreach($operIds as $one) {
             $fields[] = Operation::ATTR_TYPE_ID;
             $values[] = $one;
         }
         $collection->addFieldToFilter($fields, $values);
         $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
         $collection->getSelect()->joinLeft(
-            array('trnx' => $tableTrnx),
+            array( 'trnx' => $tableTrnx ),
             'main_table.id = trnx.operation_id',
             '*'
         );
         $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from = Config::get()->helperPeriod()->calcPeriodFromTs($periodValue, $periodCode);
-        $to = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $periodCode);
-        $collection->addFieldToFilter($fldDate, array('gteq' => $from));
-        $collection->addFieldToFilter($fldDate, array('lteq' => $to));
+        $from    = Config::get()->helperPeriod()->calcPeriodFromTs($periodValue, $periodCode);
+        $to      = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $periodCode);
+        $collection->addFieldToFilter($fldDate, array( 'gteq' => $from ));
+        $collection->addFieldToFilter($fldDate, array( 'lteq' => $to ));
         $sql = $collection->getSelectSql(true);
         $result->setCollection($collection);
         $result->setErrorCode(GetOperationsForPvWriteOffResponse::ERR_NO_ERROR);
@@ -77,46 +76,45 @@ class Praxigento_Bonus_Service_Operations_Call
 
     /**
      * @param Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff $req
+     *
      * @return Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff
      */
-    public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req)
-    {
+    public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req) {
         /** @var  $result CreateOperationPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
 
         $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
 
-        $customerAccId = $req->getCustomerAccountId();
-        $value = $req->getValue();
-        $dateApplied = $req->getDateApplied();
-        $accountantAcc = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
+        $customerAccId   = $req->getCustomerAccountId();
+        $value           = $req->getValue();
+        $dateApplied     = $req->getDateApplied();
+        $accountantAcc   = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
         $accountantAccId = $accountantAcc->getId();
-        $typeOperId = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
+        $typeOperId      = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
 
         try {
             $connection->beginTransaction();
             /* create operation */
             $operation = Config::get()->modelOperation();
-//            $operation->setDatePerformed($date);
+            //            $operation->setDatePerformed($date);
             $operation->setTypeId($typeOperId);
             $operation->save();
             $operationId = $operation->getId();
             /* don't create transactions for empty operations */
-            if ($value != 0) {
+            if($value != 0) {
                 /* create transaction */
                 $this->_createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
             }
             $connection->commit();
             $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
-        } catch (Exception $e) {
+        } catch(Exception $e) {
             $connection->rollback();
         }
 
         return $result;
     }
 
-    private function _createTransaction($operationId, $debitId, $creditId, $value, $date)
-    {
+    private function _createTransaction($operationId, $debitId, $creditId, $value, $date) {
         /* create transaction */
         /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
         $trnx = Config::get()->modelTransaction();
@@ -131,15 +129,14 @@ class Praxigento_Bonus_Service_Operations_Call
         $this->_updateBalance($creditId, $value);
     }
 
-    private function _updateBalance($accountId, $value, $period = Praxigento_Bonus_Config::PERIOD_KEY_NOW)
-    {
+    private function _updateBalance($accountId, $value, $period = Praxigento_Bonus_Config::PERIOD_KEY_NOW) {
         /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
         $balanceCollection = Config::get()->collectionBalance();
         $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
         $balanceCollection->addFieldToFilter(Balance::ATTR_PERIOD, $period);
         /** @var  $balance Praxigento_Bonus_Model_Own_Balance */
         $balance = Config::get()->modelBalance();
-        if ($balanceCollection->getSize()) {
+        if($balanceCollection->getSize()) {
             $balance = $balanceCollection->getFirstItem();
         } else {
             /* create new balance record for NOW  */
@@ -155,8 +152,7 @@ class Praxigento_Bonus_Service_Operations_Call
     /**
      * @return CreateOperationPvWriteOffRequest
      */
-    public function requestCreateOperationPvWriteOff()
-    {
+    public function requestCreateOperationPvWriteOff() {
         $result = Mage::getModel('prxgt_bonus_service/operations_request_createOperationPvWriteOff');
         return $result;
     }
@@ -164,8 +160,7 @@ class Praxigento_Bonus_Service_Operations_Call
     /**
      * @return Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff
      */
-    public function requestGetOperationsForPvWriteOff()
-    {
+    public function requestGetOperationsForPvWriteOff() {
         $result = Mage::getModel('prxgt_bonus_service/operations_request_getOperationsForPvWriteOff');
         return $result;
     }
