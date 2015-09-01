@@ -21,8 +21,6 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
         $this->assertNotNull($call);
-        $this->assertTrue($call->initPeriodCollection() instanceof Praxigento_Bonus_Resource_Own_Period_Collection);
-        $this->assertTrue($call->initTransactionCollection() instanceof Praxigento_Bonus_Resource_Own_Transaction_Collection);
     }
 
     public function test_requests() {
@@ -44,27 +42,30 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Create mocks.
          */
         /* Period Model */
-        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-                           ->setMethods(array( 'load' ))
-                           ->getMock();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'load' ))
+            ->getMock();
         $mockPeriod
             ->expects($this->once())
             ->method('load')
             ->with($this->equalTo($PERIOD_ID));
         $mockPeriod->setId($PERIOD_ID);
         /* Log Calc Model */
-        $mockLogCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-                            ->setMethods(array( 'load' ))
-                            ->getMock();
+        $mockLogCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'load' ))
+            ->getMock();
         $mockLogCalc
             ->expects($this->once())
             ->method('load')
             ->with($this->equalTo($LOG_ID));
         $mockLogCalc->setId($LOG_ID);
         /* config */
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array( 'modelPeriod', 'modelLogCalc' ));
-        $mockCfg = $mockBuilder->getMock();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'modelPeriod', 'modelLogCalc' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('modelPeriod')
@@ -95,16 +96,18 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Create mocks.
          */
         /* found period */
-        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-                           ->setMethods(array( 'getId' ))
-                           ->getMock();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'getId' ))
+            ->getMock();
         $mockPeriod->expects($this->any())
                    ->method('getId')
                    ->will($this->returnValue($FOUND_PERIOD_ID));
         /* periods collection */
-        $mockCollPeriod = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
-                               ->setMethods(array( 'getSize', 'getFirstItem' ))
-                               ->getMock();
+        $mockCollPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
+            ->setMethods(array( 'getSize', 'getFirstItem' ))
+            ->getMock();
         $mockCollPeriod
             ->expects($this->once())
             ->method('getSize')
@@ -114,16 +117,18 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->method('getFirstItem')
             ->will($this->returnValue($mockPeriod));
         /* found calculation */
-        $mockCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-                         ->setMethods(array( 'getId' ))
-                         ->getMock();
+        $mockCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'getId' ))
+            ->getMock();
         $mockCalc->expects($this->any())
                  ->method('getId')
                  ->will($this->returnValue($FOUND_CALC_ID));
         /* calculations collection */
-        $mockCollCalc = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc_Collection')
-                             ->setMethods(array( 'getSize', 'getFirstItem' ))
-                             ->getMock();
+        $mockCollCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc_Collection')
+            ->setMethods(array( 'getSize', 'getFirstItem' ))
+            ->getMock();
         $mockCollCalc
             ->expects($this->once())
             ->method('getSize')
@@ -133,9 +138,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->method('getFirstItem')
             ->will($this->returnValue($mockCalc));
         /* config */
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array( 'collectionPeriod', 'collectionLogCalc' ));
-        $mockCfg = $mockBuilder->getMock();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionLogCalc' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('collectionPeriod')
@@ -171,16 +177,18 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Create mocks.
          */
         /* found period */
-        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-                           ->setMethods(array( 'getId' ))
-                           ->getMock();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'getId' ))
+            ->getMock();
         $mockPeriod->expects($this->any())
                    ->method('getId')
                    ->will($this->returnValue($FOUND_PERIOD_ID));
         /* periods collection */
-        $mockCollPeriod = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
-                               ->setMethods(array( 'getSize', 'getFirstItem' ))
-                               ->getMock();
+        $mockCollPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
+            ->setMethods(array( 'getSize', 'getFirstItem' ))
+            ->getMock();
         $mockCollPeriod
             ->expects($this->once())
             ->method('getSize')
@@ -190,17 +198,19 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->method('getFirstItem')
             ->will($this->returnValue($mockPeriod));
         /* calculations collection */
-        $mockCollCalc = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc_Collection')
-                             ->setMethods(array( 'getSize' ))
-                             ->getMock();
+        $mockCollCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc_Collection')
+            ->setMethods(array( 'getSize' ))
+            ->getMock();
         $mockCollCalc
             ->expects($this->once())
             ->method('getSize')
             ->will($this->returnValue(0));
         /* calculation model to be saved */
-        $mockCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-                         ->setMethods(array( 'getId', 'save' ))
-                         ->getMock();
+        $mockCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'getId', 'save' ))
+            ->getMock();
         $mockCalc->expects($this->any())
                  ->method('getId')
                  ->will($this->returnValue($NEW_CALC_ID));
@@ -208,9 +218,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->expects($this->once())
             ->method('save');
         /* config */
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array( 'collectionPeriod', 'collectionLogCalc', 'modelLogCalc' ));
-        $mockCfg = $mockBuilder->getMock();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionLogCalc', 'modelLogCalc' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('collectionPeriod')
@@ -246,18 +257,20 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Create mocks.
          */
         /* Period Model */
-        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-                           ->setMethods(array( 'load' ))
-                           ->getMock();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'load' ))
+            ->getMock();
         $mockPeriod
             ->expects($this->once())
             ->method('load')
             ->with($this->equalTo($PERIOD_ID));
         $mockPeriod->setId($PERIOD_ID);
         /* Log Calc Model */
-        $mockLogCalc = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-                            ->setMethods(array( 'setData', 'getId', 'save' ))
-                            ->getMock();
+        $mockLogCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'setData', 'getId', 'save' ))
+            ->getMock();
         $mockLogCalc
             ->expects($this->at(0))
             ->method('setData')
@@ -270,9 +283,10 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->expects($this->once())
             ->method('save');
         /* config */
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array( 'modelPeriod', 'modelLogCalc' ));
-        $mockCfg = $mockBuilder->getMock();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'modelPeriod', 'modelLogCalc' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('modelPeriod')
@@ -303,25 +317,28 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Create mocks.
          */
         /* period model that throws the exception on save */
-        $mockPeriod = $this->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-                           ->setMethods(array( 'save' ))
-                           ->getMock();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'save' ))
+            ->getMock();
         $mockPeriod->expects($this->any())
                    ->method('save')
                    ->will($this->throwException(new Exception));
         /* periods collection */
-        $mockCollPeriod = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
-                               ->setMethods(array( 'getSize' ))
-                               ->getMock();
+        $mockCollPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
+            ->setMethods(array( 'getSize' ))
+            ->getMock();
         $mockCollPeriod
             ->expects($this->once())
             ->method('getSize')
             ->will($this->returnValue(0));
         /* connection to be rolled back */
-        $mockConnection = $this->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
-                               ->disableOriginalConstructor()
-                               ->setMethods(array( 'beginTransaction', 'rollBack' ))
-                               ->getMock();
+        $mockConnection = $this
+            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'rollBack' ))
+            ->getMock();
         $mockConnection
             ->expects($this->once())
             ->method('beginTransaction');
@@ -329,17 +346,19 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->expects($this->once())
             ->method('rollBack');
         /* resource as singleton to return connection */
-        $mockResource = $this->getMockBuilder('Mage_Core_Model_Resource')
-                             ->setMethods(array( 'getConnection' ))
-                             ->getMock();
+        $mockResource = $this
+            ->getMockBuilder('Mage_Core_Model_Resource')
+            ->setMethods(array( 'getConnection' ))
+            ->getMock();
         $mockResource
             ->expects($this->once())
             ->method('getConnection')
             ->will($this->returnValue($mockConnection));
         /* config */
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
-        $mockBuilder->setMethods(array( 'modelPeriod', 'collectionPeriod', 'singleton' ));
-        $mockCfg = $mockBuilder->getMock();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'modelPeriod', 'collectionPeriod', 'singleton' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('modelPeriod')
@@ -374,28 +393,45 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /* 'processing' period collection should return no data */
         $mockPeriodCollP = $this->mockPeriodCollection();
-        $mockPeriodCollP->expects($this->once())->method('getSize')->will($this->returnValue(0));
+        $mockPeriodCollP
+            ->expects($this->once())
+            ->method('getSize')
+            ->will($this->returnValue(0));
         $mockPeriodCollC = $this->mockPeriodCollection();
-        $mockPeriodCollC->expects($this->once())->method('getSize')->will($this->returnValue(4));
+        $mockPeriodCollC
+            ->expects($this->once())
+            ->method('getSize')
+            ->will($this->returnValue(4));
         /* add period item to period collection */
         $mockPeriod = $this->mockPeriod();
-        $mockPeriod->expects($this->once())->method('getData')
-                   ->with($this->equalTo(Period::ATTR_VALUE))
-                   ->will($this->returnValue($VAL));
+        $mockPeriod
+            ->expects($this->once())->method('getData')
+            ->with($this->equalTo(Period::ATTR_VALUE))
+            ->will($this->returnValue($VAL));
         $mockPeriodCollC->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockPeriod));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodCollP));
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodCollC));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
-         */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection' ));
-        $mockCall->expects($this->at(0))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollP));
-        $mockCall->expects($this->at(1))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollC));
-        /**
-         * Prepare request and perform call.
+         * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
-        $resp = $mockCall->getPeriodForPvWriteOff($req);
+        $resp = $call->getPeriodForPvWriteOff($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL_NEXT, $resp->getPeriodValue());
         $this->assertNull($resp->getExistingPeriodId());
@@ -406,8 +442,8 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     private function mockPeriodCollection() {
-        $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection');
-        $result      = $mockBuilder
+        $result = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
             ->disableOriginalConstructor()
             ->getMock();
         return $result;
@@ -452,28 +488,40 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /* period collection should return data */
         $mockPeriodColl = $this->mockPeriodCollection();
-        $mockPeriodColl->expects($this->once())->method('getSize')->will($this->returnValue(500));
+        $mockPeriodColl
+            ->expects($this->once())
+            ->method('getSize')
+            ->will($this->returnValue(500));
         /* add period item to period collection */
         $mockPeriod = $this->mockPeriod();
-        $mockPeriod->expects($this->at(0))->method('getData')
-                   ->with($this->equalTo(Period::ATTR_ID))
-                   ->will($this->returnValue($ID));
-        $mockPeriod->expects($this->at(1))->method('getData')
-                   ->with($this->equalTo(Period::ATTR_VALUE))
-                   ->will($this->returnValue($VAL));
+        $mockPeriod
+            ->expects($this->at(0))->method('getData')
+            ->with($this->equalTo(Period::ATTR_ID))
+            ->will($this->returnValue($ID));
+        $mockPeriod
+            ->expects($this->at(1))->method('getData')
+            ->with($this->equalTo(Period::ATTR_VALUE))
+            ->will($this->returnValue($VAL));
         $mockPeriodColl->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockPeriod));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
-         */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        /**
-         * Prepare request and perform call.
+         * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
-        $resp = $mockCall->getPeriodForPvWriteOff($req);
+        $resp = $call->getPeriodForPvWriteOff($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL, $resp->getPeriodValue());
         $this->assertEquals($ID, $resp->getExistingPeriodId());
@@ -490,29 +538,49 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /* period collection should return no data 2 times */
         $mockPeriodColl = $this->mockPeriodCollection();
-        $mockPeriodColl->expects($this->exactly(2))->method('getSize')->will($this->returnValue(0));
+        $mockPeriodColl
+            ->expects($this->exactly(2))
+            ->method('getSize')
+            ->will($this->returnValue(0));
         /* transaction collection should return data */
         $mockTransactionColl = $this->mockTransactionCollection();
-        $mockTransactionColl->expects($this->once())->method('getSize')->will($this->returnValue(1));
+        $mockTransactionColl
+            ->expects($this->once())
+            ->method('getSize')
+            ->will($this->returnValue(1));
         /* add transaction item to collection */
         $mockTransaction = $this->mockTransaction();
-        $mockTransaction->expects($this->once())->method('getData')
-                        ->with($this->equalTo(Transaction::ATTR_DATE_APPLIED))
-                        ->will($this->returnValue('2015-06-01 07:00:00'));
-        $mockTransactionColl->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockTransaction));
+        $mockTransaction
+            ->expects($this->once())->method('getData')
+            ->with($this->equalTo(Transaction::ATTR_DATE_APPLIED))
+            ->will($this->returnValue('2015-06-01 07:00:00'));
+        $mockTransactionColl
+            ->expects($this->once())
+            ->method('getFirstItem')
+            ->will($this->returnValue($mockTransaction));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionTransaction')
+            ->will($this->returnValue($mockTransactionColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
-         */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection', 'initTransactionCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
-        /**
-         * Prepare request and perform call.
+         * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
-        $resp = $mockCall->getPeriodForPvWriteOff($req);
+        $resp = $call->getPeriodForPvWriteOff($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals('20150601', $resp->getPeriodValue());
         $this->assertNull($resp->getExistingPeriodId());
@@ -555,19 +623,29 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /* transaction collection should return no data */
         $mockTransactionColl = $this->mockTransactionCollection();
         $mockTransactionColl->expects($this->once())->method('getSize')->will($this->returnValue(0));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionTransaction')
+            ->will($this->returnValue($mockTransactionColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
+         * Compose service, prepare request and perform call.
          */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection', 'initTransactionCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
-        /**
-         * Prepare request and perform call.
-         */
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
         $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
-        $resp = $mockCall->getPeriodForPvWriteOff($req);
+        $resp = $call->getPeriodForPvWriteOff($req);
         $this->assertFalse($resp->isSucceed());
         $this->assertEquals(GetPeriodForPvWriteOff::ERR_NOTHING_TO_DO, $resp->getErrorCode());
     }
@@ -585,19 +663,29 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /* transaction collection should return no data */
         $mockTransactionColl = $this->mockTransactionCollection();
         $mockTransactionColl->expects($this->once())->method('getSize')->will($this->returnValue(0));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionTransaction')
+            ->will($this->returnValue($mockTransactionColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
+         * Compose service, prepare request and perform call.
          */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection', 'initTransactionCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
-        /**
-         * Prepare request and perform call.
-         */
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $resp = $mockCall->getPeriodForPersonalBonus($req);
+        $resp = $call->getPeriodForPersonalBonus($req);
         $this->assertFalse($resp->isSucceed());
         $this->assertEquals(GetPeriodForPersonalBonus::ERR_NOTHING_TO_DO, $resp->getErrorCode());
     }
@@ -622,19 +710,29 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
                         ->with($this->equalTo(Transaction::ATTR_DATE_APPLIED))
                         ->will($this->returnValue('2015-06-01 07:00:00'));
         $mockTransactionColl->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockTransaction));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod', 'collectionTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionTransaction')
+            ->will($this->returnValue($mockTransactionColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
+         * Compose service, prepare request and perform call.
          */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection', 'initTransactionCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        $mockCall->expects($this->any())->method('initTransactionCollection')->will($this->returnValue($mockTransactionColl));
-        /**
-         * Prepare request and perform call.
-         */
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $resp = $mockCall->getPeriodForPersonalBonus($req);
+        $resp = $call->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals('20150601', $resp->getPeriodValue());
         $this->assertNull($resp->getExistingPeriodId());
@@ -661,18 +759,25 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
                    ->with($this->equalTo(Period::ATTR_VALUE))
                    ->will($this->returnValue($VAL));
         $mockPeriodColl->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockPeriod));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodColl));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
+         * Compose service, prepare request and perform call.
          */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection' ));
-        $mockCall->expects($this->any())->method('initPeriodCollection')->will($this->returnValue($mockPeriodColl));
-        /**
-         * Prepare request and perform call.
-         */
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $resp = $mockCall->getPeriodForPersonalBonus($req);
+        $resp = $call->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL, $resp->getPeriodValue());
         $this->assertEquals($ID, $resp->getExistingPeriodId());
@@ -698,19 +803,29 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
                    ->with($this->equalTo(Period::ATTR_VALUE))
                    ->will($this->returnValue($VAL));
         $mockPeriodCollC->expects($this->once())->method('getFirstItem')->will($this->returnValue($mockPeriod));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'collectionPeriod' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodCollP));
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriodCollC));
+        /* setup Config */
+        Config::set($mockCfg);
         /**
-         * Compose service.
+         * Compose service, prepare request and perform call.
          */
-        $mockCall = $this->mockCall(array( 'initPeriodCollection' ));
-        $mockCall->expects($this->at(0))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollP));
-        $mockCall->expects($this->at(1))->method('initPeriodCollection')->will($this->returnValue($mockPeriodCollC));
-        /**
-         * Prepare request and perform call.
-         */
+        $call = Config::get()->servicePeriod();
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus */
         $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPersonalBonus');
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus */
-        $resp = $mockCall->getPeriodForPersonalBonus($req);
+        $resp = $call->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL_NEXT, $resp->getPeriodValue());
         $this->assertNull($resp->getExistingPeriodId());

@@ -98,7 +98,7 @@ class Praxigento_Bonus_Service_Period_Call
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
-                $collection = $this->initTransactionCollection();
+                $collection = Config::get()->collectionTransaction();
                 $asOper     = 'o';
                 $table      = array( $asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION );
                 $cond       = 'main_table.' . Transaction::ATTR_OPERATION_ID . '='
@@ -132,7 +132,7 @@ class Praxigento_Bonus_Service_Period_Call
     }
 
     private function  _getCalcPeriodsCollection($as) {
-        $result = $this->initPeriodCollection();
+        $result = Config::get()->collectionPeriod();
         $table  = array( $as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC );
         $cond   = 'main_table.' . Period::ATTR_ID . '='
                   . $as . '.' . LogCalc::ATTR_PERIOD_ID;
@@ -142,26 +142,6 @@ class Praxigento_Bonus_Service_Period_Call
             LogCalc::ATTR_STATE
         );
         $result->join($table, $cond, $cols);
-        return $result;
-    }
-
-    /**
-     * This method is mocked in unit tests.
-     *
-     * @return Praxigento_Bonus_Resource_Own_Period_Collection
-     */
-    public function initPeriodCollection() {
-        $result = Config::get()->collectionPeriod();
-        return $result;
-    }
-
-    /**
-     * This method is mocked in unit tests.
-     *
-     * @return Praxigento_Bonus_Resource_Own_Transaction_Collection
-     */
-    public function initTransactionCollection() {
-        $result = Config::get()->collectionTransaction();
         return $result;
     }
 
