@@ -10,9 +10,13 @@ use Praxigento_Bonus_Model_Own_Operation as Operation;
 use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff as CreateOperationPvWriteOffRequest;
+use Praxigento_Bonus_Service_Operations_Request_CreateTransaction as CreateTransactionRequest;
 use Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffRequest;
+use Praxigento_Bonus_Service_Operations_Request_UpdateBalance as UpdateBalanceRequest;
 use Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff as CreateOperationPvWriteOffResponse;
+use Praxigento_Bonus_Service_Operations_Response_CreateTransaction as CreateTransactionResponse;
 use Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff as GetOperationsForPvWriteOffResponse;
+use Praxigento_Bonus_Service_Operations_Response_UpdateBalance as UpdateBalanceResponse;
 
 /**
  *
@@ -83,53 +87,77 @@ class Praxigento_Bonus_Service_Operations_Call
         /** @var  $result CreateOperationPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
 
-        $connection = Mage::getSingleton('core/resource')->getConnection('core_write');
+        $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
 
         $customerAccId   = $req->getCustomerAccountId();
         $value           = $req->getValue();
         $dateApplied     = $req->getDateApplied();
-        $accountantAcc   = Config::get()->helperAccount()->getAccountantAccByAssetCode(Config::ASSET_PV);
+        $accountantAcc   = $this->_helperAccount->getAccountantAccByAssetCode(Config::ASSET_PV);
         $accountantAccId = $accountantAcc->getId();
         $typeOperId      = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
-
         try {
             $connection->beginTransaction();
             /* create operation */
             $operation = Config::get()->modelOperation();
-            //            $operation->setDatePerformed($date);
             $operation->setTypeId($typeOperId);
             $operation->save();
             $operationId = $operation->getId();
             /* don't create transactions for empty operations */
             if($value != 0) {
                 /* create transaction */
-                $this->_createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
+                $this->createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
             }
             $connection->commit();
             $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
         } catch(Exception $e) {
             $connection->rollback();
         }
-
         return $result;
     }
 
-    private function _createTransaction($operationId, $debitId, $creditId, $value, $date) {
-        /* create transaction */
+    /**
+     * @param Praxigento_Bonus_Service_Operations_Request_CreateTransaction $req
+     *
+     * @return Praxigento_Bonus_Service_Operations_Response_CreateTransaction
+     */
+    public function createTransaction(CreateTransactionRequest $req) {
+        /** @var  $result CreateTransactionResponse */
+        $result      = Mage::getModel('prxgt_bonus_service/operations_response_createTransaction');
+        $debitAccId  = $req->getDebitAccId();
+        $creditAccId = $req->getCreditAccId();
+        $value       = $req->getValue();
         /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
         $trnx = Config::get()->modelTransaction();
-        $trnx->setOperationId($operationId);
-        $trnx->setDateApplied($date);
-        $trnx->setDebitAccId($debitId);
-        $trnx->setCreditAccId($creditId);
+        $trnx->setOperationId($req->getOperationId());
+        $trnx->setDateApplied($req->getDateApplied());
+        $trnx->setDebitAccId($debitAccId);
+        $trnx->setCreditAccId($creditAccId);
         $trnx->setValue($value);
         $trnx->save();
         /* update balances */
-        $this->_updateBalance($debitId, -$value);
-        $this->_updateBalance($creditId, $value);
+        /* decrease debit */
+        $reqBalance = $this->requestUpdateBalance();
+        $reqBalance->setAccountId($debitAccId);
+        $reqBalance->setValue(0 - $value);
+        $this->updateBalance($reqBalance);
+        /* increase credit */
+        $reqBalance = $this->requestUpdateBalance();
+        $reqBalance->setAccountId($creditAccId);
+        $reqBalance->setValue($value);
+        $this->updateBalance($reqBalance);
+        return $result;
     }
 
-    private function _updateBalance($accountId, $value, $period = Praxigento_Bonus_Config::PERIOD_KEY_NOW) {
+    /**
+     * @param Praxigento_Bonus_Service_Operations_Request_UpdateBalance $req
+     *
+     * @return Praxigento_Bonus_Service_Operations_Response_UpdateBalance
+     */
+    public function updateBalance(UpdateBalanceRequest $req) {
+        /** @var  $result UpdateBalanceResponse */
+        $result    = Mage::getModel('prxgt_bonus_service/operations_response_updateBalance');
+        $accountId = $req->getAccountId();
+        $period    = $req->getPeriod();
         /** @var  $balanceCollection Praxigento_Bonus_Resource_Own_Balance_Collection */
         $balanceCollection = Config::get()->collectionBalance();
         $balanceCollection->addFieldToFilter(Balance::ATTR_ACCOUNT_ID, $accountId);
@@ -142,11 +170,13 @@ class Praxigento_Bonus_Service_Operations_Call
             /* create new balance record for NOW  */
             $balance->setAccountId($accountId);
             $balance->setPeriod($period);
-            $balance->save();
         }
-        $val = $balance->getValue() + $value;
+        $val = $balance->getValue() + $req->getValue();
         $balance->setValue($val);
         $balance->save();
+        $result->setBalance($balance);
+        $result->setErrorCode(UpdateBalanceResponse::ERR_NO_ERROR);
+        return $result;
     }
 
     /**
@@ -162,6 +192,22 @@ class Praxigento_Bonus_Service_Operations_Call
      */
     public function requestGetOperationsForPvWriteOff() {
         $result = Mage::getModel('prxgt_bonus_service/operations_request_getOperationsForPvWriteOff');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Operations_Request_CreateTransaction
+     */
+    public function requestCreateTransaction() {
+        $result = Mage::getModel('prxgt_bonus_service/operations_request_createTransaction');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Operations_Request_UpdateBalance
+     */
+    public function requestUpdateBalance() {
+        $result = Mage::getModel('prxgt_bonus_service/operations_request_updateBalance');
         return $result;
     }
 
