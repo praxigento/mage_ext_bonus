@@ -37,16 +37,145 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Fra
         $req->setPeriodCode('20150601');
         $req->setDateApplied('2015-06-01 23:59:59');
         $req->setValue(360);
-        $resp = $call->createOperationPvWriteOff($req);
+        //$resp = $call->createOperationPvWriteOff($req);
         // TODO enable and complete test
         //        $resp = $mockCall->getOperationsForPvWriteOff();
         //        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff);
     }
 
+    public function test_createTransaction_commit() {
+        $DEBIT_ACC_ID  = 321;
+        $CREDIT_ACC_ID = 789;
+        $VALUE         = 654.98;
+        $OPER_ID       = 587;
+        $DATE_APPLIED  = '2015-09-01 12:43:54';
+        /**
+         * Create mocks.
+         */
+        /* connection */
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit' ))
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $mockConn
+            ->expects($this->once())
+            ->method('commit');
+        /* transaction model */
+        $mockTrans = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
+            ->setMethods(array( 'save' ))
+            ->getMock();
+        $mockTrans
+            ->expects($this->once())
+            ->method('save');
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'connectionWrite', 'modelTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelTransaction')
+            ->will($this->returnValue($mockTrans));
+        /* setup Config */
+        Config::set($mockCfg);
+        /** service call mock */
+        $mockCall = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Call')
+            ->setMethods(array( 'updateBalance' ))
+            ->getMock();
+        $mockCall
+            ->expects($this->at(0))
+            ->method('updateBalalnce');
+        $mockCall
+            ->expects($this->at(1))
+            ->method('updateBalalnce');
+        /**
+         * Prepare request and perform call.
+         */
+        $req = $mockCall->requestCreateTransaction();
+        $req->setCreditAccId($CREDIT_ACC_ID);
+        $req->setDebitAccId($DEBIT_ACC_ID);
+        $req->setValue($VALUE);
+        $req->setOperationId($OPER_ID);
+        $req->setDateApplied($DATE_APPLIED);
+        $resp = $mockCall->createTransaction($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateTransaction);
+        $this->assertTrue($resp->isSucceed());
+    }
+
+    public function test_createTransaction_rollback() {
+        $DEBIT_ACC_ID  = 321;
+        $CREDIT_ACC_ID = 789;
+        $VALUE         = 654.98;
+        $OPER_ID       = 587;
+        $DATE_APPLIED  = '2015-09-01 12:43:54';
+        /**
+         * Create mocks.
+         */
+        /* connection */
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'rollBack' ))
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $mockConn
+            ->expects($this->once())
+            ->method('rollBack');
+        /* transaction model */
+        $mockTrans = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
+            ->setMethods(array( 'save' ))
+            ->getMock();
+        $mockTrans
+            ->expects($this->once())
+            ->method('save')
+            ->will($this->throwException(new Exception));
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'connectionWrite', 'modelTransaction' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelTransaction')
+            ->will($this->returnValue($mockTrans));
+        /* setup Config */
+        Config::set($mockCfg);
+        /**
+         * Prepare request and perform call.
+         */
+        $call = Config::get()->serviceOperations();
+        $req  = $call->requestCreateTransaction();
+        $req->setCreditAccId($CREDIT_ACC_ID);
+        $req->setDebitAccId($DEBIT_ACC_ID);
+        $req->setValue($VALUE);
+        $req->setOperationId($OPER_ID);
+        $req->setDateApplied($DATE_APPLIED);
+        $resp = $call->createTransaction($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateTransaction);
+        $this->assertFalse($resp->isSucceed());
+    }
+
     public function test_updateBalance_accountExists() {
         $ACC_ID    = 321;
         $VAL_SAVED = 546;
-        $VAL_INC   = 32;
+        $VAL_INC   = -32;
         /**
          * Create mocks.
          */
@@ -168,19 +297,6 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Fra
         $resp = $call->updateBalance($req);
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_UpdateBalance);
         $this->assertTrue($resp->isSucceed());
-    }
-
-    public function test_createTransaction() {
-        $call = Config::get()->serviceOperations();
-        $req  = $call->requestCreateOperationPvWriteOff();
-        $req->setCustomerAccountId(3);
-        $req->setPeriodCode('20150601');
-        $req->setDateApplied('2015-06-01 23:59:59');
-        $req->setValue(360);
-        $resp = $call->createTransaction($req);
-        // TODO enable and complete test
-        //        $resp = $mockCall->getOperationsForPvWriteOff();
-        //        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff);
     }
 
 

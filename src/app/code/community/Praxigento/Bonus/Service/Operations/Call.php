@@ -86,7 +86,7 @@ class Praxigento_Bonus_Service_Operations_Call
     public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req) {
         /** @var  $result CreateOperationPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
-
+        /** @var  $connection Varien_Db_Adapter_Interface */
         $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
 
         $customerAccId   = $req->getCustomerAccountId();
@@ -110,7 +110,7 @@ class Praxigento_Bonus_Service_Operations_Call
             $connection->commit();
             $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
         } catch(Exception $e) {
-            $connection->rollback();
+            $connection->rollBack();
         }
         return $result;
     }
@@ -126,25 +126,37 @@ class Praxigento_Bonus_Service_Operations_Call
         $debitAccId  = $req->getDebitAccId();
         $creditAccId = $req->getCreditAccId();
         $value       = $req->getValue();
-        /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
-        $trnx = Config::get()->modelTransaction();
-        $trnx->setOperationId($req->getOperationId());
-        $trnx->setDateApplied($req->getDateApplied());
-        $trnx->setDebitAccId($debitAccId);
-        $trnx->setCreditAccId($creditAccId);
-        $trnx->setValue($value);
-        $trnx->save();
-        /* update balances */
-        /* decrease debit */
-        $reqBalance = $this->requestUpdateBalance();
-        $reqBalance->setAccountId($debitAccId);
-        $reqBalance->setValue(0 - $value);
-        $this->updateBalance($reqBalance);
-        /* increase credit */
-        $reqBalance = $this->requestUpdateBalance();
-        $reqBalance->setAccountId($creditAccId);
-        $reqBalance->setValue($value);
-        $this->updateBalance($reqBalance);
+        /* DB transaction */
+        $conn = Config::get()->connectionWrite();
+        $conn->beginTransaction();
+        try {
+            /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
+            $trnx = Config::get()->modelTransaction();
+            $trnx->setOperationId($req->getOperationId());
+            $trnx->setDateApplied($req->getDateApplied());
+            $trnx->setDebitAccId($debitAccId);
+            $trnx->setCreditAccId($creditAccId);
+            $trnx->setValue($value);
+            $trnx->save();
+            /* update balances */
+            /* decrease debit */
+            $reqBalance = $this->requestUpdateBalance();
+            $reqBalance->setAccountId($debitAccId);
+            $reqBalance->setValue(0 - $value);
+            $this->updateBalance($reqBalance);
+            /* increase credit */
+            $reqBalance = $this->requestUpdateBalance();
+            $reqBalance->setAccountId($creditAccId);
+            $reqBalance->setValue($value);
+            $this->updateBalance($reqBalance);
+            $conn->commit();
+            $result->setErrorCode(CreateTransactionResponse::ERR_NO_ERROR);
+        } catch(Exception $e) {
+            $conn->rollBack();
+            $msg = "Cannot create transaction (debit: $debitAccId, credit: $creditAccId, amount: $value).";
+            $msg .= " Reason: " . $e->getMessage();
+            $this->_log->error($msg);
+        }
         return $result;
     }
 

@@ -179,6 +179,14 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * @return Varien_Db_Adapter_Interface
+     */
+    public function connectionWrite() {
+        $result = Mage::getSingleton('core/resource')->getConnection('core_write');
+        return $result;
+    }
+
+    /**
      * @return  \Praxigento_Bonus_Helper_Data
      */
     public function helper() {
