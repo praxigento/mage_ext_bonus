@@ -65,8 +65,9 @@ class Praxigento_Bonus_Service_Calculation_Call
                 /* mark period as processed */
                 $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
                 $logCalc->getResource()->save($logCalc);
+                $result->setErrorCode(CalcPvWriteOffResponse::ERR_NO_ERROR);
             } else {
-                if($resp->getErrorCode() == GetPeriodForWriteOff::ERR_NOTHING_TO_DO) {
+                if($resp->getErrorCode() == GetPeriodForPvWriteOffResponse::ERR_NOTHING_TO_DO) {
                     $this->_log->warn("There are no periods/operations to calculate PV Write Off.");
                     if($resp->isNewPeriod()) {
                         /* we need registry PV Write Off calc for empty periods. */
@@ -85,13 +86,13 @@ class Praxigento_Bonus_Service_Calculation_Call
                         $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
                         $logCalc->getResource()->save($logCalc);
                     }
+                    $result->setErrorCode(CalcPvWriteOffResponse::ERR_NO_ERROR);
                 } else {
-                    $this->_log->warn("Cannot get period to calculate PV Write Off.");
+                    $this->_log->error("Cannot get period to calculate PV Write Off.");
                 }
             }
-            $result->setErrorCode(CalcPvWriteOffResponse::ERR_NO_ERROR);
         } else {
-            $this->_log->debug("Personal bonus is disabled. PV Write Off calculation cannot be started.");
+            $this->_log->warn('Personal bonus is disabled. PV Write Off calculation cannot be started.');
         }
         return $result;
     }

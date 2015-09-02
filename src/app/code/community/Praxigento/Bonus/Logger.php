@@ -36,7 +36,7 @@ class Praxigento_Bonus_Logger {
      *
      * @param string $name
      *
-     * @return Namespace_Module_Logger
+     * @return Praxigento_Bonus_Logger
      */
     public static function getLogger($name) {
         $class = __CLASS__;

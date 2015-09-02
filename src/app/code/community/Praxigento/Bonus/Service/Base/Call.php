@@ -25,7 +25,7 @@ abstract class Praxigento_Bonus_Service_Base_Call {
     protected $_log;
 
     function __construct() {
-        $this->_log = Praxigento_Bonus_Logger::getLogger(__CLASS__);
+        $this->_log = Config::get()->logger(__CLASS__);
         /* helpers */
         $this->_helper        = Config::get()->helper();
         $this->_helperAccount = Config::get()->helperAccount();

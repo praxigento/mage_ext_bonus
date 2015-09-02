@@ -156,6 +156,18 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * Wrapper to use testable logger.
+     *
+     * @param $name
+     *
+     * @return Praxigento_Bonus_Logger
+     */
+    public function logger($name) {
+        $result = Praxigento_Bonus_Logger::getLogger($name);
+        return $result;
+    }
+
+    /**
      * Use this method to get singletons from Mage. This method may be overridden in tests.
      *
      * @return mixed
