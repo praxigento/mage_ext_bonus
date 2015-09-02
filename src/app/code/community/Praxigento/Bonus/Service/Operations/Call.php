@@ -95,16 +95,15 @@ class Praxigento_Bonus_Service_Operations_Call
      */
     public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req) {
         /** @var  $result CreateOperationPvWriteOffResponse */
-        $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
-        /* DB transaction */
-        $conn = Config::get()->connectionWrite();
-
+        $result          = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
         $customerAccId   = $req->getCustomerAccountId();
-        $value           = $req->getValue();
         $dateApplied     = $req->getDateApplied();
+        $value           = $req->getValue();
         $accountantAcc   = $this->_helperAccount->getAccountantAccByAssetCode(Config::ASSET_PV);
         $accountantAccId = $accountantAcc->getId();
-        $typeOperId      = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
+        $typeOperId      = $this->_helperType->getOperId(Config::OPER_PV_WRITE_OFF);
+        /* DB transaction */
+        $conn = Config::get()->connectionWrite();
         try {
             $conn->beginTransaction();
             /* create operation */
@@ -121,12 +120,27 @@ class Praxigento_Bonus_Service_Operations_Call
                 $reqTrn->setCreditAccId($accountantAccId);
                 $reqTrn->setValue($value);
                 $reqTrn->setDateApplied($dateApplied);
-                $this->createTransaction($reqTrn);
+                $respTrn = $this->createTransaction($reqTrn);
+                if($respTrn->isSucceed()) {
+                    $conn->commit();
+                    $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
+                } else {
+                    $msg = "Cannot create transaction. Reason: " . $respTrn->getErrorMessage();
+                    throw new Exception($msg);
+                }
+            } else {
+                $conn->commit();
+                $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
             }
-            $conn->commit();
-            $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
         } catch(Exception $e) {
             $conn->rollBack();
+            $msg = "Cannot create PV Write Off operation ";
+            $msg .= "(cust. acc.: $customerAccId; date: $dateApplied; value: $value). ";
+            $msg .= "Reason: ";
+            $msg .= $e->getMessage();
+            $this->_log->error($msg);
+            $result->setErrorMessage($msg);
+            $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_FAILED);
         }
         return $result;
     }
@@ -172,6 +186,8 @@ class Praxigento_Bonus_Service_Operations_Call
             $msg = "Cannot create transaction (debit: $debitAccId, credit: $creditAccId, amount: $value).";
             $msg .= " Reason: " . $e->getMessage();
             $this->_log->error($msg);
+            $result->setErrorMessage($msg);
+            $result->setErrorCode(CreateTransactionResponse::ERR_FAILED);
         }
         return $result;
     }

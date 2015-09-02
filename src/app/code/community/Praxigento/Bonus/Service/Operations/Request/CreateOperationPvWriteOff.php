@@ -13,8 +13,6 @@ class Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff
     private $_customerAccountId;
     /** @var  string */
     private $_dateApplied;
-    /** @var  string 20150601 | 201506 | 2015 */
-    private $_periodCode;
     /** @var  decimal */
     private $_value;
 
@@ -30,20 +28,6 @@ class Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff
      */
     public function setCustomerAccountId($val) {
         $this->_customerAccountId = $val;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPeriodCode() {
-        return $this->_periodCode;
-    }
-
-    /**
-     * @param string $val
-     */
-    public function setPeriodCode($val) {
-        $this->_periodCode = $val;
     }
 
     /**

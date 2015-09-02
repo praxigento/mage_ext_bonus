@@ -18,6 +18,23 @@ abstract class Praxigento_Bonus_Service_Base_Response {
     private $errorCode = self::ERR_UNDEFINED;
 
     /**
+     * @return string
+     */
+    public function getErrorMessage() {
+        return $this->_errorMessage;
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    public function setErrorMessage($errorMessage) {
+        $this->_errorMessage = $errorMessage;
+    }
+
+    /** @var  string */
+    private $_errorMessage;
+
+    /**
      * @return mixed
      */
     public function getErrorCode() {

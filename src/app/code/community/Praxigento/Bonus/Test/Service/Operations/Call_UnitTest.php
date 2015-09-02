@@ -5,13 +5,15 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
+use Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff as CreateOperationPvWriteOffResponse;
 
 include_once('../../phpunit_bootstrap.php');
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Framework_TestCase {
+class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
+    extends PHPUnit_Framework_TestCase {
 
     public function test_constructor() {
         /** @var  $call Praxigento_Bonus_Service_Operations_Call */
@@ -80,17 +82,321 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest extends PHPUnit_Fra
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_createOperationPvWriteOff() {
-        $call = Config::get()->serviceOperations();
-        $req  = $call->requestCreateOperationPvWriteOff();
-        $req->setCustomerAccountId(3);
-        $req->setPeriodCode('20150601');
-        $req->setDateApplied('2015-06-01 23:59:59');
-        $req->setValue(360);
-        //$resp = $call->createOperationPvWriteOff($req);
-        // TODO enable and complete test
-        //        $resp = $mockCall->getOperationsForPvWriteOff();
-        //        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff);
+    public function test_createOperationPvWriteOff_commit_zero() {
+        $CUST_ACC_ID  = 543;
+        $STORE_ACC_ID = 345;
+        $OPER_ID      = 546;
+        $DATE_APPLIED = '2015-08-12 12:23:34';
+        $VALUE        = 0;
+        /**
+         * Create mocks.
+         */
+        /* connection */
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit' ))
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $mockConn
+            ->expects($this->once())
+            ->method('commit');
+        /* accountant acc */
+        $mockAcc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Account')
+            ->getMock();
+        $mockAcc
+            ->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue($STORE_ACC_ID));
+        /* helper Account  */
+        $mockHlpAccount = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Account')
+            ->getMock();
+        $mockHlpAccount
+            ->expects($this->any())
+            ->method('getAccountantAccByAssetCode')
+            ->will($this->returnValue($mockAcc));
+        /* helper Types */
+        $mockHlpType = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Type')
+            ->getMock();
+        $mockHlpType
+            ->expects($this->any())
+            ->method('getOperId')
+            ->will($this->returnValue($OPER_ID));
+        /* operation to create */
+        $mockOper = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->getMock();
+        $mockOper
+            ->expects($this->once())
+            ->method('save');
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'connectionWrite', 'helperAccount', 'helperType', 'modelOperation' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperAccount')
+            ->will($this->returnValue($mockHlpAccount));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperType')
+            ->will($this->returnValue($mockHlpType));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelOperation')
+            ->will($this->returnValue($mockOper));
+        /* setup Config */
+        Config::set($mockCfg);
+        /**
+         * Service call mock.
+         */
+        /* call */
+        $mockCall = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Call')
+            ->setMethods(array( 'createTransaction' ))
+            ->getMock();
+        /**
+         * Prepare request and perform call.
+         */
+        $req = $mockCall->requestCreateOperationPvWriteOff();
+        $req->setCustomerAccountId($CUST_ACC_ID);
+        $req->setDateApplied($DATE_APPLIED);
+        $req->setValue($VALUE);
+        $resp = $mockCall->createOperationPvWriteOff($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff);
+        $this->assertTrue($resp->isSucceed());
+    }
+
+    public function test_createOperationPvWriteOff_commit_notZero() {
+        $CUST_ACC_ID  = 543;
+        $STORE_ACC_ID = 345;
+        $OPER_ID      = 546;
+        $DATE_APPLIED = '2015-08-12 12:23:34';
+        $VALUE        = 43.92;
+        /**
+         * Create mocks.
+         */
+        /* connection */
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit' ))
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $mockConn
+            ->expects($this->once())
+            ->method('commit');
+        /* accountant acc */
+        $mockAcc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Account')
+            ->getMock();
+        $mockAcc
+            ->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue($STORE_ACC_ID));
+        /* helper Account  */
+        $mockHlpAccount = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Account')
+            ->getMock();
+        $mockHlpAccount
+            ->expects($this->any())
+            ->method('getAccountantAccByAssetCode')
+            ->will($this->returnValue($mockAcc));
+        /* helper Types */
+        $mockHlpType = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Type')
+            ->getMock();
+        $mockHlpType
+            ->expects($this->any())
+            ->method('getOperId')
+            ->will($this->returnValue($OPER_ID));
+        /* operation to create */
+        $mockOper = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->getMock();
+        $mockOper
+            ->expects($this->once())
+            ->method('save');
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'connectionWrite', 'helperAccount', 'helperType', 'modelOperation' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperAccount')
+            ->will($this->returnValue($mockHlpAccount));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperType')
+            ->will($this->returnValue($mockHlpType));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelOperation')
+            ->will($this->returnValue($mockOper));
+        /* setup Config */
+        Config::set($mockCfg);
+        /**
+         * Service call mock.
+         */
+        /* response: create transaction */
+        $mockRestTrn = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Response_CreateTransaction')
+            ->setMethods(array( 'isSucceed' ))
+            ->getMock();
+        $mockRestTrn
+            ->expects($this->once())
+            ->method('isSucceed')
+            ->will($this->returnValue(true));
+        /* call */
+        $mockCall = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Call')
+            ->setMethods(array( 'createTransaction' ))
+            ->getMock();
+        $mockCall
+            ->expects($this->at(0))
+            ->method('createTransaction')
+            ->will($this->returnValue($mockRestTrn));
+        /**
+         * Prepare request and perform call.
+         */
+        $req = $mockCall->requestCreateOperationPvWriteOff();
+        $req->setCustomerAccountId($CUST_ACC_ID);
+        $req->setDateApplied($DATE_APPLIED);
+        $req->setValue($VALUE);
+        $resp = $mockCall->createOperationPvWriteOff($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff);
+        $this->assertTrue($resp->isSucceed());
+    }
+
+    public function test_createOperationPvWriteOff_rollback() {
+        $CUST_ACC_ID  = 543;
+        $STORE_ACC_ID = 345;
+        $OPER_ID      = 546;
+        $DATE_APPLIED = '2015-08-12 12:23:34';
+        $VALUE        = 43.92;
+        /**
+         * Create mocks.
+         */
+        /* connection */
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'rollBack' ))
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $mockConn
+            ->expects($this->once())
+            ->method('rollBack');
+        /* accountant acc */
+        $mockAcc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Account')
+            ->getMock();
+        $mockAcc
+            ->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue($STORE_ACC_ID));
+        /* helper Account  */
+        $mockHlpAccount = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Account')
+            ->getMock();
+        $mockHlpAccount
+            ->expects($this->any())
+            ->method('getAccountantAccByAssetCode')
+            ->will($this->returnValue($mockAcc));
+        /* helper Types */
+        $mockHlpType = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Type')
+            ->getMock();
+        $mockHlpType
+            ->expects($this->any())
+            ->method('getOperId')
+            ->will($this->returnValue($OPER_ID));
+        /* operation to create */
+        $mockOper = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->getMock();
+        $mockOper
+            ->expects($this->once())
+            ->method('save');
+        /* config */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'connectionWrite', 'helperAccount', 'helperType', 'modelOperation' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperAccount')
+            ->will($this->returnValue($mockHlpAccount));
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperType')
+            ->will($this->returnValue($mockHlpType));
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelOperation')
+            ->will($this->returnValue($mockOper));
+        /* setup Config */
+        Config::set($mockCfg);
+        /**
+         * Service call mock.
+         */
+        /* response: create transaction */
+        $mockRestTrn = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Response_CreateTransaction')
+            ->setMethods(array( 'isSucceed', 'getErrorMessage' ))
+            ->getMock();
+        $mockRestTrn
+            ->expects($this->once())
+            ->method('isSucceed')
+            ->will($this->returnValue(false));
+        $mockRestTrn
+            ->expects($this->once())
+            ->method('getErrorMessage')
+            ->will($this->returnValue('This is mocked error.'));
+        /* call */
+        $mockCall = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Operations_Call')
+            ->setMethods(array( 'createTransaction' ))
+            ->getMock();
+        $mockCall
+            ->expects($this->at(0))
+            ->method('createTransaction')
+            ->will($this->returnValue($mockRestTrn));
+        /**
+         * Prepare request and perform call.
+         */
+        $req = $mockCall->requestCreateOperationPvWriteOff();
+        $req->setCustomerAccountId($CUST_ACC_ID);
+        $req->setDateApplied($DATE_APPLIED);
+        $req->setValue($VALUE);
+        /** @var  $resp Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff */
+        $resp = $mockCall->createOperationPvWriteOff($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff);
+        $this->assertFalse($resp->isSucceed());
+        $this->assertEquals(CreateOperationPvWriteOffResponse::ERR_FAILED, $resp->getErrorCode());
     }
 
     public function test_createTransaction_commit() {
