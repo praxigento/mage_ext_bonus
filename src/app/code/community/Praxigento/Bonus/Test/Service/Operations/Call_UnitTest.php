@@ -586,6 +586,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         $resp = $call->updateBalance($req);
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_UpdateBalance);
         $this->assertTrue($resp->isSucceed());
+        $this->assertTrue($resp->getBalance() instanceof Praxigento_Bonus_Model_Own_Balance);
     }
 
     public function test_updateBalance_accountNew() {
