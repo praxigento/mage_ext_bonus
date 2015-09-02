@@ -38,18 +38,21 @@ class Praxigento_Bonus_Service_Operations_Call
         $periodValue = $req->getPeriodValue();
         $periodCode  = $req->getPeriodCode();
         /**
-         *
          * SELECT
-         *
-         * FROM prxgt_bonus_operation pbo
-         * LEFT OUTER JOIN prxgt_bonus_trnx pbt
-         * ON pbo.id = pbt.operation_id
-         * WHERE (
-         * pbo.type_id = 1
-         * OR pbo.type_id = 3
-         * )
-         * AND pbt.date_applied >= '2015-06-01 00:00:00'
-         * AND pbt.date_applied <= '2015-06-01 23:59:59'
+         * `main_table`.*,
+         * `trnx`.`id` AS `trn_id`,
+         * `trnx`.`date_applied` AS `trn_date_applied`,
+         * `trnx`.`debit_acc_id` AS `trn_debit_acc_id`,
+         * `trnx`.`credit_acc_id` AS `trn_credit_acc_id`,
+         * `trnx`.`value` AS `trn_value`
+         * FROM `prxgt_bonus_operation` AS `main_table`
+         * LEFT JOIN `prxgt_bonus_trnx` AS `trnx`
+         * ON main_table.id = trnx.operation_id
+         * WHERE ((type_id = '2')
+         * OR (type_id = '5')
+         * OR (type_id = '4'))
+         * AND (trnx.date_applied >= '2015-06-01 07:00:00')
+         * AND (trnx.date_applied <= '2015-06-02 06:59:59')
          */
         $collection = Config::get()->collectionOperation();
         /* filter by operations types */
@@ -61,15 +64,22 @@ class Praxigento_Bonus_Service_Operations_Call
             $values[] = $one;
         }
         $collection->addFieldToFilter($fields, $values);
+        $as        = 'trnx';
         $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
         $collection->getSelect()->joinLeft(
-            array( 'trnx' => $tableTrnx ),
-            'main_table.id = trnx.operation_id',
-            '*'
+            array( $as => $tableTrnx ),
+            "main_table.id = $as.operation_id",
+            array(
+                GetOperationsForPvWriteOffResponse::TRN_ID            => Transaction::ATTR_ID,
+                GetOperationsForPvWriteOffResponse::TRN_DATA_APPLIED  => Transaction::ATTR_DATE_APPLIED,
+                GetOperationsForPvWriteOffResponse::TRN_DEBIT_ACC_ID  => Transaction::ATTR_DEBIT_ACC_ID,
+                GetOperationsForPvWriteOffResponse::TRN_CREDIT_ACC_ID => Transaction::ATTR_CREDIT_ACC_ID,
+                GetOperationsForPvWriteOffResponse::TRN_VALUE         => Transaction::ATTR_VALUE
+            )
         );
-        $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from    = Config::get()->helperPeriod()->calcPeriodFromTs($periodValue, $periodCode);
-        $to      = Config::get()->helperPeriod()->calcPeriodToTs($periodValue, $periodCode);
+        $fldDate = $as . '.' . Transaction::ATTR_DATE_APPLIED;
+        $from    = $this->_helperPeriod->calcPeriodFromTs($periodValue, $periodCode);
+        $to      = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
         $collection->addFieldToFilter($fldDate, array( 'gteq' => $from ));
         $collection->addFieldToFilter($fldDate, array( 'lteq' => $to ));
         $sql = $collection->getSelectSql(true);
