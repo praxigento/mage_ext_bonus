@@ -68,7 +68,7 @@ class Praxigento_Bonus_Service_Calculation_Call
                 $result->setErrorCode(CalcPvWriteOffResponse::ERR_NO_ERROR);
             } else {
                 if($resp->getErrorCode() == GetPeriodForPvWriteOffResponse::ERR_NOTHING_TO_DO) {
-                    $this->_log->warn("There are no periods/operations to calculate PV Write Off.");
+                    $this->_log->warn('There are no operations to calculate PV Write Off.');
                     if($resp->isNewPeriod()) {
                         /* we need registry PV Write Off calc for empty periods. */
                         $periodValue = $resp->getPeriodValue();
