@@ -397,6 +397,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_CreateOperationPvWriteOff);
         $this->assertFalse($resp->isSucceed());
         $this->assertEquals(CreateOperationPvWriteOffResponse::ERR_FAILED, $resp->getErrorCode());
+        $this->assertNotNull($resp->getErrorMessage());
     }
 
     public function test_createTransaction_commit() {
@@ -583,6 +584,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         $req  = $call->requestUpdateBalance();
         $req->setAccountId($ACC_ID);
         $req->setValue($VAL_INC);
+        $req->setPeriod(Config::PERIOD_KEY_NOW);
         $resp = $call->updateBalance($req);
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Operations_Response_UpdateBalance);
         $this->assertTrue($resp->isSucceed());
