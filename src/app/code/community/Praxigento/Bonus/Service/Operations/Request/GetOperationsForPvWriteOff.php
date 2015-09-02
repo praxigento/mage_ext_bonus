@@ -9,49 +9,49 @@
  */
 class Praxigento_Bonus_Service_Operations_Request_GetOperationsForPvWriteOff
     extends Praxigento_Bonus_Service_Base_Request {
-    private $logCalcId;
-    private $periodCode;
-    private $periodValue;
+    private $_logCalcId;
+    private $_periodCode;
+    private $_periodValue;
 
     /**
      * @return mixed
      */
     public function getPeriodValue() {
-        return $this->periodValue;
+        return $this->_periodValue;
     }
 
     /**
      * @param mixed $val
      */
     public function setPeriodValue($val) {
-        $this->periodValue = $val;
+        $this->_periodValue = $val;
     }
 
     /**
      * @return mixed
      */
     public function getPeriodCode() {
-        return $this->periodCode;
+        return $this->_periodCode;
     }
 
     /**
      * @param mixed $val
      */
     public function setPeriodCode($val) {
-        $this->periodCode = $val;
+        $this->_periodCode = $val;
     }
 
     /**
      * @return mixed
      */
     public function getLogCalcId() {
-        return $this->logCalcId;
+        return $this->_logCalcId;
     }
 
     /**
      * @param mixed $val
      */
     public function setLogCalcId($val) {
-        $this->logCalcId = $val;
+        $this->_logCalcId = $val;
     }
 }

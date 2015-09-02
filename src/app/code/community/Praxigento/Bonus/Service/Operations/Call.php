@@ -86,8 +86,8 @@ class Praxigento_Bonus_Service_Operations_Call
     public function createOperationPvWriteOff(CreateOperationPvWriteOffRequest $req) {
         /** @var  $result CreateOperationPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/operations_response_createOperationPvWriteOff');
-        /** @var  $connection Varien_Db_Adapter_Interface */
-        $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
+        /* DB transaction */
+        $conn = Config::get()->connectionWrite();
 
         $customerAccId   = $req->getCustomerAccountId();
         $value           = $req->getValue();
@@ -96,7 +96,7 @@ class Praxigento_Bonus_Service_Operations_Call
         $accountantAccId = $accountantAcc->getId();
         $typeOperId      = Config::get()->helperType()->getOperId(Config::OPER_PV_WRITE_OFF);
         try {
-            $connection->beginTransaction();
+            $conn->beginTransaction();
             /* create operation */
             $operation = Config::get()->modelOperation();
             $operation->setTypeId($typeOperId);
@@ -105,12 +105,18 @@ class Praxigento_Bonus_Service_Operations_Call
             /* don't create transactions for empty operations */
             if($value != 0) {
                 /* create transaction */
-                $this->createTransaction($operationId, $customerAccId, $accountantAccId, $value, $dateApplied);
+                $reqTrn = $this->requestCreateTransaction();
+                $reqTrn->setOperationId($operationId);
+                $reqTrn->setDebitAccId($customerAccId);
+                $reqTrn->setCreditAccId($accountantAccId);
+                $reqTrn->setValue($value);
+                $reqTrn->setDateApplied($dateApplied);
+                $this->createTransaction($reqTrn);
             }
-            $connection->commit();
+            $conn->commit();
             $result->setErrorCode(CreateOperationPvWriteOffResponse::ERR_NO_ERROR);
         } catch(Exception $e) {
-            $connection->rollBack();
+            $conn->rollBack();
         }
         return $result;
     }
@@ -128,8 +134,8 @@ class Praxigento_Bonus_Service_Operations_Call
         $value       = $req->getValue();
         /* DB transaction */
         $conn = Config::get()->connectionWrite();
-        $conn->beginTransaction();
         try {
+            $conn->beginTransaction();
             /** @var  $trnx Praxigento_Bonus_Model_Own_Transaction */
             $trnx = Config::get()->modelTransaction();
             $trnx->setOperationId($req->getOperationId());
