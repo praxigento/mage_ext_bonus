@@ -224,7 +224,7 @@ class Praxigento_Bonus_Service_Operations_Call
     }
 
     /**
-     * @return CreateOperationPvWriteOffRequest
+     * @return Praxigento_Bonus_Service_Operations_Request_CreateOperationPvWriteOff
      */
     public function requestCreateOperationPvWriteOff() {
         $result = Mage::getModel('prxgt_bonus_service/operations_request_createOperationPvWriteOff');

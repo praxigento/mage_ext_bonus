@@ -14,6 +14,10 @@ include_once('../../phpunit_bootstrap.php');
  */
 class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
     extends PHPUnit_Framework_TestCase {
+
+    /**
+     * Reset Config before each test.
+     */
     public function setUp() {
         Config::set(null);
     }

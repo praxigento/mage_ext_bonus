@@ -15,20 +15,20 @@ class Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff
     const TRN_DEBIT_ACC_ID = 'trn_debit_acc_id';
     const TRN_ID = 'trn_id';
     const TRN_VALUE = 'trn_value';
-
+    /** @var  Varien_Data_Collection */
     private $_collection;
 
     /**
-     * @return mixed
+     * @return Varien_Data_Collection
      */
     public function getCollection() {
         return $this->_collection;
     }
 
     /**
-     * @param mixed $collection
+     * @param Varien_Data_Collection $collection
      */
-    public function setCollection($collection) {
+    public function setCollection(Varien_Data_Collection $collection) {
         $this->_collection = $collection;
     }
 
