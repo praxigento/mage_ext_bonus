@@ -178,6 +178,17 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * @param string $modelSubclass second part of the service name ('operations_call' for 'prxgt_bonus_service/operations_call')
+     * @param array  $arguments
+     *
+     * @return mixed
+     */
+    public function service($modelSubclass = '', $arguments = array()) {
+        $result = Mage::getModel('prxgt_bonus_service/' . $modelSubclass, $arguments);
+        return $result;
+    }
+
+    /**
      * Use this method to get singletons from Mage registry. This method may be overridden in tests.
      *
      * @param $modelClass

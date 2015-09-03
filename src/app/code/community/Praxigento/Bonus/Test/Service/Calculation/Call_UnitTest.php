@@ -87,7 +87,7 @@ class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
         /* config */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'helper', 'logger', 'servicePeriod', 'serviceOperations' ))
+            ->setMethods(array( 'helper', 'logger', 'service', 'servicePeriod', 'serviceOperations' ))
             ->getMock();
         /* helper  */
         $mockHlp = $this
@@ -190,11 +190,22 @@ class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
             ->expects($this->once())
             ->method('getOperationsForPvWriteOff')
             ->will($this->returnValue($mockRespOpGet));
-        $mockRespOpGet
+        // $hndl = Config::get()->service('calculation_hndl_writeOffOperations');
+        $mockHndl = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations')
+            ->setMethods(array( 'process' ))
+            ->getMock();
+        $mockCfg
             ->expects($this->once())
-            ->method('getCollection')
-            ->will($this->returnValue(new Praxigento_Bonus_Resource_Own_Operation_Collection()));
+            ->method('service')
+            ->with($this->equalTo('calculation_hndl_writeOffOperations'))
+            ->will($this->returnValue($mockHndl));
+        // $hndl->process($respOpGet, $periodValue, $periodCode);
+        $mockCfg
+            ->expects($this->any())
+            ->method('process');
         /* log calculation complete */
+        // $logCalc->setState(Config::STATE_PERIOD_COMPLETE);
         $mockLogCalc
             ->expects($this->once())
             ->method('setData')

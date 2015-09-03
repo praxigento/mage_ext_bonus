@@ -55,16 +55,8 @@ class Praxigento_Bonus_Helper_Account {
      * @return int
      */
     public function getAccountantAccIdByAssetCode($assetCode) {
-        /* get all existing accounts for Accountant */
-        if(count(self::$_cachedAccountantData) == 0) {
-            $this->_loadAccounts();
-        }
-        if(!isset(self::$_cachedAccountantData[ $assetCode ])) {
-            $acc                                       = $this->_createAccount($assetCode);
-            self::$_cachedAccountantData[ $assetCode ] = $acc;
-        }
         /** @var  $model Praxigento_Bonus_Model_Own_Account */
-        $model  = self::$_cachedAccountantData[ $assetCode ];
+        $model  = $this->getAccountantAccByAssetCode($assetCode);
         $result = $model->getId();
         return $result;
     }

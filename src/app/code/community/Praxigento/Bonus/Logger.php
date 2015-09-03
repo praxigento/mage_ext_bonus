@@ -8,6 +8,9 @@
  * Logger should log events to Nmmmlm_Log (Log4PHP) logger or to Magento default logger.
  *
  * User: Alex Gusev <alex@flancer64.com>
+ *
+ * @codeCoverageIgnore
+ *
  */
 class Praxigento_Bonus_Logger {
     private static $_isLog4phpUsed = null;

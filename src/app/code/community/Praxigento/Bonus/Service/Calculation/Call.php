@@ -60,7 +60,8 @@ class Praxigento_Bonus_Service_Calculation_Call
                 /** @var  $respOpGet GetOperationsForPvWriteOffResponse */
                 $respOpGet = $callOp->getOperationsForPvWriteOff($reqOpGet);
                 /* process found operations, create PvWriteOff operations, update balances and complete period */
-                $hndl = new Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations();
+                /** @var  $hndl Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations */
+                $hndl = Config::get()->service('calculation_hndl_writeOffOperations');
                 $hndl->process($respOpGet, $periodValue, $periodCode);
                 /* mark period as processed */
                 $logCalc->setState(Config::STATE_PERIOD_COMPLETE);

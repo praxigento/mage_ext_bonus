@@ -109,7 +109,7 @@ class Praxigento_Bonus_Service_Operations_Call
             /* create operation */
             $operation = Config::get()->modelOperation();
             $operation->setTypeId($typeOperId);
-            $operation->save();
+            $operation->getResource()->save($operation);
             $operationId = $operation->getId();
             /* don't create transactions for empty operations */
             if($value != 0) {
@@ -167,7 +167,7 @@ class Praxigento_Bonus_Service_Operations_Call
             $trnx->setDebitAccId($debitAccId);
             $trnx->setCreditAccId($creditAccId);
             $trnx->setValue($value);
-            $trnx->save();
+            $trnx->getResource()->save($trnx);
             /* update balances */
             /* decrease debit */
             $reqBalance = $this->requestUpdateBalance();
@@ -217,7 +217,7 @@ class Praxigento_Bonus_Service_Operations_Call
         }
         $val = $balance->getValue() + $req->getValue();
         $balance->setValue($val);
-        $balance->save();
+        $balance->getResource()->save($balance);
         $result->setBalance($balance);
         $result->setErrorCode(UpdateBalanceResponse::ERR_NO_ERROR);
         return $result;

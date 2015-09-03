@@ -178,11 +178,11 @@ class Praxigento_Bonus_Service_Period_Call
                     $period->setType($typePeriodId);
                     $period->setCalcTypeId($typeCalcId);
                     $period->setValue($periodValue);
-                    $period->getResource()->save();
+                    $period->getResource()->save($period);
                     /* add new entry to calculation log */
                     $logCalc->setPeriodId($period->getId());
                     $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
-                    $logCalc->getResource()->save();
+                    $logCalc->getResource()->save($logCalc);
                     $connection->commit();
                     $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is registered.");
                 } catch(Exception $e) {
@@ -203,7 +203,7 @@ class Praxigento_Bonus_Service_Period_Call
                     /* foundPeriod_noLog */
                     $logCalc->setPeriodId($period->getId());
                     $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
-                    $logCalc->save();
+                    $logCalc->getResource()->save($logCalc);
                 } else {
                     /* foundPeriod_isLog */
                     $logCalc = $calcs->getFirstItem();
@@ -216,7 +216,7 @@ class Praxigento_Bonus_Service_Period_Call
                 /* isPeriod_noLog : add new entry to calculation log */
                 $logCalc->setData(LogCalc::ATTR_PERIOD_ID, $period->getId());
                 $logCalc->setData(LogCalc::ATTR_STATE, Config::STATE_PERIOD_PROCESSING);
-                $logCalc->save();
+                $logCalc->getResource()->save($logCalc);
             } else {
                 /* isPeriod_isLog : load calculation log data */
                 $logCalc->load($logCalcId);

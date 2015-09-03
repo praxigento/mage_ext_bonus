@@ -210,15 +210,23 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->method('getSize')
             ->will($this->returnValue(0));
         /* calculation model to be saved */
-        $mockCalc = $this
+        $mockCalc         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-            ->setMethods(array( 'getId', 'save' ))
+            ->setMethods(array( 'getId', 'getResource' ))
+            ->getMock();
+        $mockCalcResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc')
+            ->setMethods(array( 'save' ))
             ->getMock();
         $mockCalc
             ->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($NEW_CALC_ID));
         $mockCalc
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockCalcResource));
+        $mockCalcResource
             ->expects($this->once())
             ->method('save');
         /* config */
@@ -273,7 +281,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /* Log Calc Model */
         $mockLogCalc = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
-            ->setMethods(array( 'setData', 'getId', 'save' ))
+            ->setMethods(array( 'setData', 'getId', 'getResource' ))
             ->getMock();
         $mockLogCalc
             ->expects($this->at(0))
@@ -283,9 +291,17 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($LOG_ID));
+        $mockLogCalcResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc')
+            ->setMethods(array( 'save' ))
+            ->getMock();
         $mockLogCalc
             ->expects($this->once())
-            ->method('save');
+            ->method('getResource')
+            ->will($this->returnValue($mockLogCalcResource));
+        //        $mockLogCalcResource
+        //            ->expects($this->once())
+        //            ->method('save');
         /* config */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')

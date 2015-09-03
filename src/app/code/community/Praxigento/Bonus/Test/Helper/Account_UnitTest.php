@@ -102,6 +102,15 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         Config::set($mockCfg);
     }
 
+    public function test_getAccountantAccIdByAssetCode() {
+        /* mock environment */
+        $this->_mockConfig_getAccountantAccByAssetCode_existingAccount();
+        /* test the method */
+        $hlp     = Config::get()->helperAccount();
+        $accountId = $hlp->getAccountantAccIdByAssetCode(Config::ASSET_PV);
+        $this->assertEquals(self::ACC_PV_ID, $accountId);
+    }
+
     public function test_getAccountantAccByAssetCode_newAccount() {
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_newAccount();

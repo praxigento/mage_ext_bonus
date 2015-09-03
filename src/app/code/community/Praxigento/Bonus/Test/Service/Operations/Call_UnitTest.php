@@ -14,6 +14,7 @@ include_once('../../phpunit_bootstrap.php');
  */
 class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     extends PHPUnit_Framework_TestCase {
+
     /**
      * Reset Config before each test.
      */
@@ -134,10 +135,19 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper = $this
+        $mockOper         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockOperResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Operation')
+            ->setMethods(array( 'save' ))
             ->getMock();
         $mockOper
+            ->expects($this->any())
+            ->method('getResource')
+            ->will($this->returnValue($mockOperResource));
+        $mockOperResource
             ->expects($this->once())
             ->method('save');
         /* config */
@@ -229,10 +239,19 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper = $this
+        $mockOper         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockOperResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Operation')
+            ->setMethods(array( 'save' ))
             ->getMock();
         $mockOper
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockOperResource));
+        $mockOperResource
             ->expects($this->once())
             ->method('save');
         /* config */
@@ -337,10 +356,19 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper = $this
+        $mockOper         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockOperResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Operation')
+            ->setMethods(array( 'save' ))
             ->getMock();
         $mockOper
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockOperResource));
+        $mockOperResource
             ->expects($this->once())
             ->method('save');
         /* config */
@@ -428,11 +456,19 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->once())
             ->method('commit');
         /* transaction model */
-        $mockTrans = $this
+        $mockTrans         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockTransResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Transaction')
             ->setMethods(array( 'save' ))
             ->getMock();
         $mockTrans
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockTransResource));
+        $mockTransResource
             ->expects($this->once())
             ->method('save');
         /* config */
@@ -497,11 +533,19 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->once())
             ->method('rollBack');
         /* transaction model */
-        $mockTrans = $this
+        $mockTrans         = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockTransResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Transaction')
             ->setMethods(array( 'save' ))
             ->getMock();
         $mockTrans
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockTransResource));
+        $mockTransResource
             ->expects($this->once())
             ->method('save')
             ->will($this->throwException(new Exception));
@@ -545,7 +589,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         /* existing item  */
         $mockBalance = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Balance')
-            ->setMethods(array( 'save', 'getData', 'setData' ))
+            ->setMethods(array( 'getData', 'setData', 'getResource' ))
             ->getMock();
         $mockBalance
             ->expects($this->at(0))
@@ -556,8 +600,16 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->at(1))
             ->method('setData')
             ->with($this->equalTo(Balance::ATTR_VALUE), $this->equalTo($VAL_SAVED + $VAL_INC));
+        $mockBalanceResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Balance')
+            ->setMethods(array( 'save' ))
+            ->getMock();
         $mockBalance
             ->expects($this->at(2))
+            ->method('getResource')
+            ->will($this->returnValue($mockBalanceResource));
+        $mockBalanceResource
+            ->expects($this->once())
             ->method('save');
         /* collectionBalance with found item */
         $mockCollection = $this
@@ -606,7 +658,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         /* empty model */
         $mockBalance = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Balance')
-            ->setMethods(array( 'save', 'getData', 'setData' ))
+            ->setMethods(array( 'getResource', 'getData', 'setData' ))
             ->getMock();
         $mockBalance
             ->expects($this->at(0))
@@ -625,8 +677,16 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->at(3))
             ->method('setData')
             ->with($this->equalTo(Balance::ATTR_VALUE), $this->equalTo(0 + $VAL_INC));
+        $mockBalanceResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Balance')
+            ->setMethods(array( 'save' ))
+            ->getMock();
         $mockBalance
-            ->expects($this->at(4))
+            ->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($mockBalanceResource));
+        $mockBalanceResource
+            ->expects($this->once())
             ->method('save');
         /* collectionBalance with found item */
         $mockCollection = $this
