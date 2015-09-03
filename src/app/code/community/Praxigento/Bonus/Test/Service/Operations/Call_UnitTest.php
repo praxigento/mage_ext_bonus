@@ -664,4 +664,10 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
         $this->assertTrue($resp->isSucceed());
     }
 
+    public function test_response_GetOperationsForPvWriteOff() {
+        $resp = Mage::getModel('prxgt_bonus_service/operations_response_getOperationsForPvWriteOff');
+        $resp->setCollection(new Varien_Data_Collection());
+        $this->assertTrue($resp->getCollection() instanceof Varien_Data_Collection);
+    }
+
 }

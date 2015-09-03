@@ -320,63 +320,181 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         /**
          * Create mocks.
          */
-        /* period model that throws the exception on save */
-        $mockPeriod = $this
-            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
-            ->setMethods(array( 'save' ))
-            ->getMock();
-        $mockPeriod
-            ->expects($this->any())
-            ->method('save')
-            ->will($this->throwException(new Exception));
-        /* periods collection */
-        $mockCollPeriod = $this
-            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
-            ->setMethods(array( 'getSize' ))
-            ->getMock();
-        $mockCollPeriod
-            ->expects($this->once())
-            ->method('getSize')
-            ->will($this->returnValue(0));
-        /* connection to be rolled back */
-        $mockConnection = $this
-            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
-            ->disableOriginalConstructor()
-            ->setMethods(array( 'beginTransaction', 'rollBack' ))
-            ->getMock();
-        $mockConnection
-            ->expects($this->once())
-            ->method('beginTransaction');
-        $mockConnection
-            ->expects($this->once())
-            ->method('rollBack');
-        /* resource as singleton to return connection */
-        $mockResource = $this
-            ->getMockBuilder('Mage_Core_Model_Resource')
-            ->setMethods(array( 'getConnection' ))
-            ->getMock();
-        $mockResource
-            ->expects($this->once())
-            ->method('getConnection')
-            ->will($this->returnValue($mockConnection));
-        /* config */
+        /* Mock constructor related environment */
+        /* Config:: */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'modelPeriod', 'collectionPeriod', 'singleton' ))
+            ->setMethods(array( 'modelPeriod', 'modelLogCalc', 'collectionPeriod', 'connectionWrite' ))
+            ->getMock();
+        /* Mock runtime environment */
+        // $period  = Config::get()->modelPeriod();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'getResource' ))
             ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('modelPeriod')
             ->will($this->returnValue($mockPeriod));
+        // $logCalc = Config::get()->modelLogCalc();
+        $mockLogCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelLogCalc')
+            ->will($this->returnValue($mockLogCalc));
+        // $periods = Config::get()->collectionPeriod();
+        $mockPeriods = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
+            ->setMethods(array( 'getSize' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('collectionPeriod')
-            ->will($this->returnValue($mockCollPeriod));
-        $mockCfg
+            ->will($this->returnValue($mockPeriods));
+        // if($periods->getSize() == 0)
+        $mockPeriods
             ->expects($this->once())
-            ->method('singleton')
-            ->will($this->returnValue($mockResource));
-        /* setup Config */
+            ->method('getSize')
+            ->will($this->returnValue(0));
+        // $connection = Config::get()->connectionWrite();
+        $mockConnection = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'rollBack' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConnection));
+        // $connection->beginTransaction();
+        $mockConnection
+            ->expects($this->once())
+            ->method('beginTransaction');
+        // $period->getResource()->save();
+        $mockPeriodResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period')
+            ->setMethods(array( 'save' ))
+            ->getMock();
+        $mockPeriod
+            ->expects($this->any())
+            ->method('getResource')
+            ->will($this->returnValue($mockPeriodResource));
+        $mockPeriodResource
+            ->expects($this->once())
+            ->method('save')
+            ->will($this->throwException(new Exception));
+        //  $connection->rollBack();
+        $mockConnection
+            ->expects($this->once())
+            ->method('rollBack');
+        /* resource as singleton to
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Period_Call */
+        $call = Config::get()->servicePeriod();
+        $req  = $call->requestRegisterPeriodCalculation();
+        $req->setPeriodValue($PERIOD_VAL);
+        $req->setTypeCalcId($CALC_TYPE_ID);
+        $req->setTypePeriodId($PERIOD_TYPE_ID);
+        $call->registerPeriodCalculation($req);
+    }
+
+    public function test_registerPeriodCalculation_noPeriod_noLog() {
+        $PERIOD_VAL     = '20150601';
+        $CALC_TYPE_ID   = 21;
+        $PERIOD_TYPE_ID = 54;
+        /**
+         * Create mocks (direct order).
+         */
+        /* Mock constructor related environment */
+        /* Config:: */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'modelPeriod', 'modelLogCalc', 'collectionPeriod', 'connectionWrite' ))
+            ->getMock();
+        /* Mock runtime environment */
+        // $period  = Config::get()->modelPeriod();
+        $mockPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Period')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelPeriod')
+            ->will($this->returnValue($mockPeriod));
+        // $logCalc = Config::get()->modelLogCalc();
+        $mockLogCalc = $this
+            ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
+            ->setMethods(array( 'getResource' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('modelLogCalc')
+            ->will($this->returnValue($mockLogCalc));
+        // $periods = Config::get()->collectionPeriod();
+        $mockPeriods = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period_Collection')
+            ->setMethods(array( 'getSize' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('collectionPeriod')
+            ->will($this->returnValue($mockPeriods));
+        // if($periods->getSize() == 0)
+        $mockPeriods
+            ->expects($this->once())
+            ->method('getSize')
+            ->will($this->returnValue(0));
+        // $connection = Config::get()->connectionWrite();
+        $mockConnection = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConnection));
+        // $connection->beginTransaction();
+        $mockConnection
+            ->expects($this->once())
+            ->method('beginTransaction');
+        // $period->getResource()->save();
+        $mockPeriodResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Period')
+            ->setMethods(array( 'save' ))
+            ->getMock();
+        $mockPeriod
+            ->expects($this->any())
+            ->method('getResource')
+            ->will($this->returnValue($mockPeriodResource));
+        $mockPeriodResource
+            ->expects($this->once())
+            ->method('save');
+        // $logCalc->getResource()->save();
+        $mockLogCalcResource = $this
+            ->getMockBuilder('Praxigento_Bonus_Resource_Own_Log_Calc')
+            ->setMethods(array( 'save' ))
+            ->getMock();
+        $mockLogCalc
+            ->expects($this->any())
+            ->method('getResource')
+            ->will($this->returnValue($mockLogCalcResource));
+        $mockLogCalcResource
+            ->expects($this->once())
+            ->method('save');
+        // $connection->commit();
+        $mockConnection
+            ->expects($this->once())
+            ->method('commit');
+        /**
+         * Setup config and perform call.
+         */
         Config::set($mockCfg);
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
@@ -808,6 +926,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         $resp = $call->getPeriodForPersonalBonus($req);
         $this->assertTrue($resp->isSucceed());
         $this->assertEquals($VAL, $resp->getPeriodValue());
+        $this->assertEquals(Config::PERIOD_DAY, $resp->getPeriodTypeCode());
         $this->assertEquals($ID, $resp->getExistingPeriodId());
     }
 

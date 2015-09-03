@@ -71,7 +71,9 @@ class Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations {
             $reqOp->setValue($val);
             $reqOp->setDateApplied($dateApplied);
             $respOp = $callOp->createOperationPvWriteOff($reqOp);
-            if(!$respOp->isSucceed()) {
+            if($respOp->isSucceed()) {
+                continue;
+            } else {
                 $errCode = $respOp->getErrorCode();
                 Mage::throwException("Cannot create PV Write Off operation for customer acc #$accId "
                                      . "(value=$val, date=$dateApplied). Error code: $errCode");

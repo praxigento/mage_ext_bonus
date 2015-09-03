@@ -60,7 +60,6 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
     public function test_process() {
         $DATE_APPLIED      = '2015-06-02 06:59:59';
         $ACCOUNTANT_ACC_ID = 1;
-        $ERROR_CODE        = 13;
         /**
          * Create mocks (direct order).
          */

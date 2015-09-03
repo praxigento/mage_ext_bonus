@@ -171,18 +171,18 @@ class Praxigento_Bonus_Service_Period_Call
             $periods->addFieldToFilter(Period::ATTR_VALUE, $periodValue);
             if($periods->getSize() == 0) {
                 /* noPeriod_noLog : register new calculation period into DB */
-                $connection = Config::get()->singleton('core/resource')->getConnection('core_write');
+                $connection = Config::get()->connectionWrite();
                 $connection->beginTransaction();
                 try {
                     /* add new period */
                     $period->setType($typePeriodId);
                     $period->setCalcTypeId($typeCalcId);
                     $period->setValue($periodValue);
-                    $period->save();
+                    $period->getResource()->save();
                     /* add new entry to calculation log */
                     $logCalc->setPeriodId($period->getId());
                     $logCalc->setState(Config::STATE_PERIOD_PROCESSING);
-                    $logCalc->save();
+                    $logCalc->getResource()->save();
                     $connection->commit();
                     $this->_log->debug("New period '{$period->getValue()}' (#{$period->getId()}) is registered.");
                 } catch(Exception $e) {
