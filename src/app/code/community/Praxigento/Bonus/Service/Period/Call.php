@@ -153,7 +153,8 @@ class Praxigento_Bonus_Service_Period_Call
      * @return Praxigento_Bonus_Service_Period_Response_RegisterPeriodCalculation
      */
     public function registerPeriodCalculation(RegisterPeriodCalculationRequest $req) {
-        $result  = new RegisterPeriodCalculationResponse();
+        /** @var  $result RegisterPeriodCalculationResponse */
+        $result  = Mage::getModel('prxgt_bonus_service/period_response_registerPeriodCalculation');
         $period  = Config::get()->modelPeriod();
         $logCalc = Config::get()->modelLogCalc();
         /* shortcuts for request data */

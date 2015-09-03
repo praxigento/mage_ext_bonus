@@ -55,7 +55,7 @@ class Praxigento_Bonus_Service_Calculation_Call
                 /** @var  $reqOpGet GetOperationsForPvWriteOffRequest */
                 $reqOpGet = $callOp->requestGetOperationsForPvWriteOff();
                 $reqOpGet->setPeriodValue($periodValue);
-                $reqOpGet->setPeriodCode($resp->getPeriodTypeCode());
+                $reqOpGet->setPeriodCode($periodCode);
                 $reqOpGet->setLogCalcId($logCalc->getId());
                 /** @var  $respOpGet GetOperationsForPvWriteOffResponse */
                 $respOpGet = $callOp->getOperationsForPvWriteOff($reqOpGet);
