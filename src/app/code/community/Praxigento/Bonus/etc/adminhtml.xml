@@ -11,6 +11,42 @@
         <resources>
             <admin>
                 <children>
+                    <customer>
+                        <children>
+                            <prxgt_bonus>
+                                <title>Bonus</title>
+                                <sort_order>56</sort_order>
+                                <children>
+                                    <accounting>
+                                        <title>Accounting</title>
+                                        <sort_order>100</sort_order>
+                                        <children>
+                                            <transactions>
+                                                <title>Transactions</title>
+                                                <sort_order>100</sort_order>
+                                            </transactions>
+                                        </children>
+                                    </accounting>
+                                    <calculation>
+                                        <title>Calculations</title>
+                                        <sort_order>200</sort_order>
+                                    </calculation>
+                                    <periods>
+                                        <title>Periods</title>
+                                        <sort_order>300</sort_order>
+                                    </periods>
+                                    <logs>
+                                        <title>Logs</title>
+                                        <sort_order>400</sort_order>
+                                    </logs>
+                                    <snapshots>
+                                        <title>Snapshots</title>
+                                        <sort_order>500</sort_order>
+                                    </snapshots>
+                                </children>
+                            </prxgt_bonus>
+                        </children>
+                    </customer>
                     <sales>
                         <children>
                             <prxgt_bonus>
@@ -132,5 +168,42 @@
                 </prxgt_bonus>
             </children>
         </sales>
+        <customer>
+            <children>
+                <prxgt_bonus module="prxgt_bonus_helper">
+                    <title>Bonus</title>
+                    <sort_order>56</sort_order>
+                    <children>
+                        <accounting>
+                            <title>Accounting</title>
+                            <sort_order>100</sort_order>
+                            <children>
+                                <transactions>
+                                    <title>Transactions</title>
+                                    <sort_order>100</sort_order>
+                                    <action>adminhtml/own_customer_bonus_accounting_transactions/</action>
+                                </transactions>
+                            </children>
+                        </accounting>
+                        <calculation>
+                            <title>Calculations</title>
+                            <sort_order>200</sort_order>
+                        </calculation>
+                        <periods>
+                            <title>Periods</title>
+                            <sort_order>300</sort_order>
+                        </periods>
+                        <logs>
+                            <title>Logs</title>
+                            <sort_order>400</sort_order>
+                        </logs>
+                        <snapshots>
+                            <title>Snapshots</title>
+                            <sort_order>500</sort_order>
+                        </snapshots>
+                    </children>
+                </prxgt_bonus>
+            </children>
+        </customer>
     </menu>
 </config>

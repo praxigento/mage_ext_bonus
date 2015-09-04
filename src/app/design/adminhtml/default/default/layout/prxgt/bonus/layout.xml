@@ -7,6 +7,12 @@
 -->
 <layout version="0.1.0">
 
+    <adminhtml_own_customer_bonus_accounting_transactions_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_customer_bonus_accounting_transactions"
+                   name="sales_bonus_grid_payout"/>
+        </reference>
+    </adminhtml_own_customer_bonus_accounting_transactions_index>
 
     <adminhtml_own_sales_bonus_process_pv_index>
         <reference name="content">
