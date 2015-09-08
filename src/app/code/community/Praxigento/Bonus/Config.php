@@ -274,10 +274,26 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * @return Praxigento_Bonus_Model_Own_Log_Downline
+     */
+    public function modelLogDownline() {
+        $result = Mage::getModel('prxgt_bonus_model/log_downline');
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Resource_Own_Log_Calc_Collection
      */
     public function collectionLogCalc() {
         $result = self::modelLogCalc()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Log_Downline_Collection
+     */
+    public function collectionLogDownline() {
+        $result = self::modelLogDownline()->getCollection();
         return $result;
     }
 

@@ -190,4 +190,54 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         $this->assertEquals($PERIOD_EXPECTED, $result);
     }
 
+    public function test_getLatestDownlineSnapBeforePeriod() {
+        $PERIOD = '201506';
+        $FOUND  = "20140101";
+        /**
+         * Create mocks (direct order).
+         */
+        /* Config:: */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton' ))
+            ->getMock();
+        // $rsrc      = Config::get()->singleton('core/resource');
+        $mockRsrc = $this
+            ->getMockBuilder('Mage_Core_Model_Resource')
+            ->setMethods(array( 'getTableName', 'getConnection' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->once())
+            ->method('singleton')
+            ->will($this->returnValue($mockRsrc));
+        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $mockRsrc
+            ->expects($this->once())
+            ->method('getTableName')
+            ->will($this->returnValue('prxgt_bonus_snap_downline'));
+        // $conn      = $rsrc->getConnection('core_write');
+        $mockConn = $this
+            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'fetchOne' ))
+            ->getMock();
+        $mockRsrc
+            ->expects($this->once())
+            ->method('getConnection')
+            ->will($this->returnValue($mockConn));
+        // $result    = $conn->fetchOne(...)
+        $mockConn
+            ->expects($this->once())
+            ->method('fetchOne')
+            ->will($this->returnValue($FOUND));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
+        $hndl   = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $result = $hndl->getLatestDownlineSnapBeforePeriod($PERIOD);
+        $this->assertEquals($FOUND, $result);
+    }
+
 }
