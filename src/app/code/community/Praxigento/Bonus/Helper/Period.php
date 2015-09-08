@@ -76,6 +76,29 @@ class Praxigento_Bonus_Helper_Period {
     }
 
     /**
+     * Return day period (20150630) for year period (2015) or for month period (201506).
+     *
+     * @param $periodValue
+     *
+     * @return string
+     */
+    public function calcPeriodSmallest($periodValue) {
+        $result = $periodValue;
+        if($this->isPeriodYear($periodValue)) {
+            $dt     = date_create_from_format('Y', $periodValue);
+            $ts     = strtotime('last day of December', $dt->getTimestamp());
+            $dt     = $this->_helperCore->convertToDateTime($ts);
+            $result = date_format($dt, 'Ymd');
+        } else if($this->isPeriodMonth($periodValue)) {
+            $dt     = date_create_from_format('Ym', $periodValue);
+            $ts     = strtotime('last day of this month', $dt->getTimestamp());
+            $dt     = $this->_helperCore->convertToDateTime($ts);
+            $result = date_format($dt, 'Ymd');
+        }
+        return $result;
+    }
+
+    /**
      * Calculate period next for the given.
      *
      * @param $period 20150601 | 201506 | 2015
@@ -274,5 +297,41 @@ class Praxigento_Bonus_Helper_Period {
         }
         self::$_cachePeriodBounds[ $period ][ $periodCode ]['from'] = $from;
         self::$_cachePeriodBounds[ $period ][ $periodCode ]['to']   = $to;
+    }
+
+    /**
+     * Return 'true' if $periodValue is year period (YYYY).
+     *
+     * @param $periodValue
+     *
+     * @return bool
+     */
+    public function isPeriodYear($periodValue) {
+        $result = (strlen($periodValue) == 4);
+        return $result;
+    }
+
+    /**
+     * Return 'true' if $periodValue is month period (YYYYMM).
+     *
+     * @param $periodValue
+     *
+     * @return bool
+     */
+    public function isPeriodMonth($periodValue) {
+        $result = (strlen($periodValue) == 6);
+        return $result;
+    }
+
+    /**
+     * Return 'true' if $periodValue is day period (YYYYMMDD).
+     *
+     * @param $periodValue
+     *
+     * @return bool
+     */
+    public function isPeriodDay($periodValue) {
+        $result = (strlen($periodValue) == 8);
+        return $result;
     }
 }

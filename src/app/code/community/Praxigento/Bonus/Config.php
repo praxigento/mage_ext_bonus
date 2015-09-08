@@ -433,5 +433,13 @@ class Praxigento_Bonus_Config {
         return $result;
     }
 
+    /**
+     * @return Praxigento_Bonus_Service_Snapshot_Call
+     */
+    public function serviceSnapshot() {
+        $result = Mage::getModel('prxgt_bonus_service/snapshot_call');
+        return $result;
+    }
+
 
 }

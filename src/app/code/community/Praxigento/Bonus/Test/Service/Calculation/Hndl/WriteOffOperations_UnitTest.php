@@ -52,7 +52,6 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
          * Setup config and perform call.
          */
         Config::set($mockCfg);
-        /** @var  $call Praxigento_Bonus_Service_Calculation_Call */
         $hndl = new Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations();
         $this->assertNotNull($hndl);
     }
@@ -156,7 +155,6 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
          * Setup config and perform call.
          */
         Config::set($mockCfg);
-        /** @var  $call Praxigento_Bonus_Service_Calculation_Call */
         $hndl = new Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations();
         $hndl->process($mockParamReq, $PERIOD_VALUE, $PERIOD_CODE);
     }
@@ -258,7 +256,6 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
          * Setup config and perform call.
          */
         Config::set($mockCfg);
-        /** @var  $call Praxigento_Bonus_Service_Calculation_Call */
         $hndl = new Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations();
         $hndl->process($mockParamReq, $PERIOD_VALUE, $PERIOD_CODE);
     }
