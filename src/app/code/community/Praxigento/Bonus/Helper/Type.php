@@ -26,7 +26,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return int
      */
     public function getAssetId($code) {
-        $type   = $this->getAsset($code);
+        $type = $this->getAsset($code);
         $result = $type->getId();
         return $result;
     }
@@ -39,7 +39,7 @@ class Praxigento_Bonus_Helper_Type {
     public function getAsset($code) {
         if(is_null($this->_cacheAssetTypes)) {
             $allTypes = Config::get()->collectionTypeAsset();
-            $types    = array();
+            $types = array();
             /** @var  $one Praxigento_Bonus_Model_Own_Type_Asset */
             foreach($allTypes as $one) {
                 $types[ $one->getCode() ] = $one;
@@ -56,7 +56,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return int
      */
     public function getCalcId($code) {
-        $type   = $this->getCalc($code);
+        $type = $this->getCalc($code);
         $result = $type->getId();
         return $result;
     }
@@ -69,7 +69,7 @@ class Praxigento_Bonus_Helper_Type {
     public function getCalc($code) {
         if(is_null($this->_cacheCalcTypes)) {
             $allTypes = Config::get()->collectionTypeCalc();
-            $types    = array();
+            $types = array();
             /** @var  $one Praxigento_Bonus_Model_Own_Type_Calc */
             foreach($allTypes as $one) {
                 $types[ $one->getCode() ] = $one;
@@ -86,7 +86,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return int
      */
     public function getOperId($code) {
-        $type   = $this->getOper($code);
+        $type = $this->getOper($code);
         $result = $type->getId();
         return $result;
     }
@@ -99,7 +99,7 @@ class Praxigento_Bonus_Helper_Type {
     public function getOper($code) {
         if(is_null($this->_cacheOperationTypes)) {
             $allTypes = Config::get()->collectionTypeOper();
-            $types    = array();
+            $types = array();
             /** @var  $one Praxigento_Bonus_Model_Own_Type_Operation */
             foreach($allTypes as $one) {
                 $types[ $one->getCode() ] = $one;
@@ -116,7 +116,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return int
      */
     public function getPeriodId($code) {
-        $type   = $this->getPeriod($code);
+        $type = $this->getPeriod($code);
         $result = $type->getId();
         return $result;
     }
@@ -129,7 +129,7 @@ class Praxigento_Bonus_Helper_Type {
     public function getPeriod($code) {
         if(is_null($this->_cachePeriodTypes)) {
             $allTypes = Config::get()->collectionTypePeriod();
-            $types    = array();
+            $types = array();
             /** @var  $one Praxigento_Bonus_Model_Own_Type_Period */
             foreach($allTypes as $one) {
                 $types[ $one->getCode() ] = $one;
@@ -145,7 +145,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return array
      */
     public function getOperIdsForPersonalBonus() {
-        $result   = array();
+        $result = array();
         $result[] = $this->getOperId(Config::OPER_ORDER_PV);
         $result[] = $this->getOperId(Config::OPER_PV_INT);
         $result[] = $this->getOperId(Config::OPER_PV_FWRD);
@@ -157,7 +157,7 @@ class Praxigento_Bonus_Helper_Type {
      * @return array
      */
     public function getOperIdsForPvWriteOff() {
-        $result   = array();
+        $result = array();
         $result[] = $this->getOperId(Config::OPER_ORDER_PV);
         $result[] = $this->getOperId(Config::OPER_PV_INT);
         $result[] = $this->getOperId(Config::OPER_PV_FWRD);

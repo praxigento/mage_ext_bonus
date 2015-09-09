@@ -21,7 +21,7 @@ class Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations {
      */
     public function __construct() {
         $this->_helperAccount = Config::get()->helperAccount();
-        $this->_helperPeriod  = Config::get()->helperPeriod();
+        $this->_helperPeriod = Config::get()->helperPeriod();
     }
 
     /**
@@ -41,9 +41,9 @@ class Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations {
         /* Loop all operations and compute values for PVWrite Off operations */
         $changes = array();
         foreach($opers as $item) {
-            $debitAccId  = $item->getData(GetOperationsForPvWriteOffResponse::TRN_DEBIT_ACC_ID);
+            $debitAccId = $item->getData(GetOperationsForPvWriteOffResponse::TRN_DEBIT_ACC_ID);
             $creditAccId = $item->getData(GetOperationsForPvWriteOffResponse::TRN_CREDIT_ACC_ID);
-            $value       = $item->getData(GetOperationsForPvWriteOffResponse::TRN_VALUE);
+            $value = $item->getData(GetOperationsForPvWriteOffResponse::TRN_VALUE);
             if(isset($changes[ $debitAccId ])) {
                 $changes[ $debitAccId ] -= $value;
             } else {
@@ -56,7 +56,7 @@ class Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations {
             }
         }
         /* Create PvWriteOff operations with the last second of the period and update NOW balances. */
-        $dateApplied     = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
+        $dateApplied = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
         $accountantAccId = $this->_helperAccount->getAccountantAccIdByAssetCode(Config::ASSET_PV);
         /** @var  $callOp Praxigento_Bonus_Service_Operations_Call */
         $callOp = Config::get()->serviceOperations();

@@ -27,9 +27,9 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_TransactController exte
             /* prevent memory exhausting */
             ini_set('memory_limit', '-1');
             /* process orders */
-            $call  = Mage::getModel('prxgt_bonus_model/service_registry_call');
-            $req   = Mage::getModel('prxgt_bonus_model/service_registry_request_createTransactions');
-            $resp  = $call->createTransactions($req);
+            $call = Mage::getModel('prxgt_bonus_model/service_registry_call');
+            $req = Mage::getModel('prxgt_bonus_model/service_registry_request_createTransactions');
+            $resp = $call->createTransactions($req);
             $count = count($resp->getTransactionIds());
             $block->setCollectedCount($count);
         }

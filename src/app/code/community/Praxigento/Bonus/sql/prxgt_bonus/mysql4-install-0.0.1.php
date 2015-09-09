@@ -43,34 +43,34 @@ $conn = $this->getConnection();
 /**
  * Own tables names.
  */
-$tblAccount       = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
-$tblBalance       = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
-$tblCfgPersonal   = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
+$tblAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
+$tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
+$tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
 $tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
-$tblLogAccount    = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
-$tblLogCalc       = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
-$tblLogDownline   = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
-$tblLogOrder      = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
-$tblLogPayout     = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
-$tblOperation     = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
-$tblPeriod        = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_PERIOD);
-$tblSnapBonus     = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
-$tblSnapDownline  = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-$tblTransaction   = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
-$tblTypeAsset     = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
-$tblTypeCalc      = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_CALC);
-$tblTypeOper      = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
-$tblTypePeriod    = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
+$tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
+$tblLogCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
+$tblLogDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+$tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
+$tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
+$tblOperation = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
+$tblPeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_PERIOD);
+$tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
+$tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+$tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+$tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
+$tblTypeCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_CALC);
+$tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
+$tblTypePeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
 /**
  * Mage tables names.
  */
 $tblSalesOrder = $this->getTable('sales/order');
-$tblCustomer   = $this->getTable('customer/entity');
+$tblCustomer = $this->getTable('customer/entity');
 
 /** =================================================================================================================
  * Create tables.
  * =============================================================================================================== */
-$optId     = array( 'identity' => true, 'primary' => true, 'nullable' => false, 'unsigned' => true );
+$optId = array( 'identity' => true, 'primary' => true, 'nullable' => false, 'unsigned' => true );
 $currentTs = Varien_Db_Ddl_Table::TIMESTAMP_INIT;
 
 
@@ -279,7 +279,7 @@ $conn->createTable($tbl);
 
 /* UQ index (order_id) */
 $ndxFields = array( DetailsRetail::ATTR_ORDER_ID );
-$ndxName   = $conn->getIndexName($tblDetailsRetail, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+$ndxName = $conn->getIndexName($tblDetailsRetail, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 $conn->addIndex($tblDetailsRetail, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
 
 /* Order FK */

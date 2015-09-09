@@ -37,7 +37,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_existingAccount();
         /* test the method */
-        $hlp     = Config::get()->helperAccount();
+        $hlp = Config::get()->helperAccount();
         $account = $hlp->getAccountantAccByAssetCode(Config::ASSET_PV);
         $this->assertEquals(self::ACC_PV_ASSET_ID, $account->getData(Account::ATTR_ASSET_ID));
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $account->getData(Account::ATTR_CUSTOMER_ID));
@@ -106,7 +106,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_existingAccount();
         /* test the method */
-        $hlp     = Config::get()->helperAccount();
+        $hlp = Config::get()->helperAccount();
         $accountId = $hlp->getAccountantAccIdByAssetCode(Config::ASSET_PV);
         $this->assertEquals(self::ACC_PV_ID, $accountId);
     }
@@ -115,7 +115,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         /* mock environment */
         $this->_mockConfig_getAccountantAccByAssetCode_newAccount();
         /* test the method */
-        $hlp     = Config::get()->helperAccount();
+        $hlp = Config::get()->helperAccount();
         $account = $hlp->getAccountantAccByAssetCode(Config::ASSET_RETAIL);
         $this->assertEquals(self::ACC_RETAIL_ASSET_ID, $account->getData(Account::ATTR_ASSET_ID));
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $account->getData(Account::ATTR_CUSTOMER_ID));
@@ -225,7 +225,7 @@ class Praxigento_Bonus_Test_Helper_Account_UnitTest extends PHPUnit_Framework_Te
         /* mock environment */
         $this->_mockConfig_getAccountantMageId();
         /* test the method */
-        $hlp    = Config::get()->helperAccount();
+        $hlp = Config::get()->helperAccount();
         $mageId = $hlp->getAccountantMageId();
         $this->assertEquals(self::ACCOUNTANT_MAGE_ID, $mageId);
     }

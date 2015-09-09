@@ -40,7 +40,7 @@ class Praxigento_Bonus_Helper_Account {
             $this->_loadAccounts();
         }
         if(!isset(self::$_cachedAccountantData[ $assetCode ])) {
-            $acc                                       = $this->_createAccount($assetCode);
+            $acc = $this->_createAccount($assetCode);
             self::$_cachedAccountantData[ $assetCode ] = $acc;
         }
         $result = self::$_cachedAccountantData[ $assetCode ];
@@ -56,7 +56,7 @@ class Praxigento_Bonus_Helper_Account {
      */
     public function getAccountantAccIdByAssetCode($assetCode) {
         /** @var  $model Praxigento_Bonus_Model_Own_Account */
-        $model  = $this->getAccountantAccByAssetCode($assetCode);
+        $model = $this->getAccountantAccByAssetCode($assetCode);
         $result = $model->getId();
         return $result;
     }
@@ -65,22 +65,22 @@ class Praxigento_Bonus_Helper_Account {
      * Load accounts from db and cache it.
      */
     private function _loadAccounts() {
-        $all    = Config::get()->collectionAccount();
+        $all = Config::get()->collectionAccount();
         $custId = $this->getAccountantMageId();
         $all->addFieldToFilter(Account::ATTR_CUSTOMER_ID, $custId);
         /* join assets to get codes */
         $asAsset = 'a';
-        $table   = array( $asAsset => Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET );
-        $cond    = 'main_table.' . Account::ATTR_ASSET_ID . '='
-                   . $asAsset . '.' . TypeAsset::ATTR_ID;
-        $cols    = array( TypeAsset::ATTR_CODE );
+        $table = array( $asAsset => Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET );
+        $cond = 'main_table.' . Account::ATTR_ASSET_ID . '='
+                . $asAsset . '.' . TypeAsset::ATTR_ID;
+        $cols = array( TypeAsset::ATTR_CODE );
         $all->join($table, $cond, $cols);
         foreach($all as $one) {
-            $accId   = $one->getData(Account::ATTR_ID);
+            $accId = $one->getData(Account::ATTR_ID);
             $assetId = $one->getData(Account::ATTR_ASSET_ID);
-            $custId  = $one->getData(Account::ATTR_CUSTOMER_ID);
-            $code    = $one->getData(TypeAsset::ATTR_CODE);
-            $item    = new Varien_Object();
+            $custId = $one->getData(Account::ATTR_CUSTOMER_ID);
+            $code = $one->getData(TypeAsset::ATTR_CODE);
+            $item = new Varien_Object();
             $item->setId($accId);
             $item->setAssetId($assetId);
             $item->setCustomerId($custId);
@@ -90,8 +90,8 @@ class Praxigento_Bonus_Helper_Account {
 
     private function _createAccount($assetCode) {
         $assetId = Config::get()->helperType()->getAssetId($assetCode);
-        $custId  = $this->getAccountantMageId();
-        $result  = Config::get()->modelAccount();
+        $custId = $this->getAccountantMageId();
+        $result = Config::get()->modelAccount();
         $result->setAssetId($assetId);
         $result->setCustomerId($custId);
         $result->save();
@@ -100,10 +100,10 @@ class Praxigento_Bonus_Helper_Account {
 
     public function getAccountantMageId() {
         if(is_null(self::$_cachedAccountantMageId)) {
-            $mlmId   = Config::get()->helper()->cfgGeneralAccountantMlmId();
+            $mlmId = Config::get()->helper()->cfgGeneralAccountantMlmId();
             $hlpCore = Config::get()->helperCore();
             /** @var  $cust Nmmlm_Core_Model_Customer_Customer */
-            $cust                          = $hlpCore->findCustomerByMlmId($mlmId);
+            $cust = $hlpCore->findCustomerByMlmId($mlmId);
             self::$_cachedAccountantMageId = $cust->getId();
         }
         return self::$_cachedAccountantMageId;

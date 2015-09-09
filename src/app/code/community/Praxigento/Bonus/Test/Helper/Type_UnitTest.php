@@ -36,11 +36,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
 
     public function test_getAsset() {
         /** mock stored items  */
-        $item    = Config::get()->modelTypeAsset();
+        $item = Config::get()->modelTypeAsset();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypeAsset', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp   = Config::get()->helperType();
+        $hlp = Config::get()->helperType();
         $asset = $hlp->getAsset(self::TEST_CODE);
         $this->assertTrue($asset instanceof Praxigento_Bonus_Model_Own_Type_Asset);
         $this->assertEquals(self::TEST_ID, $asset->getId());
@@ -70,11 +70,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     public function test_getCalc() {
         /** mock stored items  */
         /** @var  $item */
-        $item    = Config::get()->modelTypeCalc();
+        $item = Config::get()->modelTypeCalc();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypeCalc', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp  = Config::get()->helperType();
+        $hlp = Config::get()->helperType();
         $type = $hlp->getCalc(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Calc);
         $this->assertEquals(self::TEST_ID, $type->getId());
@@ -86,7 +86,7 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         /** mock stored items  */
         $this->_mockConfigOper();
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp  = Config::get()->helperType();
+        $hlp = Config::get()->helperType();
         $type = $hlp->getOper(Config::OPER_BONUS_PV);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Oper);
         $this->assertEquals(self::OPER_ID_BONUS_PV, $type->getId());
@@ -98,7 +98,7 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         /** mock stored items  */
         $this->_mockConfigOper();
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp   = Config::get()->helperType();
+        $hlp = Config::get()->helperType();
         $types = $hlp->getOperIdsForPvWriteOff();
         $this->assertTrue(is_array($types));
         $this->assertContains(self::OPER_ID_ORDER_PV, $types);
@@ -115,7 +115,7 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
         $mockBuilder = $this->getMockBuilder('Praxigento_Bonus_Config');
         $mockBuilder->setMethods(array( 'collectionTypeOper' ));
         $mockCfg = $mockBuilder->getMock();
-        $items   = array();
+        $items = array();
         /* add operation types */
         /* OPER_BONUS_PV */
         /** @var  $item Praxigento_Bonus_Model_Own_Type_Oper */
@@ -172,11 +172,11 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     public function test_getPeriod() {
         /** mock stored items  */
         /** @var  $item */
-        $item    = Config::get()->modelTypePeriod();
+        $item = Config::get()->modelTypePeriod();
         $mockCfg = $this->mockClass('Praxigento_Bonus_Config', 'collectionTypePeriod', $item);
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Type */
-        $hlp  = Config::get()->helperType();
+        $hlp = Config::get()->helperType();
         $type = $hlp->getPeriod(self::TEST_CODE);
         $this->assertTrue($type instanceof Praxigento_Bonus_Model_Own_Type_Period);
         $this->assertEquals(self::TEST_ID, $type->getId());

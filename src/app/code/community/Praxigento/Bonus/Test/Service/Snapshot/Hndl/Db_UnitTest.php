@@ -35,7 +35,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
 
     public function test_isThereDownlinesSnapForPeriod_exactEquality() {
         $PERIOD = '20150601';
-        $FOUND  = "21";
+        $FOUND = "21";
         /**
          * Create mocks (direct order).
          */
@@ -78,14 +78,14 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
          */
         Config::set($mockCfg);
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-        $hndl   = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $result = $hndl->isThereDownlinesSnapForPeriod($PERIOD);
         $this->assertEquals($PERIOD, $result);
     }
 
     public function test_isThereDownlinesSnapForPeriod_noData() {
         $PERIOD = '20150601';
-        $FOUND  = "0";
+        $FOUND = "0";
         /**
          * Create mocks (direct order).
          */
@@ -128,16 +128,16 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
          */
         Config::set($mockCfg);
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-        $hndl   = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $result = $hndl->isThereDownlinesSnapForPeriod($PERIOD);
         $this->assertNull($result);
     }
 
     public function test_isThereDownlinesSnapForPeriod_smallestEquality() {
-        $PERIOD          = '201506';
+        $PERIOD = '201506';
         $PERIOD_EXPECTED = '20150630';
-        $NOT_FOUND       = "0";
-        $FOUND           = "1";
+        $NOT_FOUND = "0";
+        $FOUND = "1";
         /**
          * Create mocks (direct order).
          */
@@ -185,14 +185,14 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
          */
         Config::set($mockCfg);
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-        $hndl   = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $result = $hndl->isThereDownlinesSnapForPeriod($PERIOD);
         $this->assertEquals($PERIOD_EXPECTED, $result);
     }
 
     public function test_getLatestDownlineSnapBeforePeriod() {
         $PERIOD = '201506';
-        $FOUND  = "20140101";
+        $FOUND = "20140101";
         /**
          * Create mocks (direct order).
          */
@@ -235,7 +235,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
          */
         Config::set($mockCfg);
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-        $hndl   = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $result = $hndl->getLatestDownlineSnapBeforePeriod($PERIOD);
         $this->assertEquals($FOUND, $result);
     }

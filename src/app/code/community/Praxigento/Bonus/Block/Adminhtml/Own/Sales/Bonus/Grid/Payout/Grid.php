@@ -25,7 +25,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Payout_Grid
         /** @var  $collection Praxigento_Bonus_Resource_Own_Payout_Collection */
         $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_payout_collection');
         /* JOIN customer_entity */
-        $tbl  = array( 'cust' => 'customer/entity' );
+        $tbl = array( 'cust' => 'customer/entity' );
         $cond = 'main_table.' . Payout::ATTR_CUSTOMER_ID . '=cust.entity_id';
         $cols = array( self::AS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID );
         $collection->join($tbl, $cond, $cols);
@@ -37,7 +37,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Payout_Grid
     }
 
     protected function _prepareColumns() {
-        $helper   = Mage::helper(Config::CFG_HELPER);
+        $helper = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
         $this->addColumn(Payout::ATTR_ID, array(

@@ -27,14 +27,14 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_RetailController extend
             /* prevent memory exhausting */
             ini_set('memory_limit', '-1');
             /* process orders */
-            $srv       = Mage::getModel('prxgt_bonus_model/service_registry_call');
-            $orderIds  = $this->_getUnprocessedOrders();
+            $srv = Mage::getModel('prxgt_bonus_model/service_registry_call');
+            $orderIds = $this->_getUnprocessedOrders();
             $processed = 0;
-            $failed    = array();
+            $failed = array();
             foreach($orderIds as $one) {
-                $id    = $one['entity_id'];
+                $id = $one['entity_id'];
                 $order = Mage::getModel('sales/order')->load($id);
-                $req   = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
+                $req = Mage::getModel('prxgt_bonus_model/service_registry_request_saveRetailBonus');
                 $req->setOrder($order);
                 try {
                     $resp = $srv->saveRetailBonus($req);
@@ -69,15 +69,15 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_Collect_RetailController extend
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Mage::getSingleton('core/resource');
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
-        $conn      = $rsrc->getConnection('core_write');
-        $tblSales  = $rsrc->getTableName('sales/order');
+        $conn = $rsrc->getConnection('core_write');
+        $tblSales = $rsrc->getTableName('sales/order');
         $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
-        $query     = "
+        $query = "
 SELECT $tblSales.entity_id FROM $tblSales
   LEFT OUTER JOIN $tblRetail ON $tblSales.entity_id = $tblRetail.order_id
 WHERE $tblRetail.order_id IS NULL";
-        $rs        = $conn->query($query);
-        $result    = $rs->fetchAll();
+        $rs = $conn->query($query);
+        $result = $rs->fetchAll();
         return $result;
     }
 }

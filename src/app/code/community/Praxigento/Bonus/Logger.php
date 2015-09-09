@@ -23,7 +23,7 @@ class Praxigento_Bonus_Logger {
          * "ERR (3): Warning: include(Praxigento\Log\Logger.php): failed to open stream: No such file or directory"
          * in case of Praxigento_Log module is not used.
          */
-        $level                = error_reporting(0);
+        $level = error_reporting(0);
         self::$_isLog4phpUsed = class_exists('Praxigento_Log_Logger', true);
         error_reporting($level);
         if(self::$_isLog4phpUsed) {

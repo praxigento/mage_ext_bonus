@@ -81,7 +81,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
          * Prepare request and perform call.
          */
         $call = Config::get()->serviceOperations();
-        $req  = $call->requestGetOperationsForPvWriteOff();
+        $req = $call->requestGetOperationsForPvWriteOff();
         $req->setPeriodCode(Config::PERIOD_DAY);
         $req->setPeriodValue('20150601');
         $resp = $call->getOperationsForPvWriteOff($req);
@@ -90,11 +90,11 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_createOperationPvWriteOff_commit_zero() {
-        $CUST_ACC_ID  = 543;
+        $CUST_ACC_ID = 543;
         $STORE_ACC_ID = 345;
-        $OPER_ID      = 546;
+        $OPER_ID = 546;
         $DATE_APPLIED = '2015-08-12 12:23:34';
-        $VALUE        = 0;
+        $VALUE = 0;
         /**
          * Create mocks.
          */
@@ -135,7 +135,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper         = $this
+        $mockOper = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
             ->setMethods(array( 'getResource' ))
             ->getMock();
@@ -194,11 +194,11 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_createOperationPvWriteOff_commit_notZero() {
-        $CUST_ACC_ID  = 543;
+        $CUST_ACC_ID = 543;
         $STORE_ACC_ID = 345;
-        $OPER_ID      = 546;
+        $OPER_ID = 546;
         $DATE_APPLIED = '2015-08-12 12:23:34';
-        $VALUE        = 43.92;
+        $VALUE = 43.92;
         /**
          * Create mocks.
          */
@@ -239,7 +239,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper         = $this
+        $mockOper = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
             ->setMethods(array( 'getResource' ))
             ->getMock();
@@ -311,11 +311,11 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_createOperationPvWriteOff_rollback() {
-        $CUST_ACC_ID  = 543;
+        $CUST_ACC_ID = 543;
         $STORE_ACC_ID = 345;
-        $OPER_ID      = 546;
+        $OPER_ID = 546;
         $DATE_APPLIED = '2015-08-12 12:23:34';
-        $VALUE        = 43.92;
+        $VALUE = 43.92;
         /**
          * Create mocks.
          */
@@ -356,7 +356,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->method('getOperId')
             ->will($this->returnValue($OPER_ID));
         /* operation to create */
-        $mockOper         = $this
+        $mockOper = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Operation')
             ->setMethods(array( 'getResource' ))
             ->getMock();
@@ -435,11 +435,11 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_createTransaction_commit() {
-        $DEBIT_ACC_ID  = 321;
+        $DEBIT_ACC_ID = 321;
         $CREDIT_ACC_ID = 789;
-        $VALUE         = 654.98;
-        $OPER_ID       = 587;
-        $DATE_APPLIED  = '2015-09-01 12:43:54';
+        $VALUE = 654.98;
+        $OPER_ID = 587;
+        $DATE_APPLIED = '2015-09-01 12:43:54';
         /**
          * Create mocks.
          */
@@ -456,7 +456,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->once())
             ->method('commit');
         /* transaction model */
-        $mockTrans         = $this
+        $mockTrans = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
             ->setMethods(array( 'getResource' ))
             ->getMock();
@@ -512,11 +512,11 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_createTransaction_rollback() {
-        $DEBIT_ACC_ID  = 321;
+        $DEBIT_ACC_ID = 321;
         $CREDIT_ACC_ID = 789;
-        $VALUE         = 654.98;
-        $OPER_ID       = 587;
-        $DATE_APPLIED  = '2015-09-01 12:43:54';
+        $VALUE = 654.98;
+        $OPER_ID = 587;
+        $DATE_APPLIED = '2015-09-01 12:43:54';
         /**
          * Create mocks.
          */
@@ -533,7 +533,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
             ->expects($this->once())
             ->method('rollBack');
         /* transaction model */
-        $mockTrans         = $this
+        $mockTrans = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Transaction')
             ->setMethods(array( 'getResource' ))
             ->getMock();
@@ -568,7 +568,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
          * Prepare request and perform call.
          */
         $call = Config::get()->serviceOperations();
-        $req  = $call->requestCreateTransaction();
+        $req = $call->requestCreateTransaction();
         $req->setCreditAccId($CREDIT_ACC_ID);
         $req->setDebitAccId($DEBIT_ACC_ID);
         $req->setValue($VALUE);
@@ -580,9 +580,9 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_updateBalance_accountExists() {
-        $ACC_ID    = 321;
+        $ACC_ID = 321;
         $VAL_SAVED = 546;
-        $VAL_INC   = -32;
+        $VAL_INC = -32;
         /**
          * Create mocks.
          */
@@ -639,7 +639,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
          * Prepare request and perform call.
          */
         $call = Config::get()->serviceOperations();
-        $req  = $call->requestUpdateBalance();
+        $req = $call->requestUpdateBalance();
         $req->setAccountId($ACC_ID);
         $req->setValue($VAL_INC);
         $req->setPeriod(Config::PERIOD_KEY_NOW);
@@ -650,7 +650,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
     }
 
     public function test_updateBalance_accountNew() {
-        $ACC_ID  = 321;
+        $ACC_ID = 321;
         $VAL_INC = 32;
         /**
          * Create mocks.
@@ -716,7 +716,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_UnitTest
          * Prepare request and perform call.
          */
         $call = Config::get()->serviceOperations();
-        $req  = $call->requestUpdateBalance();
+        $req = $call->requestUpdateBalance();
         $req->setAccountId($ACC_ID);
         $req->setValue($VAL_INC);
         $resp = $call->updateBalance($req);

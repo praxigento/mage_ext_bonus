@@ -64,7 +64,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract {
      * @return Mage_Customer_Model_Customer|null
      */
     public function getUplineFromSession() {
-        $proc   = Config::get()->singleton('nmmlm_core_model/own_referral_customer_processor');
+        $proc = Config::get()->singleton('nmmlm_core_model/own_referral_customer_processor');
         $result = $proc->sessionGetUpline();
         return $result;
     }

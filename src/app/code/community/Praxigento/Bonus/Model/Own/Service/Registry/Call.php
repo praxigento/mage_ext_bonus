@@ -44,8 +44,8 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
     public function getUnprocessedBonusesCount(GetUnprocessedBonusesCountRequest $req) {
         /** @var  $result GetUnprocessedBonusesCountResponse */
         $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedBonusesCount');
-        $data   = $this->_readUnprocessedBonuses();
-        $count  = count($data);
+        $data = $this->_readUnprocessedBonuses();
+        $count = count($data);
         $result->setCount($count);
         return $result;
     }
@@ -59,24 +59,24 @@ class Praxigento_Bonus_Model_Own_Service_Registry_Call
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Mage::getSingleton('core/resource');
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
-        $conn        = $rsrc->getConnection('core_write');
-        $tblSales    = $rsrc->getTableName('sales/order');
-        $tblRetail   = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
-        $entityId    = 'entity_id';
-        $id          = BonusOrder::ATTR_ID;
-        $orderId     = BonusOrder::ATTR_ORDER_ID;
-        $customerId  = BonusOrder::ATTR_UPLINE_ID;
-        $transactId  = BonusOrder::ATTR_TRANSACT_ID;
+        $conn = $rsrc->getConnection('core_write');
+        $tblSales = $rsrc->getTableName('sales/order');
+        $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
+        $entityId = 'entity_id';
+        $id = BonusOrder::ATTR_ID;
+        $orderId = BonusOrder::ATTR_ORDER_ID;
+        $customerId = BonusOrder::ATTR_UPLINE_ID;
+        $transactId = BonusOrder::ATTR_TRANSACT_ID;
         $amountBonus = BonusOrder::ATTR_AMOUNT;
-        $amountFee   = BonusOrder::ATTR_FEE;
-        $currency    = BonusOrder::ATTR_CURR;
-        $asId        = self::AS_ID;
-        $asOrderId   = self::AS_ORDER_ID;
-        $asCustId    = self::AS_CUSTOMER_ID;
+        $amountFee = BonusOrder::ATTR_FEE;
+        $currency = BonusOrder::ATTR_CURR;
+        $asId = self::AS_ID;
+        $asOrderId = self::AS_ORDER_ID;
+        $asCustId = self::AS_CUSTOMER_ID;
         $asAmntBonus = self::AS_AMOUNT_BONUS;
-        $asAmntFee   = self::AS_AMOUNT_FEE;
-        $asCurr      = self::AS_CURR;
-        $query       = "
+        $asAmntFee = self::AS_AMOUNT_FEE;
+        $asCurr = self::AS_CURR;
+        $query = "
 SELECT
   $tblRetail.$id AS $asId,
   $tblRetail.$orderId AS $asOrderId,
@@ -93,16 +93,16 @@ WHERE
   ) AND
   ($tblRetail.$amountBonus > 0)
 ";
-        $rs          = $conn->query($query);
-        $result      = $rs->fetchAll();
+        $rs = $conn->query($query);
+        $result = $rs->fetchAll();
         return $result;
     }
 
     public function getUnprocessedTransactionsCount(GetUnprocessedTransactionsCountRequest $req) {
         /** @var  $result GetUnprocessedTransactionsCountResponse */
         $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedTransactionsCount');
-        $data   = $this->_readUnprocessedTransactions();
-        $count  = count($data);
+        $data = $this->_readUnprocessedTransactions();
+        $count = count($data);
         $result->setCount($count);
         return $result;
     }
@@ -118,10 +118,10 @@ WHERE
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
         $conn = $rsrc->getConnection('core_write');
         /* tables */
-        $tblTransact       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_TRANSACT);
+        $tblTransact = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_TRANSACT);
         $tblPayoutTransact = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT);
         /* perform query */
-        $query  = "
+        $query = "
 SELECT
   pbt.*
 FROM $tblTransact AS pbt
@@ -130,7 +130,7 @@ FROM $tblTransact AS pbt
 WHERE
   (pbpt.payout_id IS NULL)
 ";
-        $rs     = $conn->query($query);
+        $rs = $conn->query($query);
         $result = $rs->fetchAll();
         return $result;
     }
@@ -138,8 +138,8 @@ WHERE
     public function getUnprocessedPayoutsCount(GetUnprocessedPayoutsCountRequest $req) {
         /** @var  $result GetUnprocessedPayoutsCountResponse */
         $result = Mage::getModel('prxgt_bonus_model/service_registry_response_getUnprocessedPayoutsCount');
-        $data   = $this->_readUnprocessedPayouts();
-        $count  = count($data);
+        $data = $this->_readUnprocessedPayouts();
+        $count = count($data);
         $result->setCount($count);
         return $result;
     }
@@ -157,14 +157,14 @@ WHERE
         /* tables */
         $tblPayout = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT);
         /* perform query */
-        $query  = "
+        $query = "
 SELECT
   pbt.*
 FROM $tblPayout AS pbt
 WHERE
   (pbt.reference IS NULL)
 ";
-        $rs     = $conn->query($query);
+        $rs = $conn->query($query);
         $result = $rs->fetchAll();
         return $result;
     }
@@ -182,7 +182,7 @@ WHERE
             $count = count($items);
             $this->_log->debug("Total $count payouts should be processed to create payments.");
             if($count) {
-                $refs   = array();
+                $refs = array();
                 $payout = Mage::getModel('prxgt_bonus_model/payout');
                 foreach($items as $one) {
                     $ref = $this->_createOnePayment($one);
@@ -255,22 +255,22 @@ WHERE
     }
 
     protected function _createOnePayout($data, $desc) {
-        $result   = null;
-        $payout   = Mage::getModel('prxgt_bonus_model/payout');
+        $result = null;
+        $payout = Mage::getModel('prxgt_bonus_model/payout');
         $transact = Mage::getModel('prxgt_bonus_model/transact');
         /* calculate payout attributes */
         /* customer id & currency should be the same for all items in $data */
-        $first      = reset($data);
+        $first = reset($data);
         $customerId = $first[ Transact::ATTR_CUSTOMER_ID ];
-        $currency   = $first[ Transact::ATTR_CURR ];
-        $amount     = 0;
-        $isFailed   = false;
+        $currency = $first[ Transact::ATTR_CURR ];
+        $amount = 0;
+        $isFailed = false;
         foreach($data as $one) {
-            $oneId         = $one[ Transact::ATTR_ID ];
+            $oneId = $one[ Transact::ATTR_ID ];
             $oneCustomerId = $one[ Transact::ATTR_CUSTOMER_ID ];
-            $oneAmount     = $one[ Transact::ATTR_AMOUNT ];
-            $oneCurr       = $one[ Transact::ATTR_CURR ];
-            $oneCreated    = $one[ Transact::ATTR_DATE_CREATED ];
+            $oneAmount = $one[ Transact::ATTR_AMOUNT ];
+            $oneCurr = $one[ Transact::ATTR_CURR ];
+            $oneCreated = $one[ Transact::ATTR_DATE_CREATED ];
             $this->_log->trace("Collect transaction #$oneId for customer #$oneCustomerId on $oneAmount $oneCurr at $oneCreated.");
             if($oneCustomerId != $customerId) {
                 $this->_log->error("Cannot collect transaction to payout - customer is mismatched.");
@@ -318,8 +318,8 @@ WHERE
         $result = Mage::getModel('prxgt_bonus_model/service_registry_response_createTransactions');
         if($this->_helper->cfgRetailBonusEnabled()) {
             $idsCreated = array();
-            $ids        = $this->_readUnprocessedBonuses();
-            $count      = count($ids);
+            $ids = $this->_readUnprocessedBonuses();
+            $count = count($ids);
             $this->_log->debug("Total $count bonuses should be processed to create transactions.");
             foreach($ids as $one) {
                 $newId = $this->_createOneTransaction($one);
@@ -344,7 +344,7 @@ WHERE
      */
     protected function _createOneTransaction($data) {
         $transact = Mage::getModel('prxgt_bonus_model/transact');
-        $retail   = Mage::getModel('prxgt_bonus_model/order');
+        $retail = Mage::getModel('prxgt_bonus_model/order');
         /* start transaction */
         $conn = Mage::getSingleton('core/resource')->getConnection('core_write');
         try {
@@ -382,8 +382,8 @@ WHERE
              * Prepare processing data.
              */
             /** @var  $order Mage_Sales_Model_Order */
-            $order      = $req->getOrder();
-            $orderId    = $order->getId();
+            $order = $req->getOrder();
+            $orderId = $order->getId();
             $customerId = $order->getCustomerId();
             /** @var  $customer Mage_Customer_Model_Customer */
             $customer = Mage::getModel('customer/customer')->load($customerId);
@@ -394,40 +394,40 @@ WHERE
                 $upline = $this->_helper->getUplineFromSession();
             }
             if($upline && $upline->getId()) {
-                $uplineId  = $upline->getId();
+                $uplineId = $upline->getId();
                 $bonusCurr = $order->getBaseCurrencyCode();
                 /**
                  * Compose upline's quote from customer order.
                  */
-                $call   = Mage::getModel('prxgt_bonus_model/service_replica_call');
+                $call = Mage::getModel('prxgt_bonus_model/service_replica_call');
                 $reqRep = Mage::getModel('prxgt_bonus_model/service_replica_request_createQuoteFromOrder');
                 $reqRep->setCustomer($upline);
                 $reqRep->setOrder($order);
                 $respRep = $call->createQuoteFromOrder($reqRep);
-                $quote   = $respRep->getQuote();
+                $quote = $respRep->getQuote();
                 /**
                  * Calculate bonus value.
                  */
                 /* customer order */
-                $orderBaseShipping   = $order->getBaseShippingAmount();
-                $orderBaseTax        = $order->getBaseTaxAmount();
+                $orderBaseShipping = $order->getBaseShippingAmount();
+                $orderBaseTax = $order->getBaseTaxAmount();
                 $orderBaseGrandTotal = $order->getBaseGrandTotal();
-                $orderAmount         = $orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping;
-                $orderAmount         = $this->_helper->formatAmount($orderAmount);
+                $orderAmount = $orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping;
+                $orderAmount = $this->_helper->formatAmount($orderAmount);
                 $this->_logRetailBonusOrder($order);
                 $this->_log->trace("Order #$orderId amount to calculate retail bonus: $orderAmount $bonusCurr ($orderBaseGrandTotal - $orderBaseTax - $orderBaseShipping [grand - tax - shipping]).");
                 /* upline quote */
-                $quoteBaseShipping   = $this->_calcRetailBonusQuoteShipping($quote);
-                $quoteBaseTax        = $this->_calcRetailBonusQuoteTax($quote);
+                $quoteBaseShipping = $this->_calcRetailBonusQuoteShipping($quote);
+                $quoteBaseTax = $this->_calcRetailBonusQuoteTax($quote);
                 $quoteBaseGrandTotal = $quote->getBaseGrandTotal();
-                $quoteAmount         = $quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping;
-                $quoteAmount         = $this->_helper->formatAmount($quoteAmount);
+                $quoteAmount = $quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping;
+                $quoteAmount = $this->_helper->formatAmount($quoteAmount);
                 $this->_logRetailBonusQuote($quote);
                 $this->_log->trace("Quote for order #$orderId amount to calculate retail bonus: $quoteAmount $bonusCurr ($quoteBaseGrandTotal - $quoteBaseTax - $quoteBaseShipping [grand - tax - shipping]).");
                 /* bonus */
                 $bonusAmount = $orderAmount - $quoteAmount;
-                $bonusFee    = $this->_calcRetailBonusFee($bonusAmount);
-                $bonusFinal  = $bonusAmount - $bonusFee;
+                $bonusFee = $this->_calcRetailBonusFee($bonusAmount);
+                $bonusFinal = $bonusAmount - $bonusFee;
                 $this->_log->trace("New retail bonus ($bonusFinal $bonusCurr) based on order #$orderId is calculated for customer #$uplineId.");
                 /**
                  * Save bonus value.
@@ -458,22 +458,22 @@ WHERE
     }
 
     private function _logRetailBonusOrder(Mage_Sales_Model_Order $order) {
-        $incId   = $order->getIncrementId();
-        $items   = $order->getAllItems();
-        $total   = count($items);
+        $incId = $order->getIncrementId();
+        $items = $order->getAllItems();
+        $total = count($items);
         $storeId = $order->getStoreId();
         $this->_log->trace("Order #$incId; total items: $total; store: $storeId;");
         foreach($items as $item) {
             /** @var $item Mage_Sales_Model_Order_Item */
-            $itemId       = $item->getId();
-            $sku          = $item->getSku();
-            $qty          = $item->getQtyOrdered();
-            $price        = $item->getBasePrice();
-            $tax          = $item->getBaseTaxAmount();
-            $discount     = $item->getBaseDiscountAmount();
-            $rowTotal     = $item->getBaseRowTotal();
-            $pvUnit       = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
-            $pvTotal      = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
+            $itemId = $item->getId();
+            $sku = $item->getSku();
+            $qty = $item->getQtyOrdered();
+            $price = $item->getBasePrice();
+            $tax = $item->getBaseTaxAmount();
+            $discount = $item->getBaseDiscountAmount();
+            $rowTotal = $item->getBaseRowTotal();
+            $pvUnit = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
+            $pvTotal = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
             $appliedRules = $item->getAppliedRuleIds();
             $this->_log->trace("\tItem data: ID: $itemId; SKU: $sku; Qty: $qty; Price: $price; Discount: $discount; Tax: $tax; Total: $rowTotal; PV Unit: $pvUnit; PV Total: $pvTotal; Sales Rules: $appliedRules;");
         }
@@ -482,33 +482,33 @@ WHERE
     protected function _calcRetailBonusQuoteShipping(Mage_Sales_Model_Quote $quote) {
         /** @var  $shipping */
         $shipping = $quote->getShippingAddress();
-        $result   = $shipping->getBaseShippingAmount();
+        $result = $shipping->getBaseShippingAmount();
         return $result;
     }
 
     protected function _calcRetailBonusQuoteTax(Mage_Sales_Model_Quote $quote) {
         /** @var  $shipping */
         $shipping = $quote->getShippingAddress();
-        $result   = $shipping->getBaseTaxAmount();
+        $result = $shipping->getBaseTaxAmount();
         return $result;
     }
 
     private function _logRetailBonusQuote(Mage_Sales_Model_Quote $quote) {
-        $items   = $quote->getAllItems();
-        $total   = count($items);
+        $items = $quote->getAllItems();
+        $total = count($items);
         $storeId = $quote->getStoreId();
         $this->_log->trace("New quote; total items: $total; store: $storeId;");
         foreach($items as $item) {
             /** @var $item Mage_Sales_Model_Quote_Item */
-            $itemId       = $item->getId();
-            $sku          = $item->getSku();
-            $qty          = $item->getQtyOrdered();
-            $price        = $item->getBasePrice();
-            $tax          = $item->getBaseTaxAmount();
-            $discount     = $item->getBaseDiscountAmount();
-            $rowTotal     = $item->getBaseRowTotal();
-            $pvUnit       = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
-            $pvTotal      = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
+            $itemId = $item->getId();
+            $sku = $item->getSku();
+            $qty = $item->getQtyOrdered();
+            $price = $item->getBasePrice();
+            $tax = $item->getBaseTaxAmount();
+            $discount = $item->getBaseDiscountAmount();
+            $rowTotal = $item->getBaseRowTotal();
+            $pvUnit = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_UNIT);
+            $pvTotal = $item->getData(Nmmlm_Core_Config::ATTR_COMMON_PV_TOTAL);
             $appliedRules = $item->getAppliedRuleIds();
             $this->_log->trace("\tItem data: ID: $itemId; SKU: $sku; Qty: $qty; Price: $price; Discount: $discount; Tax: $tax; Total: $rowTotal; PV Unit: $pvUnit; PV Total: $pvTotal; Sales Rules: $appliedRules;");
         }
@@ -517,14 +517,14 @@ WHERE
     protected function _calcRetailBonusFee($amount) {
         $result = 0;
         if($amount > 0) {
-            $fixed   = $this->_helper->cfgRetailBonusFeeFixed();
+            $fixed = $this->_helper->cfgRetailBonusFeeFixed();
             $percent = $this->_helper->cfgRetailBonusFeePercent();
-            $min     = $this->_helper->cfgRetailBonusFeeMin();
-            $max     = $this->_helper->cfgRetailBonusFeeMax();
-            $result  = $fixed + $amount * $percent;
-            $result  = ($result < $min) ? $min : $result;
-            $result  = ($result > $max) ? $max : $result;
-            $result  = $this->_helper->formatAmount($result);
+            $min = $this->_helper->cfgRetailBonusFeeMin();
+            $max = $this->_helper->cfgRetailBonusFeeMax();
+            $result = $fixed + $amount * $percent;
+            $result = ($result < $min) ? $min : $result;
+            $result = ($result > $max) ? $max : $result;
+            $result = $this->_helper->formatAmount($result);
             $this->_log->trace("Retail bonus fee for amount $amount is $result ($min < [$fixed + $amount * $percent] < $max).");
         } else {
             $this->_log->trace("Retail bonus fee for amount $amount is not calculated (=0.00).");

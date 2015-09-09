@@ -35,9 +35,9 @@ class Praxigento_Bonus_Service_Period_Call
         /** @var  $result GetPeriodForPvWriteOffResponse */
         $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPvWriteOff');
         /* define parameters for lookup */
-        $calcTypeId  = $this->_helperType->getCalcId(Config::CALC_PV_WRITE_OFF);
+        $calcTypeId = $this->_helperType->getCalcId(Config::CALC_PV_WRITE_OFF);
         $operTypeIds = $this->_helperType->getOperIdsForPvWriteOff();
-        $result      = $this->_getPeriodForPersonalBonus_base($calcTypeId, $operTypeIds, $result);
+        $result = $this->_getPeriodForPersonalBonus_base($calcTypeId, $operTypeIds, $result);
         return $result;
     }
 
@@ -56,14 +56,14 @@ class Praxigento_Bonus_Service_Period_Call
         GetPeriodForPersonalBonusBaseResponse $result
     ) {
         /* define common data */
-        $periodCode   = $this->_helper->cfgPersonalBonusPeriod();
+        $periodCode = $this->_helper->cfgPersonalBonusPeriod();
         $periodTypeId = $this->_helperType->getPeriodId($periodCode);
         /* populate response */
         $result->setCalculationTypeId($calcTypeId);
         $result->setPeriodTypeCode($periodCode);
         $result->setPeriodTypeId($periodTypeId);
         /* get period in 'processing' state */
-        $asLog   = 'log';
+        $asLog = 'log';
         $periods = $this->_getCalcPeriodsCollection($asLog);
         $periods->addFieldToFilter(Period::ATTR_CALC_TYPE_ID, $calcTypeId);
         $periods->addFieldToFilter(Period::ATTR_TYPE, $periodTypeId);
@@ -73,8 +73,8 @@ class Praxigento_Bonus_Service_Period_Call
         if($periods->getSize()) {
             /* there is desired period in 'processing' state */
             /** @var  $item Praxigento_Bonus_Model_Own_Period */
-            $item  = $periods->getFirstItem();
-            $id    = $item->getData(Period::ATTR_ID);
+            $item = $periods->getFirstItem();
+            $id = $item->getData(Period::ATTR_ID);
             $value = $item->getData(Period::ATTR_VALUE);
             $result->setExistingPeriodId($id);
             $result->setExistingLogCalcId($item->getData(self::AS_LOG_ID));
@@ -92,23 +92,23 @@ class Praxigento_Bonus_Service_Period_Call
             // WHERE (type = '8') AND (type = '1') AND (log.state = 'complete')
             if($periods->getSize()) {
                 $periodLast = $periods->getFirstItem();
-                $value      = $periodLast->getData(Period::ATTR_VALUE);
-                $next       = $this->_helperPeriod->calcPeriodNext($value, $periodCode);
+                $value = $periodLast->getData(Period::ATTR_VALUE);
+                $next = $this->_helperPeriod->calcPeriodNext($value, $periodCode);
                 $result->setPeriodValue($next);
                 $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
             } else {
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
                 $collection = Config::get()->collectionTransaction();
-                $asOper     = 'o';
-                $table      = array( $asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION );
-                $cond       = 'main_table.' . Transaction::ATTR_OPERATION_ID . '='
-                              . $asOper . '.' . Operation::ATTR_ID;
+                $asOper = 'o';
+                $table = array( $asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION );
+                $cond = 'main_table.' . Transaction::ATTR_OPERATION_ID . '='
+                        . $asOper . '.' . Operation::ATTR_ID;
                 $collection->join($table, $cond);
                 /* add filter by operation types */
-                $fields  = array();
+                $fields = array();
                 $opTypes = array();
                 foreach($operTypeIds as $one) {
-                    $fields[]  = $asOper . '.' . Operation::ATTR_TYPE_ID;
+                    $fields[] = $asOper . '.' . Operation::ATTR_TYPE_ID;
                     $opTypes[] = $one;
                 }
                 $collection->addFieldToFilter($fields, $opTypes);
@@ -118,7 +118,7 @@ class Praxigento_Bonus_Service_Period_Call
                 );
                 $sql = (string)$collection->getSelectSql();
                 if($collection->getSize()) {
-                    $item        = $collection->getFirstItem();
+                    $item = $collection->getFirstItem();
                     $dateApplied = $item->getData(Transaction::ATTR_DATE_APPLIED);
                     $result->setPeriodValue($this->_helperPeriod->calcPeriodCurrent($dateApplied, $periodCode));
                     $result->setErrorCode(GetPeriodForPersonalBonusResponse::ERR_NO_ERROR);
@@ -133,10 +133,10 @@ class Praxigento_Bonus_Service_Period_Call
 
     private function  _getCalcPeriodsCollection($as) {
         $result = Config::get()->collectionPeriod();
-        $table  = array( $as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC );
-        $cond   = 'main_table.' . Period::ATTR_ID . '='
-                  . $as . '.' . LogCalc::ATTR_PERIOD_ID;
-        $cols   = array(
+        $table = array( $as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC );
+        $cond = 'main_table.' . Period::ATTR_ID . '='
+                . $as . '.' . LogCalc::ATTR_PERIOD_ID;
+        $cols = array(
             self::AS_LOG_ID => LogCalc::ATTR_ID,
             LogCalc::ATTR_DATE_PERFORMED,
             LogCalc::ATTR_STATE
@@ -154,14 +154,14 @@ class Praxigento_Bonus_Service_Period_Call
      */
     public function registerPeriodCalculation(RegisterPeriodCalculationRequest $req) {
         /** @var  $result RegisterPeriodCalculationResponse */
-        $result  = Mage::getModel('prxgt_bonus_service/period_response_registerPeriodCalculation');
-        $period  = Config::get()->modelPeriod();
+        $result = Mage::getModel('prxgt_bonus_service/period_response_registerPeriodCalculation');
+        $period = Config::get()->modelPeriod();
         $logCalc = Config::get()->modelLogCalc();
         /* shortcuts for request data */
-        $periodId     = $req->getPeriodId();
-        $periodValue  = $req->getPeriodValue();
-        $logCalcId    = $req->getLogCalcId();
-        $typeCalcId   = $req->getTypeCalcId();
+        $periodId = $req->getPeriodId();
+        $periodValue = $req->getPeriodValue();
+        $logCalcId = $req->getLogCalcId();
+        $typeCalcId = $req->getTypeCalcId();
         $typePeriodId = $req->getTypePeriodId();
         if(is_null($periodId)) {
             /* look up for existing period by calculation type and period value */
@@ -239,9 +239,9 @@ class Praxigento_Bonus_Service_Period_Call
         /** @var  $result GetPeriodForPersonalBonusResponse */
         $result = Mage::getModel('prxgt_bonus_service/period_response_getPeriodForPersonalBonus');
         /* define parameters for lookup */
-        $calcTypeId  = $this->_helperType->getCalcId(Config::CALC_BONUS_PERSONAL);
+        $calcTypeId = $this->_helperType->getCalcId(Config::CALC_BONUS_PERSONAL);
         $operTypeIds = $this->_helperType->getOperIdsForPersonalBonus();
-        $result      = $this->_getPeriodForPersonalBonus_base($calcTypeId, $operTypeIds, $result);
+        $result = $this->_getPeriodForPersonalBonus_base($calcTypeId, $operTypeIds, $result);
         return $result;
     }
 

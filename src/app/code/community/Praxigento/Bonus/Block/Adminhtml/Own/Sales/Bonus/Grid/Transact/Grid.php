@@ -69,22 +69,22 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
     protected function _prepareCollection() {
         /** @var  $collection Praxigento_Bonus_Resource_Own_Transact_Collection */
         $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_transact_collection');
-        $rsrc       = $collection->getResource();
-        $conn       = $rsrc->getReadConnection();
+        $rsrc = $collection->getResource();
+        $conn = $rsrc->getReadConnection();
         /* JOIN customer_entity */
-        $tbl  = array( 'cust' => 'customer/entity' );
+        $tbl = array( 'cust' => 'customer/entity' );
         $cond = 'main_table.' . Transact::ATTR_CUSTOMER_ID . '=cust.entity_id';
         $cols = array(
             self::AS_BONUS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID
         );
         $collection->join($tbl, $cond, $cols);
         /* JOIN prxgt_bonus_order */
-        $tbl  = array( 'bord' => Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER );
+        $tbl = array( 'bord' => Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER );
         $cond = 'main_table.' . Transact::ATTR_ID . '=bord.' . Order::ATTR_TRANSACT_ID;
         $cols = array();
         $collection->join($tbl, $cond, $cols);
         /* JOIN sales_flat_order */
-        $tbl  = array( 'sord' => $rsrc->getTable('sales/order') );
+        $tbl = array( 'sord' => $rsrc->getTable('sales/order') );
         $cond = 'bord.' . Order::ATTR_ORDER_ID . '=sord.entity_id';
         $cols = array(
             self::AS_ORDER_INC_ID    => 'increment_id',
@@ -93,14 +93,14 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
         );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN customer_entity as order customer*/
-        $tbl  = array( 'ocust' => $rsrc->getTable('customer/entity') );
+        $tbl = array( 'ocust' => $rsrc->getTable('customer/entity') );
         $cond = 'sord.customer_id=ocust.entity_id';
         $cols = array(
             self::AS_ORDER_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID
         );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN payout_transact */
-        $tbl  = array( 'pt' => $rsrc->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT) );
+        $tbl = array( 'pt' => $rsrc->getTable(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_PAYOUT_TRANSACT) );
         $cond = 'main_table.' . Transact::ATTR_ID . '=pt.' . PayoutTransact::ATTR_TRANSACT_ID;
         $cols = array( self::AS_PAYOUT => PayoutTransact::ATTR_PAYOUT_ID );
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
@@ -108,20 +108,20 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
          * JOIN bonus customer first and last names
          */
         /* JOIN first name */
-        $tbl  = array( 'bfirsta' => $rsrc->getTable('eav/attribute') );
+        $tbl = array( 'bfirsta' => $rsrc->getTable('eav/attribute') );
         $cond = 'bfirsta.entity_type_id=1 AND bfirsta.attribute_code=\'firstname\'';
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
-        $tbl  = array( 'bfirst' => $conn->getTableName('customer_entity_varchar') );
+        $tbl = array( 'bfirst' => $conn->getTableName('customer_entity_varchar') );
         $cond = 'bfirst.attribute_id=bfirsta.attribute_id AND bfirst.entity_id=main_table.' . Transact::ATTR_CUSTOMER_ID;
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
         /* JOIN last name */
-        $tbl  = array( 'blasta' => $rsrc->getTable('eav/attribute') );
+        $tbl = array( 'blasta' => $rsrc->getTable('eav/attribute') );
         $cond = 'blasta.entity_type_id=1 AND blasta.attribute_code=\'lastname\'';
         $cols = array();
         $collection->getSelect()->joinLeft($tbl, $cond, $cols);
-        $tbl  = array( 'blast' => $conn->getTableName('customer_entity_varchar') );
+        $tbl = array( 'blast' => $conn->getTableName('customer_entity_varchar') );
         $cond = 'blast.attribute_id=blasta.attribute_id AND blast.entity_id=main_table.' . Transact::ATTR_CUSTOMER_ID;
         $cols = array(
             self::AS_BONUS_CUST_NAME =>
@@ -136,7 +136,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Transact_Grid
     }
 
     protected function _prepareColumns() {
-        $helper   = Mage::helper(Config::CFG_HELPER);
+        $helper = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
         $this->addColumn(Transact::ATTR_ID, array(

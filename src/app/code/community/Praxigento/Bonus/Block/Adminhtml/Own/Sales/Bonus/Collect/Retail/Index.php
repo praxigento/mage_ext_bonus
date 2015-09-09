@@ -24,18 +24,18 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Retail_Index
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Mage::getSingleton('core/resource');
         /** @var  \Varien_Db_Adapter_Pdo_Mysql */
-        $conn               = $rsrc->getConnection('core_write');
-        $tblSales           = $rsrc->getTableName('sales/order');
-        $tblRetail          = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
-        $as                 = 'NUM';
-        $query              = "SELECT
+        $conn = $rsrc->getConnection('core_write');
+        $tblSales = $rsrc->getTableName('sales/order');
+        $tblRetail = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::CFG_ENTITY_ORDER);
+        $as = 'NUM';
+        $query = "SELECT
   COUNT($tblSales.entity_id) AS $as
 FROM $tblSales
   LEFT OUTER JOIN $tblRetail
     ON $tblSales.entity_id = $tblRetail.order_id
 WHERE $tblRetail.order_id IS NULL";
-        $rs                 = $conn->query($query);
-        $arr                = $rs->fetch();
+        $rs = $conn->query($query);
+        $arr = $rs->fetch();
         $this->_ordersCount = $arr[ $as ];
     }
 }

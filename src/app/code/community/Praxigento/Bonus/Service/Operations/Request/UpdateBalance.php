@@ -11,10 +11,10 @@ class Praxigento_Bonus_Service_Operations_Request_UpdateBalance
     extends Praxigento_Bonus_Service_Base_Request {
     /** @var  int */
     private $_accountId;
-    /** @var  decimal */
-    private $_value;
     /** @var string 20150601 | 201506 | 2015 | NOW */
     private $_period = Praxigento_Bonus_Config::PERIOD_KEY_NOW;
+    /** @var  decimal */
+    private $_value;
 
     /**
      * @return int

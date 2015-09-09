@@ -57,15 +57,15 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
     }
 
     public function test_process() {
-        $DATE_APPLIED      = '2015-06-02 06:59:59';
+        $DATE_APPLIED = '2015-06-02 06:59:59';
         $ACCOUNTANT_ACC_ID = 1;
         /**
          * Create mocks (direct order).
          */
         /* Mock parameters */
-        $PERIOD_VALUE   = '20150903';
-        $PERIOD_CODE    = 'day';
-        $mockParamReq   = $this
+        $PERIOD_VALUE = '20150903';
+        $PERIOD_CODE = 'day';
+        $mockParamReq = $this
             ->getMockBuilder('Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff')
             ->setMethods(array( 'getCollection' ))
             ->getMock();
@@ -163,16 +163,16 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
      * @expectedException Mage_Core_Exception
      */
     public function test_exception() {
-        $DATE_APPLIED      = '2015-06-02 06:59:59';
+        $DATE_APPLIED = '2015-06-02 06:59:59';
         $ACCOUNTANT_ACC_ID = 1;
-        $ERROR_CODE        = 13;
+        $ERROR_CODE = 13;
         /**
          * Create mocks (direct order).
          */
         /* Mock parameters */
-        $PERIOD_VALUE   = '20150903';
-        $PERIOD_CODE    = 'day';
-        $mockParamReq   = $this
+        $PERIOD_VALUE = '20150903';
+        $PERIOD_CODE = 'day';
+        $mockParamReq = $this
             ->getMockBuilder('Praxigento_Bonus_Service_Operations_Response_GetOperationsForPvWriteOff')
             ->setMethods(array( 'getCollection' ))
             ->getMock();

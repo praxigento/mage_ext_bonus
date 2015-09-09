@@ -26,12 +26,12 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Retail_Grid
         /** @var  $collection Praxigento_Bonus_Resource_Own_Order_Collection */
         $collection = Mage::getResourceModel(Config::CFG_MODEL . '/own_order_collection');
         /* JOIN sales_order */
-        $tbl  = array( 'ord' => 'sales/order' );
+        $tbl = array( 'ord' => 'sales/order' );
         $cond = 'main_table.' . Order::ATTR_ORDER_ID . '=ord.entity_id';
         $cols = array( self::AS_ORDER_ID => 'increment_id' );
         $collection->join($tbl, $cond, $cols);
         /* JOIN customer_entity */
-        $tbl  = array( 'cust' => 'customer/entity' );
+        $tbl = array( 'cust' => 'customer/entity' );
         $cond = 'main_table.' . Order::ATTR_UPLINE_ID . '=cust.entity_id';
         $cols = array( self::AS_CUST_ID => Nmmlm_Core_Config::ATTR_CUST_MLM_ID );
         $collection->join($tbl, $cond, $cols);
@@ -43,7 +43,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Grid_Retail_Grid
     }
 
     protected function _prepareColumns() {
-        $helper   = Mage::helper(Config::CFG_HELPER);
+        $helper = Mage::helper(Config::CFG_HELPER);
         $currency = (string)Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
 
         $this->addColumn(Order::ATTR_ID, array(

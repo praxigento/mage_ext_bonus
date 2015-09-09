@@ -22,10 +22,10 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
     public function createQuoteFromOrder(CreateQuoteFromOrderRequest $req) {
         $result = Mage::getModel('prxgt_bonus_model/service_replica_response_createQuoteFromOrder');
         /* extract data from request and load data models */
-        $customer        = $this->_initCustomer($req->getCustomerId(), $req->getCustomer());
+        $customer = $this->_initCustomer($req->getCustomerId(), $req->getCustomer());
         $customerGroupId = $customer->getGroupId();
-        $order           = $this->_initOrder($req->getOrderId(), $req->getOrder());
-        $storeId         = $order->getStoreId();
+        $order = $this->_initOrder($req->getOrderId(), $req->getOrder());
+        $storeId = $order->getStoreId();
         /**
          * Populate quote with order's data.
          */
@@ -114,13 +114,13 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
             /* unregister rules data */
             Mage::unregister($registryKey);
         }
-        $store         = Mage::getModel('core/store')->load($storeId);
+        $store = Mage::getModel('core/store')->load($storeId);
         $ruleDataArray = array(
             'store_id'          => $store->getId(),
             'website_id'        => $store->getWebsiteId(),
             'customer_group_id' => $customerGroupId,
         );
-        $ruleData      = new Varien_Object($ruleDataArray);
+        $ruleData = new Varien_Object($ruleDataArray);
         Mage::register($registryKey, $ruleData);
     }
 
@@ -185,7 +185,7 @@ class Praxigento_Bonus_Model_Own_Service_Replica_Call
         /** @var  $product Mage_Catalog_Model_Product */
         $product = Mage::getModel('catalog/product');
         $product->setStoreId($storeId);
-        $sku       = $orderItem->getSku();
+        $sku = $orderItem->getSku();
         $productId = $product->getIdBySku($sku);
         $product->load($productId);
         /** INTR-706: customer group is used in \Amasty_Table_Model_Carrier_Table::collectRates */

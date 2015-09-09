@@ -14,7 +14,8 @@ abstract class Praxigento_Bonus_Service_Base_Response {
     const ERR_BONUS_DISABLED = 'bonus_is_disabled';
     const ERR_NO_ERROR = 'no_error';
     const ERR_UNDEFINED = 'undefined';
-
+    /** @var  string */
+    private $_errorMessage;
     private $errorCode = self::ERR_UNDEFINED;
 
     /**
@@ -30,9 +31,6 @@ abstract class Praxigento_Bonus_Service_Base_Response {
     public function setErrorMessage($errorMessage) {
         $this->_errorMessage = $errorMessage;
     }
-
-    /** @var  string */
-    private $_errorMessage;
 
     /**
      * @return mixed

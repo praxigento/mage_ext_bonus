@@ -18,7 +18,7 @@ class Praxigento_Bonus_Model_Own_Source_Weekday {
     const WEDNESDAY = 'wednesday';
 
     public function toOptionArray() {
-        $hlp    = Config::get()->helper();
+        $hlp = Config::get()->helper();
         $result = array(
             array(
                 'value' => self::SUNDAY,

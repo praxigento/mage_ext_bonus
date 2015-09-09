@@ -17,7 +17,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Payout_Index
             /** @var  $req Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount */
             $req = Mage::getModel('prxgt_bonus_model/service_registry_request_getUnprocessedTransactionsCount');
             /** @var  $resp Praxigento_Bonus_Model_Own_Service_Registry_Response_GetUnprocessedTransactionsCount */
-            $resp         = $this->getRegistryCall()->getUnprocessedTransactionsCount($req);
+            $resp = $this->getRegistryCall()->getUnprocessedTransactionsCount($req);
             $this->_count = $resp->getCount();
         }
         return $this->_count;

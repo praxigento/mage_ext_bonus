@@ -21,7 +21,7 @@ class Praxigento_Bonus_Test_Model_Own_Source_Weekday_UnitTest extends PHPUnit_Fr
 
     public function test_toOptionArray() {
         /** @var  $model Praxigento_Bonus_Model_Own_Source_Weekday */
-        $model   = Config::get()->model('prxgt_bonus_model/source_weekday');
+        $model = Config::get()->model('prxgt_bonus_model/source_weekday');
         $options = $model->toOptionArray();
         $this->assertTrue(is_array($options));
         $this->assertEquals(7, count($options));

@@ -20,7 +20,7 @@ if(!function_exists('prxgt_install_recreate_column')) {
      */
     function prxgt_install_recreate_column(Varien_Db_Adapter_Pdo_Mysql $conn, $table, $column, $columnDef, $columnOld = null) {
         $columnTmp = $column . '_tmp';
-        $fetched   = $conn->fetchAll("SELECT * FROM $table LIMIT 1");
+        $fetched = $conn->fetchAll("SELECT * FROM $table LIMIT 1");
 
         // analyze old named column data
         $oldColumnExists = (!is_null($columnOld) && is_array($fetched) && isset($fetched[0]) && array_key_exists($columnOld, $fetched[0]));

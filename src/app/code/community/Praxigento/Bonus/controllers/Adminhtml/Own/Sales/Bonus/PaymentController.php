@@ -27,9 +27,9 @@ class Praxigento_Bonus_Adminhtml_Own_Sales_Bonus_PaymentController extends Mage_
             /* prevent memory exhausting */
             ini_set('memory_limit', '-1');
             /* process orders */
-            $call  = Mage::getModel('prxgt_bonus_model/service_registry_call');
-            $req   = Mage::getModel('prxgt_bonus_model/service_registry_request_createPayments');
-            $resp  = $call->createPayments($req);
+            $call = Mage::getModel('prxgt_bonus_model/service_registry_call');
+            $req = Mage::getModel('prxgt_bonus_model/service_registry_request_createPayments');
+            $resp = $call->createPayments($req);
             $count = count($resp->getPaymentsRefs());
             $block->setCreatedCount($count);
         }

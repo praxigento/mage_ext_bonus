@@ -78,9 +78,9 @@ class Praxigento_Bonus_Test_Service_Calculation_Call_UnitTest
     }
 
     public function test_calcPvWriteOff_process() {
-        $PERIOD_VALUE     = '20150904';
+        $PERIOD_VALUE = '20150904';
         $PERIOD_TYPE_CODE = 123;
-        $LOG_CALC_ID      = 654;
+        $LOG_CALC_ID = 654;
         /**
          * Create mocks (direct order).
          */

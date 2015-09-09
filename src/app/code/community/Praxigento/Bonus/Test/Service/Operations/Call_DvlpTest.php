@@ -25,7 +25,7 @@ class Praxigento_Bonus_Test_Service_Operations_Call_DvlpTest
     public function test_getOperationsForPvWriteOff() {
         /** @var  $call Praxigento_Bonus_Service_Operations_Call */
         $call = Config::get()->serviceOperations();
-        $req  = $call->requestGetOperationsForPvWriteOff();
+        $req = $call->requestGetOperationsForPvWriteOff();
         $req->setLogCalcId(null);
         $req->setPeriodCode(Config::PERIOD_DAY);
         $req->setPeriodValue('20150601');
