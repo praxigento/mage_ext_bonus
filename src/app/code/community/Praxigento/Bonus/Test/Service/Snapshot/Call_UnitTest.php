@@ -18,6 +18,14 @@ include_once('../../phpunit_bootstrap.php');
 class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
     extends PHPUnit_Framework_TestCase {
 
+
+    /**
+     * Reset Config before each test.
+     */
+    public function setUp() {
+        Config::set(null);
+    }
+
     public function test_constructor() {
         /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
         $call = Config::get()->serviceSnapshot();
@@ -78,8 +86,10 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
     public function test_requests() {
         /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
         $call = Config::get()->serviceSnapshot();
-        $req  = $call->requestComposeDownlineSnapshot();
+        $req = $call->requestComposeDownlineSnapshot();
         $this->assertTrue($req instanceof Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot);
+        $req = $call->requestValidateDownlineSnapshot();
+        $this->assertTrue($req instanceof Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot);
     }
 
 }

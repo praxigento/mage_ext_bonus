@@ -5,8 +5,11 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
+use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot as ComposeDownlineSnapshotRequest;
+use Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot as ValidateDownlineSnapshotRequest;
 use Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot as ComposeDownlineSnapshotResponse;
+use Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot as ValidateDownlineSnapshotResponse;
 
 /**
  *
@@ -70,12 +73,79 @@ class Praxigento_Bonus_Service_Snapshot_Call
     }
 
     /**
+     * @param Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot $req
+     *
+     * @return Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot
+     */
+    public function validateDownlineSnapshot(ValidateDownlineSnapshotRequest $req) {
+        /** @var  $result ValidateDownlineSnapshotResponse */
+        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
+
+        $periodValue = $this->_helperPeriod->calcPeriodSmallest($req->getPeriodValue());
+        $entries = $this->_hndlDb->getDownlineSnapForPeriod($periodValue, true, $asDepth = 'depth');
+        $allByCustomerId = array();
+        $allOrphans = array();
+        $allWrongPaths = array();
+        $maxDepth = 0;
+        $totalCustomers = count($entries);
+        $totalRoots = 0;
+        foreach($entries as $one) {
+            $custId = $one[ SnapDownline::ATTR_CUSTOMER_ID ];
+            $parentId = $one[ SnapDownline::ATTR_PARENT_ID ];
+            /* register customers */
+            $allByCustomerId[ $custId ] = $one;
+            /* validate parents and save customers without parents */
+            if(!isset($allByCustomerId[ $parentId ])) {
+                $allOrphans[ $custId ] = $one;
+            } else {
+                if($custId == $parentId) {
+                    /* this is root node */
+                    $totalRoots++;
+                } else {
+                    $path = $one[ SnapDownline::ATTR_PATH ];
+                    $parent = $allByCustomerId[ $parentId ];
+                    $pathParent = $parent[ SnapDownline::ATTR_PATH ];
+                    /* validate paths and save customers with wrong paths */
+                    if($path != $pathParent . $parentId . Config::FORMAT_PATH_SEPARATOR) {
+                        $allWrongPaths[ $custId ] = $one;
+                    }
+                }
+            }
+            /* save max depth */
+            $max = (int)$one[ $asDepth ];
+            if($max > $maxDepth) {
+                $maxDepth = $max;
+            }
+        }
+        unset($entries);
+        $result->setAllOrphans($allOrphans);
+        $result->setAllWrongPaths($allWrongPaths);
+        $result->setMaxDepth($maxDepth);
+        $result->setTotalCustomers($totalCustomers);
+        $result->setTotalOrphans(count($allOrphans));
+        $result->setTotalRoots($totalRoots);
+        $result->setTotalWrongPaths(count($allWrongPaths));
+        $result->setErrorCode(ValidateDownlineSnapshotResponse::ERR_NO_ERROR);
+        return $result;
+    }
+
+    /**
      * Request model to be populated.
      *
      * @return Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot
      */
     public function requestComposeDownlineSnapshot() {
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_request_composeDownlineSnapshot');
+        return $result;
+    }
+
+    /**
+     * Request model to be populated.
+     *
+     * @return Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot
+     */
+    public function requestValidateDownlineSnapshot() {
+        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_request_validateDownlineSnapshot');
         return $result;
     }
 }

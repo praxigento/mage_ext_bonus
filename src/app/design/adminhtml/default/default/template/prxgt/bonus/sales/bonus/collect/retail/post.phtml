@@ -9,20 +9,13 @@
  */
 /** @var $this Praxigento_Bonus_Block_Adminhtml_Own_Sales_Bonus_Collect_Retail_Post */
 ?>
-<style>
-    .nmmlmFormLayout {
-        margin: 0 auto;
-        width: 400px;
-    }
-</style>
-
 
 <h2 align="center"><?php $this->ui('Process Retail Bonus') ?></h2>
 
 <div class="nmmlmFormLayout">
 
 
-    <?php if ($this->isRetailBonusEnabled()): ?>
+    <?php if($this->isRetailBonusEnabled()): ?>
 
 
         <div class="nmmlmRow">
@@ -31,11 +24,11 @@
 
         <?php $failed = $this->getFailedOrders(); ?>
 
-        <?php if (count($failed)) : ?>
+        <?php if(count($failed)) : ?>
             <div class="nmmlmRow">
                 <pre>
                     <?php
-                    foreach ($failed as $id => $msg) {
+                    foreach($failed as $id => $msg) {
                         echo "\n$id:\t$msg";
                     }
                     ?>

@@ -258,10 +258,10 @@ class Praxigento_Bonus_Helper_Period {
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('midnight', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $from = date(Config::FORMAT_DATETIME_SQL, $ts);
                 $ts   = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $to = date(Config::FORMAT_DATETIME_SQL, $ts);
                 break;
             case Config::PERIOD_WEEK:
                 /* week period ends on ...  */
@@ -271,28 +271,28 @@ class Praxigento_Bonus_Helper_Period {
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime("previous $prev midnight", $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $from = date(Config::FORMAT_DATETIME_SQL, $ts);
                 $ts   = strtotime('tomorrow midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $to = date(Config::FORMAT_DATETIME_SQL, $ts);
                 break;
             case Config::PERIOD_MONTH:
                 $dt = date_create_from_format('Ym', $period);
                 $ts = strtotime('first day of midnight', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $from = date(Config::FORMAT_DATETIME_SQL, $ts);
                 $ts   = strtotime('first day of next month midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $to = date(Config::FORMAT_DATETIME_SQL, $ts);
                 break;
             case Config::PERIOD_YEAR:
                 $dt = date_create_from_format('Y', $period);
                 $ts = strtotime('first day of January', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $from = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $from = date(Config::FORMAT_DATETIME_SQL, $ts);
                 $ts   = strtotime('first day of January next year midnight -1 second', $dt->getTimestamp());
                 $ts -= self::$_tzDelta;
-                $to = date(Config::FROMAT_DATETIME_SQL, $ts);
+                $to = date(Config::FORMAT_DATETIME_SQL, $ts);
                 break;
         }
         self::$_cachePeriodBounds[ $period ][ $periodCode ]['from'] = $from;

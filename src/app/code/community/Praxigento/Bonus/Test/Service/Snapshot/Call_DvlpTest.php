@@ -33,4 +33,22 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_DvlpTest
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot);
     }
 
+    public function test_validateDownlineSnapshot() {
+        $PERIOD = 'NOW';
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = Config::get()->serviceSnapshot();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot */
+        $req = $call->requestValidateDownlineSnapshot();
+        $req->setPeriodValue($PERIOD);
+        $resp = $call->validateDownlineSnapshot($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot);
+        $this->assertTrue(is_array($resp->getAllOrphans()));
+        $this->assertTrue(is_array($resp->getAllWrongPaths()));
+        $this->assertTrue(is_int($resp->getMaxDepth()));
+        $this->assertTrue(is_int($resp->getTotalCustomers()));
+        $this->assertTrue(is_int($resp->getTotalOrphans()));
+        $this->assertTrue(is_int($resp->getTotalRoots()));
+        $this->assertTrue(is_int($resp->getTotalWrongPaths()));
+    }
+
 }

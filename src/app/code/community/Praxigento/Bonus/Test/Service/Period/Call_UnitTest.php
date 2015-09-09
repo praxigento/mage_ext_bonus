@@ -17,6 +17,14 @@ include_once('../../phpunit_bootstrap.php');
  */
 class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framework_TestCase {
 
+
+    /**
+     * Reset Config before each test.
+     */
+    public function setUp() {
+        Config::set(null);
+    }
+
     public function test_constructor() {
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
@@ -26,7 +34,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     public function test_requests() {
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestPeriodForPersonalBonus();
+        $req = $call->requestPeriodForPersonalBonus();
         $this->assertTrue($req instanceof Praxigento_Bonus_Service_Period_Request_GetPeriodForPersonalBonus);
         $req = $call->requestPeriodForPvWriteOff();
         $this->assertTrue($req instanceof Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff);
@@ -37,7 +45,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
 
     public function test_registerPeriodCalculation_isPeriod_isLog() {
         $PERIOD_ID = 21;
-        $LOG_ID    = 34;
+        $LOG_ID = 34;
         /**
          * Create mocks.
          */
@@ -78,7 +86,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         Config::set($mockCfg);
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodId($PERIOD_ID);
         $req->setLogCalcId($LOG_ID);
         $resp = $call->registerPeriodCalculation($req);
@@ -87,11 +95,11 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     }
 
     public function test_registerPeriodCalculation_foundPeriod_isLog() {
-        $PERIOD_VAL      = '20150601';
-        $CALC_TYPE_ID    = 21;
-        $PERIOD_TYPE_ID  = 54;
+        $PERIOD_VAL = '20150601';
+        $CALC_TYPE_ID = 21;
+        $PERIOD_TYPE_ID = 54;
         $FOUND_PERIOD_ID = 999;
-        $FOUND_CALC_ID   = 888;
+        $FOUND_CALC_ID = 888;
         /**
          * Create mocks.
          */
@@ -159,7 +167,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodValue($PERIOD_VAL);
         $req->setTypeCalcId($CALC_TYPE_ID);
         $req->setTypePeriodId($PERIOD_TYPE_ID);
@@ -170,11 +178,11 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     }
 
     public function test_registerPeriodCalculation_foundPeriod_noLog() {
-        $PERIOD_VAL      = '20150601';
-        $CALC_TYPE_ID    = 21;
-        $PERIOD_TYPE_ID  = 54;
+        $PERIOD_VAL = '20150601';
+        $CALC_TYPE_ID = 21;
+        $PERIOD_TYPE_ID = 54;
         $FOUND_PERIOD_ID = 999;
-        $NEW_CALC_ID     = 888;
+        $NEW_CALC_ID = 888;
         /**
          * Create mocks.
          */
@@ -210,7 +218,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
             ->method('getSize')
             ->will($this->returnValue(0));
         /* calculation model to be saved */
-        $mockCalc         = $this
+        $mockCalc = $this
             ->getMockBuilder('Praxigento_Bonus_Model_Own_Log_Calc')
             ->setMethods(array( 'getId', 'getResource' ))
             ->getMock();
@@ -253,7 +261,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          */
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodValue($PERIOD_VAL);
         $req->setTypeCalcId($CALC_TYPE_ID);
         $req->setTypePeriodId($PERIOD_TYPE_ID);
@@ -264,7 +272,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
 
     public function test_registerPeriodCalculation_isPeriod_noLog() {
         $PERIOD_ID = 21;
-        $LOG_ID    = 34;
+        $LOG_ID = 34;
         /**
          * Create mocks.
          */
@@ -319,7 +327,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         Config::set($mockCfg);
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodId($PERIOD_ID);
         $req->setLogCalcId(null);
         $resp = $call->registerPeriodCalculation($req);
@@ -328,11 +336,11 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     }
 
     public function test_registerPeriodCalculation_noPeriod_noLog_exception() {
-        $PERIOD_VAL      = '20150601';
-        $CALC_TYPE_ID    = 21;
-        $PERIOD_TYPE_ID  = 54;
+        $PERIOD_VAL = '20150601';
+        $CALC_TYPE_ID = 21;
+        $PERIOD_TYPE_ID = 54;
         $FOUND_PERIOD_ID = 999;
-        $NEW_CALC_ID     = 888;
+        $NEW_CALC_ID = 888;
         /**
          * Create mocks.
          */
@@ -413,7 +421,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         Config::set($mockCfg);
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodValue($PERIOD_VAL);
         $req->setTypeCalcId($CALC_TYPE_ID);
         $req->setTypePeriodId($PERIOD_TYPE_ID);
@@ -421,8 +429,8 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
     }
 
     public function test_registerPeriodCalculation_noPeriod_noLog() {
-        $PERIOD_VAL     = '20150601';
-        $CALC_TYPE_ID   = 21;
+        $PERIOD_VAL = '20150601';
+        $CALC_TYPE_ID = 21;
         $PERIOD_TYPE_ID = 54;
         /**
          * Create mocks (direct order).
@@ -514,7 +522,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
         Config::set($mockCfg);
         /** @var  $call Praxigento_Bonus_Service_Period_Call */
         $call = Config::get()->servicePeriod();
-        $req  = $call->requestRegisterPeriodCalculation();
+        $req = $call->requestRegisterPeriodCalculation();
         $req->setPeriodValue($PERIOD_VAL);
         $req->setTypeCalcId($CALC_TYPE_ID);
         $req->setTypePeriodId($PERIOD_TYPE_ID);
@@ -525,7 +533,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      * We should return first period in 'complete' status.
      */
     public function test_getPeriodForPvWriteOff_isPeriod_Complete() {
-        $VAL      = '20150601';
+        $VAL = '20150601';
         $VAL_NEXT = '20150602';
         /**
          * Create mocks.
@@ -579,7 +587,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
         $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
         $resp = $call->getPeriodForPvWriteOff($req);
@@ -593,7 +601,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      */
     public function test_getPeriodForPvWriteOff_isPeriod_Processing() {
         $VAL = '20150601';
-        $ID  = 256;
+        $ID = 256;
         /**
          * Create mocks.
          */
@@ -638,7 +646,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
         $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
         $resp = $call->getPeriodForPvWriteOff($req);
@@ -706,7 +714,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
          * Compose service, prepare request and perform call.
          */
         /** @var  $req  Praxigento_Bonus_Service_Period_Request_GetPeriodForPvWriteOff */
-        $req  = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
+        $req = Mage::getModel('prxgt_bonus_service/period_request_getPeriodForPvWriteOff');
         $call = Config::get()->servicePeriod();
         /** @var  $resp Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff */
         $resp = $call->getPeriodForPvWriteOff($req);
@@ -891,7 +899,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      */
     public function test_getPeriodForPersonalBonus_isPeriod_Processing() {
         $VAL = '20150601';
-        $ID  = 256;
+        $ID = 256;
         /**
          * Create mocks.
          */
@@ -950,7 +958,7 @@ class Praxigento_Bonus_Test_Service_Period_Call_UnitTest extends PHPUnit_Framewo
      * We should return first period in 'complete' status.
      */
     public function test_getPeriodForPersonalBonus_isPeriod_Complete() {
-        $VAL      = '20150601';
+        $VAL = '20150601';
         $VAL_NEXT = '20150602';
         /**
          * Create mocks.

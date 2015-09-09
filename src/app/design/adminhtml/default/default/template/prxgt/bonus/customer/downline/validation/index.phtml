@@ -7,46 +7,55 @@
  */
 ?>
 <?php
+use Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index as BLOCK;
+
 /** @var  $this Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index */
+$periods = $this->getPeriodsAvailable();
 ?>
 <div align="center">
     <h1><?php $this->uiTitle() ?></h1>
 </div>
 
-<style>
-    .nmmlmFormLayout {
-        margin: 0 auto;
-        width: 400px;
-    }
-
-    .nmmlmRow {
-        width: 100%;
-        border-bottom: 1px solid black;
-        margin-top: 10px;
-        padding-bottom: 10px;
-        text-align: center;
-    }
-
-    .nmmlmBtn {
-        text-align: center;
-    }
-</style>
-
 <?php $this->uiScriptFormSubmit() ?>
 
-<div class="nmmlmFormLayout">
+<div class="prxgtFormLayout">
     <form method="post" action="<?php echo $this->getUrl('*/*/preview'); ?>" id="<?php $this->uiDomForm() ?>">
         <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
 
-        <div class="nmmlmRow">
-            <?php $this->ui('Press \'OK\' to validate customer tree integrity.') ?>
-        </div>
+        <?php if(sizeof($periods) == 0): ?>
 
-        <div class="nmmlmRow">
-            <div class="nmmlmBtn">
-                <?php $this->uiButtonSubmit(' OK ') ?>
+            <div class="prxgtRow">
+                <?php $this->ui('There are no periods with downline snapshots.') ?>
             </div>
-            <div class="clear"></div>
-        </div>
+
+        <?php else: ?>
+
+            <div class="prxgtRow">
+                <div class="prxgtRowLabel">
+                    <?php $this->ui('Available periods:') ?>
+                </div>
+                <div class="prxgtRowValue">
+                    <select id="<?php echo BLOCK::DOM_SELECT ?>" name="<?php echo BLOCK::DOM_SELECT ?>">
+                        <?php foreach($periods as $one): ?>
+                            <option><?php echo $one[ Praxigento_Bonus_Model_Own_Snap_Downline::ATTR_PERIOD ] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="prxgtRow">
+                <?php $this->ui('Select period then press \'OK\' to validate downline tree.') ?>
+            </div>
+
+            <div class="prxgtRow">
+                <div class="prxgtBtn">
+                    <?php $this->uiButtonSubmit(' OK ') ?>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+        <?php endif ?>
+
     </form>
 </div>

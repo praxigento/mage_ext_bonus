@@ -15,36 +15,13 @@ $entries = $this->getInvalidEntries();
     <h1><?php $this->uiTitle() ?></h1>
 </div>
 
-<style>
-    TABLE {
-        width: 400px;
-    }
-
-    .nmmlmFormLayout {
-        margin: 0 auto;
-        width: 400px;
-    }
-
-    .nmmlmRow {
-        width: 100%;
-        border-bottom: 1px solid black;
-        margin-top: 10px;
-        padding-bottom: 10px;
-        text-align: center;
-    }
-
-    .nmmlmBtn {
-        text-align: center;
-    }
-</style>
-
 <?php $this->uiScriptFormSubmit() ?>
 
 <div class="nmmlmFormLayout">
     <form method="post" action="<?php echo $this->getUrl('*/*/result'); ?>" id="<?php $this->uiDomForm() ?>">
         <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
 
-        <?php if (sizeof($entries)): ?>
+        <?php if(sizeof($entries)): ?>
 
 
             <div class="nmmlmRow">
@@ -57,7 +34,7 @@ $entries = $this->getInvalidEntries();
                     <th><?php $this->ui('Actual Path') ?></th>
                     <th><?php $this->ui('Expected Path') ?></th>
                 </tr>
-                <?php foreach ($entries as $one): ?>
+                <?php foreach($entries as $one): ?>
                     <tr>
                         <td><?php echo $one->getCustomerIdMlm() ?></td>
                         <td><?php echo $one->getPathActual() ?></td>

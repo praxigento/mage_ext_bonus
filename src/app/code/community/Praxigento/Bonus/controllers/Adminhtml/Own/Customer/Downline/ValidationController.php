@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index as BlockIndex;
 use Praxigento_Bonus_Config as Config;
 
 /**
@@ -34,21 +35,22 @@ class Praxigento_Bonus_Adminhtml_Own_Customer_Downline_ValidationController
      */
     public function previewAction() {
         $this->loadLayout();
-        /** @var  $req Nmmlm_Core_Model_Own_Service_Tree_Validation_Request_Validate */
-        $req = Mage::getModel('nmmlm_core_model/own_service_tree_validation_request_validate');
-        /** @var  $call Nmmlm_Core_Model_Own_Service_Tree_Validation_Call */
-        $call = Mage::getModel('nmmlm_core_model/own_service_tree_validation_call');
-        /** @var  $resp Nmmlm_Core_Model_Own_Service_Tree_Validation_Response_Validate */
-        $resp = $call->validate($req);
-        $entries = $resp->getEntries();
-        /** @var  $block Nmmlm_Core_Block_Adminhtml_Own_Customer_Tree_Validation_Preview */
-        $block = $this->getLayout()->getBlock(self::BLOCK);
-        $block->setInvalidEntries($entries);
+        //        /** @var  $req Nmmlm_Core_Model_Own_Service_Tree_Validation_Request_Validate */
+        //        $req = Mage::getModel('nmmlm_core_model/own_service_tree_validation_request_validate');
+        //        /** @var  $call Nmmlm_Core_Model_Own_Service_Tree_Validation_Call */
+        //        $call = Mage::getModel('nmmlm_core_model/own_service_tree_validation_call');
+        //        /** @var  $resp Nmmlm_Core_Model_Own_Service_Tree_Validation_Response_Validate */
+        //        $resp = $call->validate($req);
+        //        $entries = $resp->getEntries();
+        //        /** @var  $block Nmmlm_Core_Block_Adminhtml_Own_Customer_Tree_Validation_Preview */
+        //        $block = $this->getLayout()->getBlock(self::BLOCK);
+        //        $block->setInvalidEntries($entries);
         $this->renderLayout();
     }
 
     /**
      * Compose page with error fixing results.
+     * TODO remove if unused.
      */
     public function resultAction() {
         $this->loadLayout();

@@ -80,8 +80,8 @@ class Praxigento_Bonus_Config {
      * Formats
      */
 
-    const FROMAT_DATETIME_SQL = 'Y-m-d H:i:s';
-
+    const FORMAT_DATETIME_SQL = 'Y-m-d H:i:s';
+    const FORMAT_PATH_SEPARATOR = Nmmlm_Core_Config::FORMAT_MPS;
     /**
      * Available operations codes.
      */

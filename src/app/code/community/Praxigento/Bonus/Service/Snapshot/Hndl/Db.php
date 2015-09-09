@@ -70,6 +70,39 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     }
 
     /**
+     * Return downline snap data for the given $periodValue and sort it by path depth (if $sortByDepth is 'true',
+     * $asDepth is used as alias for the computed value depth).
+     *
+     * @param            $periodValue
+     * @param bool|false $sortByDepth
+     * @param string     $asDepth
+     *
+     * @return array
+     */
+    public function getDownlineSnapForPeriod($periodValue, $sortByDepth = false, $asDepth = 'depth') {
+        /* convert period to the daily form (201506 => 20150630) */
+        $hlp = Config::get()->helperPeriod();
+        $smallest = $hlp->calcPeriodSmallest($periodValue);
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Config::get()->singleton('core/resource');
+        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $conn = $rsrc->getConnection('core_write');
+        $colPeriod = SnapDownline::ATTR_PERIOD;
+        $colPath = SnapDownline::ATTR_PATH;
+        $ps = Config::FORMAT_PATH_SEPARATOR;
+        $sql = "SELECT * FROM $tbl WHERE $colPeriod=:period";
+        if($sortByDepth) {
+            $sql = "SELECT *, (LENGTH($colPath) - LENGTH(REPLACE($colPath, \"$ps\", \"\"))) as $asDepth" .
+                   "  FROM $tbl WHERE $colPeriod=:period ORDER BY $asDepth ASC";
+        }
+        $result = $conn->fetchAll(
+            $sql,
+            array( 'period' => $smallest )
+        );
+        return $result;
+    }
+
+    /**
      * @param $periodValue
      *
      * @return string|null
