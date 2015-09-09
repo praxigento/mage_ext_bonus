@@ -7,6 +7,83 @@
  */
 ?>
 <?php
-/** @var  $this Nmmlm_Core_Block_Adminhtml_Own_Customer_Tree_Validation_Result */
+
+/** @var  $this Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Result */
+
 ?>
-<p>Result is here</p>
+<div align="center">
+    <h1><?php $this->uiTitle() ?></h1>
+</div>
+
+
+<div class="prxgtFormLayout">
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Validated period:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getPeriodValue() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Total customers:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getTotalCustomers() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Max depth:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getMaxDepth() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Total roots:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getTotalRoots() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Total orphans:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getTotalOrphans() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="prxgtRow">
+        <div class="prxgtRowLabel">
+            <?php $this->ui('Total customers with wrong paths:') ?>
+        </div>
+        <div class="prxgtRowValue">
+            <?php echo $this->getTotalWrongPaths() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+
+    <div class="prxgtRow">
+        <div class="prxgtBtn">
+            <?php $this->uiButtonBack() ?>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+</div>

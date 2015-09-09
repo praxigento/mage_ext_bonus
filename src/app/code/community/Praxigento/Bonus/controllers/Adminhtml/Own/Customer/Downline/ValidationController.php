@@ -33,37 +33,25 @@ class Praxigento_Bonus_Adminhtml_Own_Customer_Downline_ValidationController
     /**
      * Compose page with validation results.
      */
-    public function previewAction() {
-        $this->loadLayout();
-        //        /** @var  $req Nmmlm_Core_Model_Own_Service_Tree_Validation_Request_Validate */
-        //        $req = Mage::getModel('nmmlm_core_model/own_service_tree_validation_request_validate');
-        //        /** @var  $call Nmmlm_Core_Model_Own_Service_Tree_Validation_Call */
-        //        $call = Mage::getModel('nmmlm_core_model/own_service_tree_validation_call');
-        //        /** @var  $resp Nmmlm_Core_Model_Own_Service_Tree_Validation_Response_Validate */
-        //        $resp = $call->validate($req);
-        //        $entries = $resp->getEntries();
-        //        /** @var  $block Nmmlm_Core_Block_Adminhtml_Own_Customer_Tree_Validation_Preview */
-        //        $block = $this->getLayout()->getBlock(self::BLOCK);
-        //        $block->setInvalidEntries($entries);
-        $this->renderLayout();
-    }
-
-    /**
-     * Compose page with error fixing results.
-     * TODO remove if unused.
-     */
     public function resultAction() {
         $this->loadLayout();
-        /** @var  $req Nmmlm_Core_Model_Own_Service_Tree_Validation_Request_Fix */
-        $req = Mage::getModel('nmmlm_core_model/own_service_tree_validation_request_fix');
-        /** @var  $call Nmmlm_Core_Model_Own_Service_Tree_Validation_Call */
-        $call = Mage::getModel('nmmlm_core_model/own_service_tree_validation_call');
-        /** @var  $resp Nmmlm_Core_Model_Own_Service_Tree_Validation_Response_Fix */
-        $resp = $call->fix($req);
-        $entries = $resp->getEntries();
-        /** @var  $block Nmmlm_Core_Block_Adminhtml_Own_Customer_Tree_Validation_Result */
+
+        $selectedPeriod = $this->getRequest()->getParam(BlockIndex::DOM_SELECT);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = Config::get()->serviceSnapshot();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot */
+        $req = $call->requestValidateDownlineSnapshot();
+        $req->setPeriodValue($selectedPeriod);
+        /** @var  $resp Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot */
+        $resp = $call->validateDownlineSnapshot($req);
+        /** @var  $block Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Result */
         $block = $this->getLayout()->getBlock(self::BLOCK);
-        $block->setInvalidEntries($entries);
+        $block->setPeriodValue($selectedPeriod);
+        $block->setTotalCustomers($resp->getTotalCustomers());
+        $block->setMaxDepth($resp->getMaxDepth());
+        $block->setTotalRoots($resp->getTotalRoots());
+        $block->setTotalOrphans($resp->getTotalOrphans());
+        $block->setTotalWrongPaths($resp->getTotalWrongPaths());
         $this->renderLayout();
     }
 }

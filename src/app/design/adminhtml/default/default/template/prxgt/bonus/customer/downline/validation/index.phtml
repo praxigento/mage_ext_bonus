@@ -19,7 +19,7 @@ $periods = $this->getPeriodsAvailable();
 <?php $this->uiScriptFormSubmit() ?>
 
 <div class="prxgtFormLayout">
-    <form method="post" action="<?php echo $this->getUrl('*/*/preview'); ?>" id="<?php $this->uiDomForm() ?>">
+    <form method="post" action="<?php echo $this->getUrl('*/*/result'); ?>" id="<?php $this->uiDomForm() ?>">
         <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
 
         <?php if(sizeof($periods) == 0): ?>

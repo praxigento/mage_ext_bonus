@@ -40,20 +40,13 @@
                    template="prxgt/bonus/customer/downline/validation/index.phtml"/>
         </reference>
     </adminhtml_own_customer_downline_validation_index>
-    <nmmlm_core_router_adminhtml_own_tree_validation_preview>
+    <adminhtml_own_customer_downline_validation_result>
         <reference name="content">
-            <block type="nmmlm_core_block/adminhtml_own_customer_tree_validation_preview"
-                   name="prxgt_bonus_downline_tree_validation"
-                   template="nmmlm/core/customer/tree/validation/preview.phtml"/>
+            <block type="prxgt_bonus_block/adminhtml_own_customer_downline_validation_result"
+                   name="prxgt_bonus_downline_validation"
+                   template="prxgt/bonus/customer/downline/validation/result.phtml"/>
         </reference>
-    </nmmlm_core_router_adminhtml_own_tree_validation_preview>
-    <nmmlm_core_router_adminhtml_own_tree_validation_result>
-        <reference name="content">
-            <block type="nmmlm_core_block/adminhtml_own_customer_tree_validation_preview"
-                   name="prxgt_bonus_downline_tree_validation"
-                   template="nmmlm/core/customer/tree/validation/preview.phtml"/>
-        </reference>
-    </nmmlm_core_router_adminhtml_own_tree_validation_result>
+    </adminhtml_own_customer_downline_validation_result>
 
     <!-- ************************************************************************* -->
     <!-- Change Upline for the Customer (Customer / Upline Change) -->

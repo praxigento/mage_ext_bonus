@@ -20,7 +20,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index
     private $_periodsAvailable;
 
     public function uiTitle() {
-        echo $this->__('Customer Tree Validation');
+        echo $this->__('Downline Tree Validation');
     }
 
     public function getPeriodsAvailable() {
