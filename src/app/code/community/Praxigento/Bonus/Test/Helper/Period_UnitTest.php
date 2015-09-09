@@ -91,4 +91,36 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals(Weekday::THURSDAY, $hlp->getNextWeekDay(Weekday::WEDNESDAY));
         $this->assertEquals(Weekday::FRIDAY, $hlp->getNextWeekDay(Weekday::THURSDAY));
     }
+
+    public function test_isPeriodYear() {
+        /** @var  $hlp Praxigento_Bonus_Helper_Period */
+        $hlp = Config::get()->helperPeriod();
+        $this->assertTrue($hlp->isPeriodYear('2015'));
+        $this->assertFalse($hlp->isPeriodYear('201506'));
+        $this->assertFalse($hlp->isPeriodYear('20150601'));
+    }
+
+    public function test_isPeriodMonth() {
+        /** @var  $hlp Praxigento_Bonus_Helper_Period */
+        $hlp = Config::get()->helperPeriod();
+        $this->assertFalse($hlp->isPeriodMonth('2015'));
+        $this->assertTrue($hlp->isPeriodMonth('201506'));
+        $this->assertFalse($hlp->isPeriodMonth('20150601'));
+    }
+
+    public function test_isPeriodDay() {
+        /** @var  $hlp Praxigento_Bonus_Helper_Period */
+        $hlp = Config::get()->helperPeriod();
+        $this->assertFalse($hlp->isPeriodDay('2015'));
+        $this->assertFalse($hlp->isPeriodDay('201506'));
+        $this->assertTrue($hlp->isPeriodDay('20150601'));
+    }
+
+    public function test_calcPeriodSmallest() {
+        /** @var  $hlp Praxigento_Bonus_Helper_Period */
+        $hlp = Config::get()->helperPeriod();
+        $this->assertEquals('20151231', $hlp->calcPeriodSmallest('2015'));
+        $this->assertEquals('20150630', $hlp->calcPeriodSmallest('201506'));
+        $this->assertEquals('20150908', $hlp->calcPeriodSmallest('20150908'));
+    }
 }

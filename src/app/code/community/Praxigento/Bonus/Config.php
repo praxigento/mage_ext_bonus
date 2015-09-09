@@ -13,6 +13,14 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Config {
+
+    /** **************************************************************************************
+     * ACL shortcuts (adminhtml.xml:config/acl/resources/admin/...).
+     *************************************************************************************** */
+
+    const ACL_CUSTOMER_TREE_UPLINE_CHANGE = 'customer/prxgt_bonus_downline/upline_change';
+    const ACL_CUSTOMER_TREE_VALIDATION = 'customer/prxgt_bonus_downline/validation';
+
     /**
      * Available assets codes.
      */
@@ -274,10 +282,26 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * @return Praxigento_Bonus_Model_Own_Log_Downline
+     */
+    public function modelLogDownline() {
+        $result = Mage::getModel('prxgt_bonus_model/log_downline');
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Resource_Own_Log_Calc_Collection
      */
     public function collectionLogCalc() {
         $result = self::modelLogCalc()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Log_Downline_Collection
+     */
+    public function collectionLogDownline() {
+        $result = self::modelLogDownline()->getCollection();
         return $result;
     }
 
@@ -430,6 +454,14 @@ class Praxigento_Bonus_Config {
      */
     public function servicePeriod() {
         $result = Mage::getModel('prxgt_bonus_service/period_call');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Snapshot_Call
+     */
+    public function serviceSnapshot() {
+        $result = Mage::getModel('prxgt_bonus_service/snapshot_call');
         return $result;
     }
 
