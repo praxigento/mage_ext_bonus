@@ -1,0 +1,52 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ *
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+?>
+<?php
+/** @var  $this Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index */
+?>
+<div align="center">
+    <h1><?php $this->uiTitle() ?></h1>
+</div>
+
+<style>
+    .nmmlmFormLayout {
+        margin: 0 auto;
+        width: 400px;
+    }
+
+    .nmmlmRow {
+        width: 100%;
+        border-bottom: 1px solid black;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .nmmlmBtn {
+        text-align: center;
+    }
+</style>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<div class="nmmlmFormLayout">
+    <form method="post" action="<?php echo $this->getUrl('*/*/preview'); ?>" id="<?php $this->uiDomForm() ?>">
+        <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+        <div class="nmmlmRow">
+            <?php $this->ui('Press \'OK\' to validate customer tree integrity.') ?>
+        </div>
+
+        <div class="nmmlmRow">
+            <div class="nmmlmBtn">
+                <?php $this->uiButtonSubmit(' OK ') ?>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </form>
+</div>

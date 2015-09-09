@@ -45,6 +45,20 @@
                                     </snapshots>
                                 </children>
                             </prxgt_bonus>
+                            <prxgt_bonus_downline module="prxgt_bonus_helper">
+                                <title>Downline</title>
+                                <sort_order>58</sort_order>
+                                <children>
+                                    <validation>
+                                        <title>Tree Validation</title>
+                                        <sort_order>100</sort_order>
+                                    </validation>
+                                    <upline_change>
+                                        <title>Customer Upline Change</title>
+                                        <sort_order>200</sort_order>
+                                    </upline_change>
+                                </children>
+                            </prxgt_bonus_downline>
                         </children>
                     </customer>
                     <sales>
@@ -203,6 +217,22 @@
                         </snapshots>
                     </children>
                 </prxgt_bonus>
+                <prxgt_bonus_downline module="prxgt_bonus_helper">
+                    <title>Downline</title>
+                    <sort_order>58</sort_order>
+                    <children>
+                        <validation>
+                            <title>Tree Validation</title>
+                            <sort_order>100</sort_order>
+                            <action>adminhtml/own_customer_downline_validation/</action>
+                        </validation>
+                        <upline_change>
+                            <title>Customer Upline Change</title>
+                            <sort_order>200</sort_order>
+                            <action>adminhtml/own_customer_downline_uplineUpdate/</action>
+                        </upline_change>
+                    </children>
+                </prxgt_bonus_downline>
             </children>
         </customer>
     </menu>

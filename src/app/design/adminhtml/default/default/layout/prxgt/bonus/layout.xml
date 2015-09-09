@@ -29,6 +29,55 @@
         </reference>
     </adminhtml_own_sales_bonus_process_pv_post>
 
+
+    <!-- ************************************************************************* -->
+    <!-- Validate Customer Tree and fix found errors (Customer / Tree Validation ) -->
+    <!-- ************************************************************************* -->
+    <adminhtml_own_customer_downline_validation_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_customer_downline_validation_index"
+                   name="prxgt_bonus_downline_validation"
+                   template="prxgt/bonus/customer/downline/validation/index.phtml"/>
+        </reference>
+    </adminhtml_own_customer_downline_validation_index>
+    <nmmlm_core_router_adminhtml_own_tree_validation_preview>
+        <reference name="content">
+            <block type="nmmlm_core_block/adminhtml_own_customer_tree_validation_preview"
+                   name="prxgt_bonus_downline_tree_validation"
+                   template="nmmlm/core/customer/tree/validation/preview.phtml"/>
+        </reference>
+    </nmmlm_core_router_adminhtml_own_tree_validation_preview>
+    <nmmlm_core_router_adminhtml_own_tree_validation_result>
+        <reference name="content">
+            <block type="nmmlm_core_block/adminhtml_own_customer_tree_validation_preview"
+                   name="prxgt_bonus_downline_tree_validation"
+                   template="nmmlm/core/customer/tree/validation/preview.phtml"/>
+        </reference>
+    </nmmlm_core_router_adminhtml_own_tree_validation_result>
+
+    <!-- ************************************************************************* -->
+    <!-- Change Upline for the Customer (Customer / Upline Change) -->
+    <!-- ************************************************************************* -->
+    <nmmlm_core_router_adminhtml_own_tree_upline_index>
+        <reference name="content">
+            <block type="nmmlm_core_block/adminhtml_own_customer_tree_editor_index" name="nmmlm_upline_change"
+                   template="nmmlm/core/customer/tree/upline/index.phtml"/>
+        </reference>
+    </nmmlm_core_router_adminhtml_own_tree_upline_index>
+    <nmmlm_core_router_adminhtml_own_tree_upline_preview>
+        <reference name="content">
+            <block type="nmmlm_core_block/adminhtml_own_customer_tree_editor_preview" name="nmmlm_upline_change"
+                   template="nmmlm/core/customer/tree/upline/preview.phtml"/>
+        </reference>
+    </nmmlm_core_router_adminhtml_own_tree_upline_preview>
+    <nmmlm_core_router_adminhtml_own_tree_upline_result>
+        <reference name="content">
+            <block type="nmmlm_core_block/adminhtml_own_customer_tree_editor_result" name="nmmlm_upline_change"
+                   template="nmmlm/core/customer/tree/upline/result.phtml"/>
+        </reference>
+    </nmmlm_core_router_adminhtml_own_tree_upline_result>
+
+
     <!-- *************************-->
     <!-- Sales / Bonus / ... grid -->
     <!-- *************************-->

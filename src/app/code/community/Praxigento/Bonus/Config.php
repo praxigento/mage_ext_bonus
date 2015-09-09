@@ -13,6 +13,14 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 class Praxigento_Bonus_Config {
+
+    /** **************************************************************************************
+     * ACL shortcuts (adminhtml.xml:config/acl/resources/admin/...).
+     *************************************************************************************** */
+
+    const ACL_CUSTOMER_TREE_UPLINE_CHANGE = 'customer/prxgt_bonus_downline/upline_change';
+    const ACL_CUSTOMER_TREE_VALIDATION = 'customer/prxgt_bonus_downline/validation';
+
     /**
      * Available assets codes.
      */
