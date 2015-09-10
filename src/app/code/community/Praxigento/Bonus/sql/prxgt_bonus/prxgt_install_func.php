@@ -53,6 +53,21 @@ if(!function_exists('prxgt_install_recreate_column')) {
     }
 }
 
+if(!function_exists('prxgt_install_create_index')) {
+
+    /**
+     * Create simple index.
+     *
+     * @param $conn  Varien_Db_Adapter_Interface
+     * @param $table string Table name.
+     * @param $fields array Fields names to include in index.
+     */
+    function prxgt_install_create_index(Varien_Db_Adapter_Interface $conn, $table, $fields) {
+        $ndxName = $conn->getIndexName($table, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX);
+        $conn->addIndex($table, $ndxName, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX);
+    }
+}
+
 if(!function_exists('prxgt_install_create_index_unique')) {
 
     /**
@@ -67,6 +82,7 @@ if(!function_exists('prxgt_install_create_index_unique')) {
         $conn->addIndex($table, $ndxName, $fields, Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE);
     }
 }
+
 if(!function_exists('prxgt_install_create_foreign_key')) {
 
     /**

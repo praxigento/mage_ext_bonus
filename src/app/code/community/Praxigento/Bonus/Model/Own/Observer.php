@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Praxigento_Bonus_Config as Config;
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
@@ -50,6 +51,7 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer {
             $customer = $event->getCustomer();
             $customerId = $customer->getId();
             $customerPath = $customer->getNmmlmCoreMlmPath();
+            $customerDepth = $customer->getNmmlmCoreMlmDepth();
             /**
              * Save log record.
              */
@@ -65,7 +67,9 @@ class Praxigento_Bonus_Model_Own_Observer extends Mage_Core_Model_Observer {
             $snap = Mage::getModel('prxgt_bonus_model/snap_downline')->load($customerId);
             $snap->setCustomerId($customerId);
             $snap->setParentId($parentId);
+            $snap->setPeriod(Config::PERIOD_KEY_NOW);
             $snap->setPath($customerPath);
+            $snap->setDepth($customerDepth);
             $snap->getResource()->save($snap);
         }
     }

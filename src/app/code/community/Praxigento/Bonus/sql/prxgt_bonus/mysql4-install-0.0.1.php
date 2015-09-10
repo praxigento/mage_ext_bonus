@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Mage_Eav_Model_Entity as EavEntity;
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Account as Account;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
@@ -153,7 +154,7 @@ $conn->createTable($tbl);
 /* UQs  */
 prxgt_install_create_index_unique($conn, $tblAccount, array( Account::ATTR_CUSTOMER_ID, Account::ATTR_ASSET_ID ));
 /* FKs */
-prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_CUSTOMER_ID, $tblCustomer, Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD);
+prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 prxgt_install_create_foreign_key($conn, $tblAccount, Account::ATTR_ASSET_ID, $tblTypeAsset, TypeAsset::ATTR_ID);
 
 
@@ -278,43 +279,12 @@ $tbl->setComment('Details for Retail bonus.');
 $conn->createTable($tbl);
 
 /* UQ index (order_id) */
-$ndxFields = array( DetailsRetail::ATTR_ORDER_ID );
-$ndxName = $conn->getIndexName($tblDetailsRetail, $ndxFields, Db::INDEX_TYPE_UNIQUE);
-$conn->addIndex($tblDetailsRetail, $ndxName, $ndxFields, Db::INDEX_TYPE_UNIQUE);
+prxgt_install_create_index_unique($conn, $tblDetailsRetail, array( DetailsRetail::ATTR_ORDER_ID ));
 
 /* Order FK */
-$fkName = $conn->getForeignKeyName(
-    $tblDetailsRetail,
-    DetailsRetail::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblDetailsRetail,
-    DetailsRetail::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
+prxgt_install_create_foreign_key($conn, $tblDetailsRetail, DetailsRetail::ATTR_ORDER_ID, $tblSalesOrder, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 /* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblDetailsRetail,
-    DetailsRetail::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblDetailsRetail,
-    DetailsRetail::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblDetailsRetail, DetailsRetail::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 
 
 /** ******************
@@ -335,21 +305,7 @@ $tbl->setComment('Log for account transfers.');
 $conn->createTable($tbl);
 
 /* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogAccount,
-    LogAccount::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogAccount,
-    LogAccount::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogAccount, LogAccount::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 
 
 /** ******************
@@ -387,38 +343,9 @@ $tbl->setComment('Log for downline tree changes.');
 $conn->createTable($tbl);
 
 /* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogDownline,
-    LogDownline::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogDownline,
-    LogDownline::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
+prxgt_install_create_foreign_key($conn, $tblLogDownline, LogDownline::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 /* Upline type FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogDownline,
-    LogDownline::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogDownline,
-    LogDownline::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogDownline, LogDownline::ATTR_PARENT_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 
 
 /** ******************
@@ -439,22 +366,7 @@ $tbl->setComment('Log for sales order related changes.');
 $conn->createTable($tbl);
 
 /* Order FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogOrder,
-    LogOrder::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogOrder,
-    LogOrder::ATTR_ORDER_ID,
-    $tblSalesOrder,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
+prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_ORDER_ID, $tblSalesOrder, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 /* Bonus type FK */
 prxgt_install_create_foreign_key($conn, $tblLogOrder, LogOrder::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
@@ -477,21 +389,7 @@ $tbl->setComment('Log for payouts.');
 $conn->createTable($tbl);
 
 /* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblLogPayout,
-    LogPayout::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblLogPayout,
-    LogPayout::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+prxgt_install_create_foreign_key($conn, $tblLogPayout, LogPayout::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 
 
 /** ******************
@@ -512,22 +410,7 @@ $tbl->setComment('Current state of the bonuses per customer.');
 $conn->createTable($tbl);
 
 /* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapBonus,
-    SnapBonus::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapBonus,
-    SnapBonus::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
+prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 /* Bonus type FK */
 prxgt_install_create_foreign_key($conn, $tblSnapBonus, SnapBonus::ATTR_CALC_TYPE_ID, $tblTypeCalc, TypeCalc::ATTR_ID);
 
@@ -544,42 +427,20 @@ $tbl->addColumn(SnapDownline::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array( 'nullable
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_TEXT, '255', array( 'nullable' => false ),
     'Path to the node - /1/2/3/.../');
+$tbl->addColumn(SnapDownline::ATTR_NDX, Ddl::TYPE_INTEGER, null, array( 'nullable' => false ),
+    'Node index in the whole tree.');
+$tbl->addColumn(SnapDownline::ATTR_DEPTH, Ddl::TYPE_INTEGER, null, array( 'nullable' => false ),
+    'Node depth from the root of the tree.');
 $tbl->setComment('Current state of the downline tree.');
 $conn->createTable($tbl);
 
-/* Customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapDownline,
-    SnapDownline::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapDownline,
-    SnapDownline::ATTR_CUSTOMER_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
-
-/* Parent customer FK */
-$fkName = $conn->getForeignKeyName(
-    $tblSnapDownline,
-    SnapDownline::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD
-);
-$conn->addForeignKey(
-    $fkName,
-    $tblSnapDownline,
-    SnapDownline::ATTR_PARENT_ID,
-    $tblCustomer,
-    Mage_Eav_Model_Entity::DEFAULT_ENTITY_ID_FIELD,
-    Db::FK_ACTION_RESTRICT,
-    DB::FK_ACTION_RESTRICT
-);
+/* NDX */
+prxgt_install_create_index($conn, $tblSnapDownline, array( SnapDownline::ATTR_PERIOD ));
+prxgt_install_create_index($conn, $tblSnapDownline, array( SnapDownline::ATTR_DEPTH ));
+prxgt_install_create_index($conn, $tblSnapDownline, array( SnapDownline::ATTR_NDX ));
+/* FKs */
+prxgt_install_create_foreign_key($conn, $tblSnapDownline, SnapDownline::ATTR_CUSTOMER_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
+prxgt_install_create_foreign_key($conn, $tblSnapDownline, SnapDownline::ATTR_PARENT_ID, $tblCustomer, EavEntity::DEFAULT_ENTITY_ID_FIELD);
 
 
 /** =================================================================================================================

@@ -20,8 +20,11 @@ use Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot as Valid
 class Praxigento_Bonus_Service_Snapshot_Call
     extends Praxigento_Bonus_Service_Base_Call {
 
+    const AS_SUBTREE = 'subtree';
     /** @var mixed Praxigento_Bonus_Service_Snapshot_Hndl_Db */
     private $_hndlDb;
+    /** @var mixed Praxigento_Bonus_Service_Snapshot_Hndl_Downline */
+    private $_hndlDownline;
 
     /**
      * Praxigento_Bonus_Service_Snapshot_Call constructor.
@@ -29,7 +32,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
     public function __construct() {
         parent::__construct();
         $this->_hndlDb = Config::get()->model(Config::CFG_SERVICE . '/snapshot_hndl_db');
-
+        $this->_hndlDownline = Config::get()->model(Config::CFG_SERVICE . '/snapshot_hndl_downline');
     }
 
     /**
@@ -47,7 +50,8 @@ class Praxigento_Bonus_Service_Snapshot_Call
         if(is_null($periodExists)) {
             $this->_log->debug("There is no downline snapshot data for period '$periodValue/$periodValueDaily'");
             $maxExistingPeriod = $this->_hndlDb->getLatestDownlineSnapBeforePeriod();
-            $snapLatest = array();
+            /* array of the aggregated previous snap & log data */
+            $arrAggregated = array();
             $from = null;
             $to = $this->_helperPeriod->calcPeriodToTs($periodValueDaily, Config::PERIOD_DAY);
             if(is_null($maxExistingPeriod)) {
@@ -58,12 +62,15 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 /* load snapshot for existing period */
 
             }
-            /* load logs from the latest snapshot (or from beginning) and process it to get result snapshot(s) */
+            /* load logs from the latest snapshot (or from beginning) and process it to get final state for period */
             $logs = $this->_hndlDb->getDownlineLogs($from, $to);
             foreach($logs as $one) {
-                $snapLatest[ $one[ LogDownline::ATTR_CUSTOMER_ID ] ] = $one;
+                $ownId = $one[ LogDownline::ATTR_CUSTOMER_ID ];
+                $parentId = $one[ LogDownline::ATTR_PARENT_ID ];
+                $arrAggregated[ $ownId ] = $parentId;
             }
-
+            $snapshot = $this->_hndlDownline->transformIdsToSnapItems($arrAggregated, $periodValue);
+            1 + 1;
         } else {
             $this->_log->debug("There is downline snapshot data for period '$periodValue' ('$periodExists')");
             $result->setPeriodExistsValue($periodExists);
@@ -148,4 +155,13 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_request_validateDownlineSnapshot');
         return $result;
     }
+}
+
+class Praxigento_Bonus_Service_Snapshot_Call_Tree_Node {
+    public $customerId;
+    public $parentId;
+    public $path;
+    public $depth;
+    public $ndx;
+    public $subtree = array();
 }

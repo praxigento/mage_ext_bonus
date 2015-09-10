@@ -290,6 +290,14 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * @return Praxigento_Bonus_Model_Own_Snap_Downline
+     */
+    public function modelSnapDownline() {
+        $result = Mage::getModel('prxgt_bonus_model/snap_downline');
+        return $result;
+    }
+
+    /**
      * @return Praxigento_Bonus_Resource_Own_Log_Calc_Collection
      */
     public function collectionLogCalc() {
@@ -302,6 +310,14 @@ class Praxigento_Bonus_Config {
      */
     public function collectionLogDownline() {
         $result = self::modelLogDownline()->getCollection();
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Resource_Own_Snap_Downline_Collection
+     */
+    public function collectionSnapDownline() {
+        $result = self::modelSnapDownline()->getCollection();
         return $result;
     }
 
