@@ -12,20 +12,20 @@ class Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot
     /**
      * @var string 20150601 - day only period values can be in response.
      */
-    private $_periodExistsValue;
+    private $_periodValue;
 
     /**
      * @return string
      */
-    public function getPeriodExistsValue() {
-        return $this->_periodExistsValue;
+    public function getPeriodValue() {
+        return $this->_periodValue;
     }
 
     /**
-     * @param string $periodExistsValue
+     * @param string $val
      */
-    public function setPeriodExistsValue($periodExistsValue) {
-        $this->_periodExistsValue = $periodExistsValue;
+    public function setPeriodValue($val) {
+        $this->_periodValue = $val;
     }
 
     public function isSucceed() {

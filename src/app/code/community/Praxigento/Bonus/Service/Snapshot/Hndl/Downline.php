@@ -39,22 +39,13 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Downline {
                     /* this is not root */
                     if(in_array($parentId, $arrPrevLevelIds)) {
                         $parentItem = $result[ $parentId ];
-                        $path = $parentItem->path . $parentId . Config::FORMAT_PATH_SEPARATOR;
+                        $path = $parentItem[ SnapDownline::ATTR_PATH ] . $parentId . Config::FORMAT_PATH_SEPARATOR;
                     } else {
                         /* skip low levels element */
                         continue;
                     }
                 }
                 /* process found element and unset it in the source array */
-                /** @var  $snap Praxigento_Bonus_Model_Own_Snap_Downline */
-                //                $snap = Config::get()->modelSnapDownline();
-                //                $snap->setCustomerId($ownId);
-                //                $snap->setParentId($parentId);
-                //                $snap->setPeriod($periodValue);
-                //                $snap->setPath($path);
-                //                $snap->setDepth($depth);
-                /* set snap data to result and to current level IDs registry and clean up processed item */
-                //                $result[ $ownId ] = $snap;
                 $snap = array(
                     SnapDownline::ATTR_CUSTOMER_ID => $ownId,
                     SnapDownline::ATTR_PARENT_ID   => $parentId,
@@ -62,6 +53,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Downline {
                     SnapDownline::ATTR_PATH        => $path,
                     SnapDownline::ATTR_DEPTH       => $depth
                 );
+                /* set snap data to result and to current level IDs registry and clean up processed item */
                 $result[ $ownId ] = $snap;
                 $arrCurrLevelIds[] = $ownId;
                 unset($arrIds[ $ownId ]);

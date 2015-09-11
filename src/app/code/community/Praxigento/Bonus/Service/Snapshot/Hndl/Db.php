@@ -126,6 +126,23 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         return $result;
     }
 
+    public function saveDownlineSnaps($snapshot) {
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Config::get()->singleton('core/resource');
+        /** @var  $conn Varien_Db_Adapter_Interface */
+        $conn = $rsrc->getConnection('core_write');
+        $conn->beginTransaction();
+        try {
+            $tblSnapDownline = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+            $conn->insertMultiple($tblSnapDownline, $snapshot);
+            $conn->commit();
+        } catch(Exception $e) {
+            $conn->rollBack();
+            Mage::throwException($e->getMessage());
+
+        }
+    }
+
     public function getDownlineLogs($from, $to) {
         $result = array();
         /** @var  $rsrc Mage_Core_Model_Resource */

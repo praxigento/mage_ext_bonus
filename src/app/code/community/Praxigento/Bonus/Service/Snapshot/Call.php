@@ -20,7 +20,6 @@ use Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot as Valid
 class Praxigento_Bonus_Service_Snapshot_Call
     extends Praxigento_Bonus_Service_Base_Call {
 
-    const AS_SUBTREE = 'subtree';
     /** @var mixed Praxigento_Bonus_Service_Snapshot_Hndl_Db */
     private $_hndlDb;
     /** @var mixed Praxigento_Bonus_Service_Snapshot_Hndl_Downline */
@@ -49,7 +48,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $periodExists = $this->_hndlDb->isThereDownlinesSnapForPeriod($periodValueDaily);
         if(is_null($periodExists)) {
             $this->_log->debug("There is no downline snapshot data for period '$periodValue/$periodValueDaily'");
-            $maxExistingPeriod = $this->_hndlDb->getLatestDownlineSnapBeforePeriod();
+            $maxExistingPeriod = $this->_hndlDb->getLatestDownlineSnapBeforePeriod($periodValueDaily);
             /* array of the aggregated previous snap & log data */
             $arrAggregated = array();
             $from = null;
@@ -60,7 +59,11 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 $this->_log->debug("First downline log record is at '$from'");
             } else {
                 /* load snapshot for existing period */
-
+                $latestSnap = $this->_hndlDb->getDownlineSnapForPeriod($maxExistingPeriod);
+                foreach($latestSnap as $one) {
+                    $arrAggregated[ $one[ SnapDownline::ATTR_CUSTOMER_ID ] ] = $one[ SnapDownline::ATTR_PARENT_ID ];
+                }
+                $from = $this->_helperPeriod->calcPeriodToTs($maxExistingPeriod, Config::PERIOD_DAY);
             }
             /* load logs from the latest snapshot (or from beginning) and process it to get final state for period */
             $logs = $this->_hndlDb->getDownlineLogs($from, $to);
@@ -69,11 +72,19 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 $parentId = $one[ LogDownline::ATTR_PARENT_ID ];
                 $arrAggregated[ $ownId ] = $parentId;
             }
-            $snapshot = $this->_hndlDownline->transformIdsToSnapItems($arrAggregated, $periodValue);
-            1 + 1;
+            try {
+                $snapshot = $this->_hndlDownline->transformIdsToSnapItems($arrAggregated, $periodValueDaily);
+                $this->_hndlDb->saveDownlineSnaps($snapshot);
+                $result->setPeriodValue($periodValue);
+                $result->setErrorCode(ComposeDownlineSnapshotResponse::ERR_NO_ERROR);
+            } catch(Exception $e) {
+                $msg = "Cannot save snapshot data for period '$periodValue/$periodValueDaily'. Reason: "
+                       . $e->getMessage();
+                $this->_log->debug($msg);
+            }
         } else {
-            $this->_log->debug("There is downline snapshot data for period '$periodValue' ('$periodExists')");
-            $result->setPeriodExistsValue($periodExists);
+            $this->_log->debug("There is downline snapshot data for period '$periodValue/$periodExists'.");
+            $result->setPeriodValue($periodExists);
             $result->setErrorCode(ComposeDownlineSnapshotResponse::ERR_NO_ERROR);
         }
         return $result;
@@ -159,9 +170,9 @@ class Praxigento_Bonus_Service_Snapshot_Call
 
 class Praxigento_Bonus_Service_Snapshot_Call_Tree_Node {
     public $customerId;
-    public $parentId;
-    public $path;
     public $depth;
     public $ndx;
+    public $parentId;
+    public $path;
     public $subtree = array();
 }
