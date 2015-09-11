@@ -107,7 +107,7 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
         /* _helperPeriod*/
         $mockHlpPeriod = $this
             ->getMockBuilder('Praxigento_Bonus_Helper_Period')
-            ->setMethods(array( 'calcPeriodToTs' ))
+            ->setMethods(array( 'calcPeriodTsTo' ))
             ->getMock();
         $mockCfg
             ->expects($this->once())
@@ -116,7 +116,7 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
         /* Mock runtime environment */
         $mockHlpPeriod
             ->expects($this->once())
-            ->method('calcPeriodToTs')
+            ->method('calcPeriodTsTo')
             ->will($this->returnValue($DATE_APPLIED));
         $mockHlpAccount
             ->expects($this->once())
@@ -204,7 +204,7 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
         /* _helperPeriod*/
         $mockHlpPeriod = $this
             ->getMockBuilder('Praxigento_Bonus_Helper_Period')
-            ->setMethods(array( 'calcPeriodToTs' ))
+            ->setMethods(array( 'calcPeriodTsTo' ))
             ->getMock();
         $mockCfg
             ->expects($this->once())
@@ -213,7 +213,7 @@ class Praxigento_Bonus_Test_Service_Calculation_Hndl_WriteOffOperations_UnitTest
         /* Mock runtime environment */
         $mockHlpPeriod
             ->expects($this->once())
-            ->method('calcPeriodToTs')
+            ->method('calcPeriodTsTo')
             ->will($this->returnValue($DATE_APPLIED));
         $mockHlpAccount
             ->expects($this->once())

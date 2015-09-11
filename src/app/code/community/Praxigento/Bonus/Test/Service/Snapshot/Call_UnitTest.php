@@ -43,12 +43,12 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
             ->setMethods(array( 'model' ))
             ->getMock();
         $mockCfg
-            ->expects($this->at(1))
+            ->expects($this->at(2))
             ->method('model')
             ->with($this->equalTo(Config::CFG_SERVICE . '/snapshot_request_composeDownlineSnapshot'))
             ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot()));
         $mockCfg
-            ->expects($this->at(2))
+            ->expects($this->at(3))
             ->method('model')
             ->with($this->equalTo(Config::CFG_SERVICE . '/snapshot_response_composeDownlineSnapshot'))
             ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot()));
@@ -80,7 +80,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
         $resp = $call->composeDownlineSnapshot($req);
         $this->assertNotNull($resp);
         $this->assertTrue($resp->isSucceed());
-        $this->assertEquals($PERIOD_VALUE, $resp->getPeriodExistsValue());
+        $this->assertEquals($PERIOD_VALUE, $resp->getPeriodValue());
     }
 
     public function test_requests() {

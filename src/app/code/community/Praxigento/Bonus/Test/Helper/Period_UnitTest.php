@@ -47,7 +47,24 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $this->assertEquals('2015', $hlp->calcPeriodNext('2014', Config::PERIOD_YEAR));
     }
 
-    public function test_calcPeriodFromToTs() {
+    public function test_calcPeriodPrev() {
+        /**
+         * Create mocks.
+         */
+        $helper = $this->getMock('Praxigento_Bonus_Helper_Data');
+        $helper->expects($this->any())->method('cfgPersonalBonusWeekLastDay')->will($this->returnValue(Weekday::SUNDAY));
+        /** @var  $hlp Praxigento_Bonus_Helper_Period */
+        $hlp = Config::get()->helperPeriod();
+        $hlp->setHelper($helper);
+        /* tests */
+        $this->assertEquals('20150103', $hlp->calcPeriodPrev('20150104', Config::PERIOD_DAY));
+        $this->assertEquals('20150104', $hlp->calcPeriodPrev('20150105', Config::PERIOD_WEEK));
+        $this->assertEquals('20141228', $hlp->calcPeriodPrev('20150104', Config::PERIOD_WEEK));
+        $this->assertEquals('201312', $hlp->calcPeriodPrev('201401', Config::PERIOD_MONTH));
+        $this->assertEquals('2013', $hlp->calcPeriodPrev('2014', Config::PERIOD_YEAR));
+    }
+
+    public function test_calcPeriodTs() {
         /**
          * Create mocks.
          */
@@ -57,15 +74,18 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         $hlp = Config::get()->helperPeriod();
         $hlp->setHelper($helper);
         /* tests for zone "America/Los_Angeles" as set up in test/templates.json */
-        $this->assertEquals('2015-08-12 07:00:00', $hlp->calcPeriodFromTs('20150812', Config::PERIOD_DAY));
-        $this->assertEquals('2015-08-13 06:59:59', $hlp->calcPeriodToTs('20150812', Config::PERIOD_DAY));
-        $this->assertEquals('2015-08-10 07:00:00', $hlp->calcPeriodFromTs('20150816', Config::PERIOD_WEEK));
-        $this->assertEquals('2015-08-17 06:59:59', $hlp->calcPeriodToTs('20150816', Config::PERIOD_WEEK));
-        $this->assertEquals('2015-08-01 07:00:00', $hlp->calcPeriodFromTs('201508', Config::PERIOD_MONTH));
-        $this->assertEquals('2015-09-01 06:59:59', $hlp->calcPeriodToTs('201508', Config::PERIOD_MONTH));
-        /* switch from and to sequence to cover calcPeriodToTs() branches */
-        $this->assertEquals('2016-01-01 06:59:59', $hlp->calcPeriodToTs('2015', Config::PERIOD_YEAR));
-        $this->assertEquals('2015-01-01 07:00:00', $hlp->calcPeriodFromTs('2015', Config::PERIOD_YEAR));
+        $this->assertEquals('2015-08-12 07:00:00', $hlp->calcPeriodTsFrom('20150812', Config::PERIOD_DAY));
+        $this->assertEquals('2015-08-13 06:59:59', $hlp->calcPeriodTsTo('20150812', Config::PERIOD_DAY));
+        $this->assertEquals('2015-08-10 07:00:00', $hlp->calcPeriodTsFrom('20150816', Config::PERIOD_WEEK));
+        $this->assertEquals('2015-08-17 06:59:59', $hlp->calcPeriodTsTo('20150816', Config::PERIOD_WEEK));
+        $this->assertEquals('2015-08-01 07:00:00', $hlp->calcPeriodTsFrom('201508', Config::PERIOD_MONTH));
+        $this->assertEquals('2015-09-01 06:59:59', $hlp->calcPeriodTsTo('201508', Config::PERIOD_MONTH));
+        /* switch from and to sequence to cover calcPeriodTsTo() branches */
+        $this->assertEquals('2016-01-01 06:59:59', $hlp->calcPeriodTsTo('2015', Config::PERIOD_YEAR));
+        $this->assertEquals('2015-01-01 07:00:00', $hlp->calcPeriodTsFrom('2015', Config::PERIOD_YEAR));
+        /* tests nextFrom & prevTo */
+        $this->assertEquals('2014-12-29 07:00:00', $hlp->calcPeriodTsNextFrom('20141228', Config::PERIOD_WEEK));
+        $this->assertEquals('2015-01-05 06:59:59', $hlp->calcPeriodTsPrevTo('20150105', Config::PERIOD_WEEK));
     }
 
     public function test_getPreviousWeekDay() {

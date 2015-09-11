@@ -99,16 +99,57 @@ class Praxigento_Bonus_Helper_Period {
     }
 
     /**
-     * Calculate period next for the given.
+     * Calculate period previous for the given.
      *
      * @param $period 20150601 | 201506 | 2015
-     * @param $type
+     * @param $typeCode
      *
      * @return null|string 20150601 | 201506 | 2015
      */
-    public function calcPeriodNext($period, $type) {
+    public function calcPeriodPrev($period, $typeCode) {
         $result = null;
-        switch($type) {
+        switch($typeCode) {
+            case Config::PERIOD_DAY:
+                $dt = date_create_from_format('Ymd', $period);
+                $ts = strtotime('previous day', $dt->getTimestamp());
+                $dt = $this->_helperCore->convertToDateTime($ts);
+                $result = date_format($dt, 'Ymd');
+                break;
+            case Config::PERIOD_WEEK:
+                /* week period ends on ...  */
+                $end = $this->_helper->cfgPersonalBonusWeekLastDay();
+                $dt = date_create_from_format('Ymd', $period);
+                $ts = strtotime("previous $end", $dt->getTimestamp());
+                $dt = $this->_helperCore->convertToDateTime($ts);
+                $result = date_format($dt, 'Ymd');
+                break;
+            case Config::PERIOD_MONTH:
+                $dt = date_create_from_format('Ym', $period);
+                $ts = strtotime('previous month', $dt->getTimestamp());
+                $dt = $this->_helperCore->convertToDateTime($ts);
+                $result = date_format($dt, 'Ym');
+                break;
+            case Config::PERIOD_YEAR:
+                $dt = date_create_from_format('Y', $period);
+                $ts = strtotime('previous year', $dt->getTimestamp());
+                $dt = $this->_helperCore->convertToDateTime($ts);
+                $result = date_format($dt, 'Y');
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * Calculate period next for the given.
+     *
+     * @param $period 20150601 | 201506 | 2015
+     * @param $typeCode
+     *
+     * @return null|string 20150601 | 201506 | 2015
+     */
+    public function calcPeriodNext($period, $typeCode) {
+        $result = null;
+        switch($typeCode) {
             case Config::PERIOD_DAY:
                 $dt = date_create_from_format('Ymd', $period);
                 $ts = strtotime('next day', $dt->getTimestamp());
@@ -140,36 +181,68 @@ class Praxigento_Bonus_Helper_Period {
     }
 
     /**
+     * Calculate FROM bound as timestamp for the period.
+     *
      * @param $period 20150601 | 201506 | 2015
-     * @param $periodCode DAY | WEEK | MONTH | YEAR
+     * @param $typeCode DAY | WEEK | MONTH | YEAR
      *
      * @return string 2015-08-12 12:23:34
      */
-    public function calcPeriodFromTs($period, $periodCode) {
+    public function calcPeriodTsFrom($period, $typeCode) {
         if(
             !isset(self::$_cachePeriodBounds[ $period ]) &&
-            !isset(self::$_cachePeriodBounds[ $period ][ $periodCode ])
+            !isset(self::$_cachePeriodBounds[ $period ][ $typeCode ])
         ) {
-            $this->_calcPeriodBounds($period, $periodCode);
+            $this->_calcPeriodBounds($period, $typeCode);
         }
-        $result = self::$_cachePeriodBounds[ $period ][ $periodCode ]['from'];
+        $result = self::$_cachePeriodBounds[ $period ][ $typeCode ]['from'];
         return $result;
     }
 
     /**
+     * Calculate TO bound as timestamp for the period.
+     *
      * @param $period 20150601 | 201506 | 2015
-     * @param $periodCode DAY | WEEK | MONTH | YEAR
+     * @param $typeCode DAY | WEEK | MONTH | YEAR
      *
      * @return string 2015-08-12 12:23:34
      */
-    public function calcPeriodToTs($period, $periodCode) {
+    public function calcPeriodTsTo($period, $typeCode) {
         if(
             !isset(self::$_cachePeriodBounds[ $period ]) &&
-            !isset(self::$_cachePeriodBounds[ $period ][ $periodCode ])
+            !isset(self::$_cachePeriodBounds[ $period ][ $typeCode ])
         ) {
-            $this->_calcPeriodBounds($period, $periodCode);
+            $this->_calcPeriodBounds($period, $typeCode);
         }
-        $result = self::$_cachePeriodBounds[ $period ][ $periodCode ]['to'];
+        $result = self::$_cachePeriodBounds[ $period ][ $typeCode ]['to'];
+        return $result;
+    }
+
+    /**
+     * Calculate TO bound as timestamp for the previous period.
+     *
+     * @param $period
+     * @param $typeCode
+     *
+     * @return mixed
+     */
+    public function calcPeriodTsPrevTo($period, $typeCode) {
+        $periodPrev = $this->calcPeriodPrev($period, $typeCode);
+        $result = $this->calcPeriodTsTo($periodPrev, $typeCode);
+        return $result;
+    }
+
+    /**
+     * Calculate FROM bound as timestamp for the next period.
+     *
+     * @param $period
+     * @param $typeCode
+     *
+     * @return mixed
+     */
+    public function calcPeriodTsNextFrom($period, $typeCode) {
+        $periodNext = $this->calcPeriodNext($period, $typeCode);
+        $result = $this->calcPeriodTsFrom($periodNext, $typeCode);
         return $result;
     }
 

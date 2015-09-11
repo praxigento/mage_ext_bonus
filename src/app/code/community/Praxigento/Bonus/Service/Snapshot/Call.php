@@ -52,7 +52,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
             /* array of the aggregated previous snap & log data */
             $arrAggregated = array();
             $from = null;
-            $to = $this->_helperPeriod->calcPeriodToTs($periodValueDaily, Config::PERIOD_DAY);
+            $to = $this->_helperPeriod->calcPeriodTsTo($periodValueDaily, Config::PERIOD_DAY);
             if(is_null($maxExistingPeriod)) {
                 $this->_log->debug("There is no downline snapshot data for periods before '$periodValue/$periodValueDaily'. Getting up date for the first downline log record.");
                 $from = $this->_hndlDb->getFirstDownlineLogBeforePeriod($periodValue);
@@ -63,7 +63,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 foreach($latestSnap as $one) {
                     $arrAggregated[ $one[ SnapDownline::ATTR_CUSTOMER_ID ] ] = $one[ SnapDownline::ATTR_PARENT_ID ];
                 }
-                $from = $this->_helperPeriod->calcPeriodToTs($maxExistingPeriod, Config::PERIOD_DAY);
+                $from = $this->_helperPeriod->calcPeriodTsNextFrom($maxExistingPeriod, Config::PERIOD_DAY);
             }
             /* load logs from the latest snapshot (or from beginning) and process it to get final state for period */
             $logs = $this->_hndlDb->getDownlineLogs($from, $to);

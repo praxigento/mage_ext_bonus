@@ -56,7 +56,7 @@ class Praxigento_Bonus_Service_Calculation_Hndl_WriteOffOperations {
             }
         }
         /* Create PvWriteOff operations with the last second of the period and update NOW balances. */
-        $dateApplied = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
+        $dateApplied = $this->_helperPeriod->calcPeriodTsTo($periodValue, $periodCode);
         $accountantAccId = $this->_helperAccount->getAccountantAccIdByAssetCode(Config::ASSET_PV);
         /** @var  $callOp Praxigento_Bonus_Service_Operations_Call */
         $callOp = Config::get()->serviceOperations();

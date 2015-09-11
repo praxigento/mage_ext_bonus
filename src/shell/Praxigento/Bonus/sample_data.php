@@ -175,8 +175,8 @@ class Praxigento_Shell extends Mage_Shell_Abstract
             '*'
         );
         $fldDate = 'trnx.' . Transaction::ATTR_DATE_APPLIED;
-        $from = Config::helperPeriod()->calcPeriodFromTs($period, $periodCode);
-        $to = Config::helperPeriod()->calcPeriodToTs($period, $periodCode);
+        $from = Config::helperPeriod()->calcPeriodTsFrom($period, $periodCode);
+        $to = Config::helperPeriod()->calcPeriodTsTo($period, $periodCode);
         $collection->addFieldToFilter($fldDate, array('gteq' => $from));
         $collection->addFieldToFilter($fldDate, array('lteq' => $to));
         $sql = $collection->getSelectSql(true);

@@ -78,8 +78,8 @@ class Praxigento_Bonus_Service_Operations_Call
             )
         );
         $fldDate = $as . '.' . Transaction::ATTR_DATE_APPLIED;
-        $from = $this->_helperPeriod->calcPeriodFromTs($periodValue, $periodCode);
-        $to = $this->_helperPeriod->calcPeriodToTs($periodValue, $periodCode);
+        $from = $this->_helperPeriod->calcPeriodTsFrom($periodValue, $periodCode);
+        $to = $this->_helperPeriod->calcPeriodTsTo($periodValue, $periodCode);
         $collection->addFieldToFilter($fldDate, array( 'gteq' => $from ));
         $collection->addFieldToFilter($fldDate, array( 'lteq' => $to ));
         $sql = $collection->getSelectSql(true);

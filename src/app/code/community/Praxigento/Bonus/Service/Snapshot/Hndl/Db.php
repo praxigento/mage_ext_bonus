@@ -112,7 +112,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $hlp = Config::get()->helperPeriod();
         $periodDaily = $hlp->calcPeriodSmallest($periodValue);
         $hlpPeriod = Config::get()->helperPeriod();
-        $to = $hlpPeriod->calcPeriodToTs($periodDaily, Config::PERIOD_DAY);
+        $to = $hlpPeriod->calcPeriodTsTo($periodDaily, Config::PERIOD_DAY);
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Config::get()->singleton('core/resource');
         $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
