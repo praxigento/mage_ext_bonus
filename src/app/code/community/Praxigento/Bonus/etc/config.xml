@@ -5,7 +5,7 @@
  * All rights reserved.
  */
 -->
-<!-- http://www.magentocommerce.com/wiki/5_-_modules_and_development/reference/module_config.xml -->
+<!-- http://nwdthemes.com/2014/09/25/adminhtml-xml-details/ -->
 <config>
     <modules>
         <Praxigento_Bonus>
