@@ -38,7 +38,7 @@ $dbh->exec("CREATE PROCEDURE `drop_all_tables`()\n" .
     "END\n");
 $dbh->exec("call drop_all_tables();");
 $_SERVER['argv'] = array(
-    'Installer.php',
+    'install.php',
     "--db_host",
     "${CFG_DB_HOST}",
     "--db_name",
