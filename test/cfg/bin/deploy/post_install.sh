@@ -48,9 +48,9 @@ mysql --database=$DB_NAME --user=$DB_USER --password=$DB_PASS -e "source $BIN_RO
 
 
 ##
-echo "Create sample data."
+#echo "Create sample data."
 ##
-php $LOCAL_ROOT/mage/shell/Praxigento/Bonus/sample_data.php --create
+#php $LOCAL_ROOT/mage/shell/Praxigento/Bonus/sample_data.php --create
 
 
 ##
