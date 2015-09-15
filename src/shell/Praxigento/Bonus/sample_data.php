@@ -96,8 +96,6 @@ class Praxigento_Shell extends Mage_Shell_Abstract {
             }
             if($santegraCreate) {
                 $this->_log->debug("Santegra sample data generation is started.");
-                //                $this->_createCatalogCategories();
-                //                $this->_createProducts();
                 $this->_createSantegraCustomers();
                 $this->_log->debug("Santegra sample data generation is completed.");
             }
@@ -349,16 +347,17 @@ USAGE;
             $conn = $rsrc->getConnection('core_write');
             $conn->beginTransaction();
             try {
-
                 $this->_log->debug("Total $count lines are read from file {$this->_fileNameCustomers}");
                 /* insert data into 'customer_entity' table */
-                $this->_insertRecords($records, 'customer/entity');
+                $this->_dbInsertRecords($records, 'customer/entity');
                 /* read all inserted data and compose array to lookup MageId by MLM ID */
                 $entities = $this->_readCustomersEntries();
                 $map = array();
                 foreach($entities as $one) {
                     $map[ $one[ CoreConfig::ATTR_CUST_MLM_ID ] ] = $one;
                 }
+                /* cleanup downline snapshots */
+                $this->_dbTruncate(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
                 /* set up Upline and MLM Path */
                 $logDownline = array();
                 foreach($records as $one) {
@@ -377,8 +376,14 @@ USAGE;
                         LogDownline::ATTR_DATE_CHANGED => $date
                     );
                 }
-                $this->_insertRecords($logDownline, Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
-
+                $this->_dbInsertRecords($logDownline, Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+                /* create downline snapshots for imported data */
+                $call = Config::get()->serviceSnapshot();
+                $req = $call->requestComposeDownlineSnapshot();
+                $req->setPeriodValue('201506');
+                $resp = $call->composeDownlineSnapshot($req);
+                $req->setPeriodValue(Config::PERIOD_KEY_NOW);
+                $resp = $call->composeDownlineSnapshot($req);
                 $conn->commit();
             } catch(Exception $e) {
                 $this->_log->error("Cannot create Santegra customers. Error: " . $e->getMessage());
@@ -486,21 +491,25 @@ USAGE;
         }
     }
 
-    private function _insertRecords($records, $modelName) {
+    private function _dbInsertRecords($records, $modelName) {
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Config::get()->singleton('core/resource');
         /** @var  $conn Varien_Db_Adapter_Interface */
         $conn = $rsrc->getConnection('core_write');
-        $conn->beginTransaction();
-        try {
-            $tbl = $rsrc->getTableName($modelName);
-            $total = $conn->insertMultiple($tbl, $records);
-            $this->_log->debug("Total '$total' records are inserted into '$tbl' table.");
-            $conn->commit();
-        } catch(Exception $e) {
-            $conn->rollBack();
-            Mage::throwException($e->getMessage());
-        }
+        $tbl = $rsrc->getTableName($modelName);
+        $total = $conn->insertMultiple($tbl, $records);
+        $this->_log->debug("Total '$total' records are inserted into '$tbl' table.");
+    }
+
+    private function _dbTruncate($modelName) {
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Config::get()->singleton('core/resource');
+        /** @var  $conn Varien_Db_Adapter_Interface */
+        $conn = $rsrc->getConnection('core_write');
+        $tbl = $rsrc->getTableName($modelName);
+        $sql = "TRUNCATE $tbl";
+        $total = $conn->query($sql);
+        $this->_log->debug("Table '$tbl' is truncated.");
     }
 
     private function _readCustomersEntries() {
