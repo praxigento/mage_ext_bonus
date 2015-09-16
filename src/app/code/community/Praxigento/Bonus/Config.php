@@ -210,6 +210,19 @@ class Praxigento_Bonus_Config {
     }
 
     /**
+     * Use this method to get URL from Mage. This method may be overridden in tests.
+     *
+     * @param string $route
+     * @param array  $params
+     *
+     * @return string
+     */
+    public function url($route = '', $params = array()) {
+        $result = Mage::getUrl($route, $params);
+        return $result;
+    }
+
+    /**
      * @return Varien_Db_Adapter_Interface
      */
     public function connectionWrite() {
