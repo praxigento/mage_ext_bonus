@@ -7,8 +7,10 @@ use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
 use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot as ComposeDownlineSnapshotRequest;
+use Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry as GetDownlineSnapshotEntryRequest;
 use Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot as ValidateDownlineSnapshotRequest;
 use Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot as ComposeDownlineSnapshotResponse;
+use Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry as GetDownlineSnapshotEntryResponse;
 use Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot as ValidateDownlineSnapshotResponse;
 
 /**
@@ -91,6 +93,50 @@ class Praxigento_Bonus_Service_Snapshot_Call
     }
 
     /**
+     * @param Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry $req
+     *
+     * @return Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry
+     */
+    public function getDownlineSnapshotEntry(GetDownlineSnapshotEntryRequest $req) {
+        /** @var  $result GetDownlineSnapshotEntryResponse */
+        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
+        $custId = $req->getCustomerId();
+        $periodValue = $req->getPeriodValue();
+        $periodExact = $this->_helperPeriod->calcPeriodSmallest($periodValue);
+        /** @var  $rsrc Mage_Core_Model_Resource */
+        $rsrc = Config::get()->singleton('core/resource');
+        /** @var  $conn Varien_Db_Adapter_Interface */
+        $conn = $rsrc->getConnection('core_write');
+        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $colCustId = SnapDownline::ATTR_CUSTOMER_ID;
+        $colPeriod = SnapDownline::ATTR_PERIOD;
+        $bind = array(
+            'cust_id' => $custId,
+            'period'  => $periodExact
+        );
+        /* exact match */
+        $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod=:period";
+        $entry = $conn->fetchAll($sql, $bind);
+        if(!is_array($entry) || !count($entry)) {
+            $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod<:period ORDER BY $colPeriod DESC";
+            $entry = $conn->fetchRow($sql, $bind);
+            if(!is_array($entry) || !count($entry)) {
+                $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod>:period ORDER BY $colPeriod ASC";
+                $entry = $conn->fetchRow($sql, $bind);
+            }
+        }
+        if(is_array($entry)) {
+//            $result->
+        } else {
+            $result->setErrorCode(GetDownlineSnapshotEntryResponse::ERR_SNAP_IS_NOT_FOUND);
+            $msg = "Snapshot entry is not found for customer #$custId and period '$periodValue/$periodExact'.";
+            $result->setErrorMessage($msg);
+            $this->_log->warn($msg);
+        }
+        return $result;
+    }
+
+    /**
      * @param Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot $req
      *
      * @return Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot
@@ -154,6 +200,15 @@ class Praxigento_Bonus_Service_Snapshot_Call
      */
     public function requestComposeDownlineSnapshot() {
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_request_composeDownlineSnapshot');
+        return $result;
+    }
+
+    /**
+     * @return Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry
+     */
+    public function requestGetDownlineSnapshotEntry() {
+        /** @var  $result GetDownlineSnapshotEntryRequest */
+        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_request_getDownlineSnapshotEntry');
         return $result;
     }
 

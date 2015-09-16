@@ -423,7 +423,7 @@ $tbl->addColumn(SnapDownline::ATTR_PERIOD, Ddl::TYPE_TEXT, '8', array( 'primary'
     'Historical period in format [NOW|YYYY|YYYYMM|YYYYMMDD]');
 $tbl->addColumn(SnapDownline::ATTR_CUSTOMER_ID, Ddl::TYPE_INTEGER, null, array( 'primary' => true, 'identity' => false, 'nullable' => false, 'unsigned' => true ),
     'Customer itself.');
-$tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array( 'primary' => true, 'identity' => false, 'nullable' => false, 'unsigned' => true ),
+$tbl->addColumn(SnapDownline::ATTR_PARENT_ID, Ddl::TYPE_INTEGER, null, array( 'nullable' => false, 'unsigned' => true ),
     'Parent customer (sponsor, upline).');
 $tbl->addColumn(SnapDownline::ATTR_PATH, Ddl::TYPE_TEXT, '255', array( 'nullable' => false ),
     'Path to the node - /1/2/3/.../');

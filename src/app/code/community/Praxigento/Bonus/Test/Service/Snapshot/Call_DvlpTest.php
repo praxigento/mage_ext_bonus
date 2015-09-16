@@ -33,6 +33,19 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_DvlpTest
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot);
     }
 
+    public function test_getDownlineSnapshotEntry() {
+        $PERIOD = '201505';
+        $CUST_ID = '2506';
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = Config::get()->serviceSnapshot();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry */
+        $req = $call->requestGetDownlineSnapshotEntry();
+        $req->setCustomerId($CUST_ID);
+        $req->setPeriodValue($PERIOD);
+        $resp = $call->getDownlineSnapshotEntry($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry);
+    }
+
     public function test_validateDownlineSnapshot() {
         $PERIOD = 'NOW';
         /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
