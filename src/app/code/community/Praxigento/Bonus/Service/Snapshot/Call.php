@@ -125,8 +125,17 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 $entry = $conn->fetchRow($sql, $bind);
             }
         }
-        if(is_array($entry)) {
-//            $result->
+        if(is_array($entry)) { // fetchAll
+            if(isset($entry[0])) { // fetchRow
+                $entry = reset($entry);
+            }
+            $result->setCustomerId($entry[ SnapDownline::ATTR_CUSTOMER_ID ]);
+            $result->setDepth($entry[ SnapDownline::ATTR_DEPTH ]);
+            $result->setParentId($entry[ SnapDownline::ATTR_PARENT_ID ]);
+            $result->setPath($entry[ SnapDownline::ATTR_PATH ]);
+            $result->setPeriodExact($entry[ SnapDownline::ATTR_PERIOD ]);
+            $result->setPeriodRequested($periodValue);
+            $result->setErrorCode(GetDownlineSnapshotEntryResponse::ERR_NO_ERROR);
         } else {
             $result->setErrorCode(GetDownlineSnapshotEntryResponse::ERR_SNAP_IS_NOT_FOUND);
             $msg = "Snapshot entry is not found for customer #$custId and period '$periodValue/$periodExact'.";
