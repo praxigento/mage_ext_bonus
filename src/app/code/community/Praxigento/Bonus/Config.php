@@ -176,7 +176,7 @@ class Praxigento_Bonus_Config {
     }
 
     /**
-     * Use this method to get singletons from Mage. This method may be overridden in tests.
+     * Use this method to get models from Mage. This method may be overridden in tests.
      *
      * @return mixed
      */
