@@ -204,7 +204,7 @@ class Praxigento_Bonus_Config {
      *
      * @return mixed
      */
-    public function singleton($modelClass, $args) {
+    public function singleton($modelClass = '', $args = array()) {
         $result = Mage::getSingleton($modelClass, $args);
         return $result;
     }
