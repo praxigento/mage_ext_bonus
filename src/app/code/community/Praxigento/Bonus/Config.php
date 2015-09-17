@@ -3,6 +3,7 @@
  * Copyright (c) 2015, Praxigento
  * All rights reserved.
  */
+use Nmmlm_Core_Config as CoreConfig;
 
 /**
  * Constants for the module (hardcoded configuration).
@@ -206,6 +207,23 @@ class Praxigento_Bonus_Config {
      */
     public function singleton($modelClass = '', $args = array()) {
         $result = Mage::getSingleton($modelClass, $args);
+        return $result;
+    }
+
+    /**
+     * Compose table name for the $entity ('customer/customer').
+     * Return table name as string if $alias is null or return array($alias=>$tableName) if alias is set.
+     * Use $entity as model entity name if $entity contains '/', otherwise add $entity to the module CFG_MODEL node
+     * (self::CFG_MODEL . '/' . $entity) or $model value ($model . '/' . $entity) if $model is not null.
+     *
+     * @param      $entity 'customer/customer', 'snap_downline'
+     * @param null $alias 'cust'
+     * @param null $module 'prxgt_bonus_model'
+     *
+     * @return array|string
+     */
+    public function tableName($entity, $alias = null) {
+        $result = CoreConfig::get()->tableName($entity, $alias, self::CFG_MODEL);
         return $result;
     }
 
