@@ -15,13 +15,13 @@ use Nmmlm_Core_Config as CoreConfig;
  */
 class Praxigento_Bonus_Config {
 
+    const ACL_CUSTOMER_TREE_CHANGE = 'customer/prxgt_bonus_downline/change';
     /** **************************************************************************************
      * ACL shortcuts (adminhtml.xml:config/acl/resources/admin/...).
      *************************************************************************************** */
 
     const ACL_CUSTOMER_TREE_UPLINE_CHANGE = 'customer/prxgt_bonus_downline/upline_change';
     const ACL_CUSTOMER_TREE_VALIDATION = 'customer/prxgt_bonus_downline/validation';
-
     /**
      * Available assets codes.
      */
@@ -83,6 +83,10 @@ class Praxigento_Bonus_Config {
 
     const FORMAT_DATETIME_SQL = 'Y-m-d H:i:s';
     const FORMAT_PATH_SEPARATOR = Nmmlm_Core_Config::FORMAT_MPS;
+
+    /* Path separator in the downline tree  */
+    const MPS = CoreConfig::FORMAT_MPS;
+
     /**
      * Available operations codes.
      */
@@ -182,7 +186,7 @@ class Praxigento_Bonus_Config {
      * @return mixed
      */
     public function model($modelClass = '', $arguments = array()) {
-        $result = Mage::getModel($modelClass, $arguments);
+        $result = CoreConfig::get()->model($modelClass, $arguments);
         return $result;
     }
 
@@ -206,7 +210,7 @@ class Praxigento_Bonus_Config {
      * @return mixed
      */
     public function singleton($modelClass = '', $args = array()) {
-        $result = Mage::getSingleton($modelClass, $args);
+        $result = CoreConfig::get()->singleton($modelClass, $args);
         return $result;
     }
 

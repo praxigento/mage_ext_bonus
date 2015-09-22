@@ -30,9 +30,9 @@
     </adminhtml_own_sales_bonus_process_pv_post>
 
 
-    <!-- ************************************************************************* -->
-    <!-- Validate Customer Tree and fix found errors (Customer / Tree Validation ) -->
-    <!-- ************************************************************************* -->
+    <!-- ************************************************************************************* -->
+    <!-- Validate Customer Tree and fix found errors (Customers / Downline / Tree Validation ) -->
+    <!-- ************************************************************************************* -->
     <adminhtml_own_customer_downline_validation_index>
         <reference name="content">
             <block type="prxgt_bonus_block/adminhtml_own_customer_downline_validation_index"
@@ -47,6 +47,31 @@
                    template="prxgt/bonus/customer/downline/validation/result.phtml"/>
         </reference>
     </adminhtml_own_customer_downline_validation_result>
+
+    <!-- ********************************************************************** -->
+    <!-- Change customer upline (Customers / Downline / Customer Upline Change) -->
+    <!-- ********************************************************************** -->
+    <adminhtml_own_customer_downline_change_index>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_customer_downline_change_index"
+                   name="prxgt_bonus_downline_change"
+                   template="prxgt/bonus/customer/downline/change/index.phtml"/>
+        </reference>
+    </adminhtml_own_customer_downline_change_index>
+    <adminhtml_own_customer_downline_change_preview>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_customer_downline_change_preview"
+                   name="prxgt_bonus_downline_change"
+                   template="prxgt/bonus/customer/downline/change/preview.phtml"/>
+        </reference>
+    </adminhtml_own_customer_downline_change_preview>
+    <adminhtml_own_customer_downline_change_result>
+        <reference name="content">
+            <block type="prxgt_bonus_block/adminhtml_own_customer_downline_change_result"
+                   name="prxgt_bonus_downline_change"
+                   template="prxgt/bonus/customer/downline/change/result.phtml"/>
+        </reference>
+    </adminhtml_own_customer_downline_change_result>
 
     <!-- ************************************************************************* -->
     <!-- Change Upline for the Customer (Customer / Upline Change) -->

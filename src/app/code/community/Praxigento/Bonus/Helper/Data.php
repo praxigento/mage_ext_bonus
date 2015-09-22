@@ -5,6 +5,7 @@
  */
 use Nmmlm_Core_Config as ConfigCore;
 use Praxigento_Bonus_Config as Config;
+use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 
 /**
  * Un-categorized module's utilities (access to System/Configuration parameters, etc.).

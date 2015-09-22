@@ -1,0 +1,95 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ *
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+?>
+<?php
+use Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Change_Preview as BLOCK;
+
+/** @var  $this BLOCK */
+$mlmId = $this->getCurrentCustomerId();
+$nameFull = $this->getCurrentCustomerName();
+$uplineCurrent = $this->getCurrentUplineId();
+$uplineCurrentName = $this->getCurrentUplineName();
+$uplineNew = $this->getNewUplineId();
+$uplineNewName = $this->getNewUplineName();
+?>
+<div align="center">
+    <h1><?php $this->uiTitle() ?></h1>
+</div>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<div class="prxgtFormLayout">
+    <form method="post" action="<?php echo $this->getUrl('*/*/result'); ?>" id="<?php $this->uiDomForm() ?>">
+        <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+        <input name="<?php echo BLOCK::DOM_FLD_CUSTOMER_ID ?>" type="hidden" value="<?php echo $mlmId ?>"/>
+        <input name="<?php echo BLOCK::DOM_FLD_UPLINE_ID ?>" type="hidden" value="<?php echo $uplineNew ?>"/>
+
+        <?php if($this->getIsFoundCurrentCustomer()): ?>
+            <div class="prxgtRow">
+                <div class="prxgtRowLabel"><?php $this->ui('Customer'); ?>:</div>
+                <div class="prxgtRowValue"><?php echo $mlmId ?> (<?php echo $nameFull ?>)</div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="prxgtRow">
+                <div class="prxgtRowLabel"><?php $this->ui('Current Upline'); ?>:</div>
+                <div class="prxgtRowValue"><?php echo $uplineCurrent ?> (<?php echo $this->getCurrentUplineName() ?>)
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <?php if($this->getIsFoundNewUpline()): ?>
+
+                <div class="prxgtRow">
+                    <div class="prxgtRowLabel"><?php $this->ui('New Upline'); ?>:</div>
+                    <div class="prxgtRowValue"><?php echo $uplineNew ?> (<?php echo $uplineNewName ?>)</div>
+                    <div class="clear"></div>
+                </div>
+
+                <?php if($this->getIsErrorFound()): ?>
+
+                    <div class="prxgtRow">
+                        <div class="prxgtFail"><?php echo $this->getErrorMessage() ?></div>
+                        <div class="clear"></div>
+                    </div>
+
+                <?php else: /* $this->getIsErrorFound() */ ?>
+
+                    <div class="prxgtRow">
+                        <div class="prxgtBtn">
+                            <?php $this->uiButtonSubmit(' OK ') ?>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                <?php endif; /** $isError */ ?>
+
+
+            <?php else: /** $this->getIsFoundNewUpline() */ ?>
+
+                <div class="prxgtRow">
+                    <div class="prxgtRowLabel"><?php $this->ui('Cannot find new upline'); ?>:</div>
+                    <div class="prxgtRowValue"><?php echo $uplineNew ?></div>
+                    <div class="clear"></div>
+                </div>
+
+            <?php endif; /** $this->getIsFoundNewUpline() */ ?>
+
+        <?php else:/** $this->getIsFoundCurrentCustomer() */ ?>
+
+            <div class="prxgtRow">
+                <div class="prxgtRowLabel"><?php $this->ui('Cannot find customer'); ?>:</div>
+                <div class="prxgtRowValue"><?php echo $mlmId ?></div>
+                <div class="clear"></div>
+            </div>
+
+        <?php endif; /** $this->getIsFoundCurrentCustomer() */ ?>
+
+    </form>
+</div>

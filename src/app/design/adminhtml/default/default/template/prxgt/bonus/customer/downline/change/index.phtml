@@ -1,0 +1,58 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ *
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+?>
+<?php
+use Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Change_Index as BLOCK;
+
+/** @var  $this BLOCK */
+?>
+<div align="center">
+    <h1><?php $this->uiTitle() ?></h1>
+</div>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<div class="prxgtFormLayout">
+    <form method="post" action="<?php echo $this->getUrl('*/*/preview'); ?>" id="<?php $this->uiDomForm() ?>">
+        <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+        <div class="prxgtRow">
+            <div class="prxgtRowLabel">
+                <label for="<?php echo BLOCK::DOM_FLD_CUSTOMER_ID ?>"><?php $this->ui('Enter customer ID'); ?></label>:
+            </div>
+            <div class="prxgtRowValue">
+                <input type="text"
+                       name="<?php echo BLOCK::DOM_FLD_CUSTOMER_ID ?>"
+                       id="<?php echo BLOCK::DOM_FLD_CUSTOMER_ID ?>">
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="prxgtRow">
+            <div class="prxgtRowLabel">
+                <label
+                    for="<?php echo BLOCK::DOM_FLD_UPLINE_ID ?>"><?php $this->ui('Enter ID for new upline'); ?></label>:
+            </div>
+            <div class=prxgtRowValue>
+                <input type="text"
+                       name="<?php echo BLOCK::DOM_FLD_UPLINE_ID ?>"
+                       id="<?php echo BLOCK::DOM_FLD_UPLINE_ID ?>">
+            </div>
+            <div class="clear"></div>
+        </div>
+
+
+        <div class="prxgtRow">
+            <div class="prxgtBtn">
+                <?php $this->uiButtonSubmit(' OK ') ?>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    </form>
+</div>
