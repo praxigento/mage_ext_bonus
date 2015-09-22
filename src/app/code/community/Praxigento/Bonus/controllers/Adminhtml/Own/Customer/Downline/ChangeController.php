@@ -38,6 +38,28 @@ class Praxigento_Bonus_Adminhtml_Own_Customer_Downline_ChangeController
     }
 
     /**
+     * Perform requested changes.
+     */
+    public function resultAction() {
+        $this->loadLayout();
+        /** @var  $block BlockPreview */
+        $block = $this->getLayout()->getBlock(self::BLOCK);
+        /* get posted data*/
+        $post = $this->getRequest()->getPost();
+        $currentId = isset($post[ BlockIndex::DOM_FLD_CUSTOMER_ID ]) ?
+            trim($post[ BlockIndex::DOM_FLD_CUSTOMER_ID ]) : null;
+        $newUplineId = isset($post[ BlockIndex::DOM_FLD_UPLINE_ID ]) ?
+            trim($post[ BlockIndex::DOM_FLD_UPLINE_ID ]) : null;
+        /* validate posted data and init block */
+        $this->_validatePostedData($currentId, $newUplineId, $block);
+        /* perform operation if no error are found */
+        if(!$block->getIsErrorFound()) {
+            1 + 1;
+        }
+        $this->renderLayout();
+    }
+
+    /**
      * @return mixed
      */
     protected function _isAllowed() {

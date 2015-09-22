@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright (c) 2015, Praxigento
+ * All rights reserved.
+ *
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+?>
+<?php
+use Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Change_Result as BLOCK;
+
+/** @var  $this BLOCK */
+?>
+<?php
+$title = 'Customer Upline Result';
+$mlmId = $this->getCurrentCustomerId();
+$nameFull = $this->getCurrentCustomerName();
+?>
+
+<div align="center">
+    <h1><?php $this->uiTitle() ?></h1>
+</div>
+
+<?php $this->uiScriptFormSubmit() ?>
+
+<div class="prxgtFormLayout">
+    <form method="post" action="<?php echo $this->getUrl('*/*/result'); ?>" id="<?php $this->uiDomForm() ?>">
+        <input name="form_key" type="hidden" value="<?php $this->uiFormKey() ?>"/>
+
+        <?php if($this->getIsTreeUpdated()): ?>
+
+            <div class="prxgtRow">
+                <div class="prxgtSuccess"><?php $this->ui('Customer'); ?> <?php echo $mlmId ?> (<?php echo $nameFull ?>
+                    ) <?php $this->ui('is updated'); ?>.
+                </div>
+                <div class="clear"></div>
+            </div>
+
+
+        <?php else: /* $this->getIsTreeUpdated() */ ?>
+
+            <div class="prxgtRow">
+                <div class="prxgtFail"><?php $this->ui('Customer'); ?> <?php echo $mlmId ?> (<?php echo $nameFull ?>
+                    ) <?php $this->ui('is NOT updated'); ?>.
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <?php if($this->getIsErrorFound()): ?>
+
+                <div class="prxgtRow">
+                    <div class="prxgtFail"><?php echo $this->getErrorMessage() ?></div>
+                    <div class="clear"></div>
+                </div>
+
+            <?php endif; /* $this->getIsErrorFound() */ ?>
+
+        <?php endif; /* $this->getIsTreeUpdated() */ ?>
+
+    </form>
+</div>

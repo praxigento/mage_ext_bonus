@@ -5,6 +5,7 @@
  */
 use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Balance as Balance;
+use Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline as ChangeUplineRequest;
 
 include_once('../../phpunit_bootstrap.php');
 
@@ -44,6 +45,19 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_DvlpTest
         $req->setPeriodValue($PERIOD);
         $resp = $call->getDownlineSnapshotEntry($req);
         $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry);
+    }
+
+    public function test_changeUpline() {
+        $CUST_ID = '846';
+        $UPLINE_ID = '909';
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = Config::get()->serviceSnapshot();
+        /** @var  $req ChangeUplineRequest */
+        $req = $call->requestChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($UPLINE_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertTrue($resp instanceof Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline);
     }
 
     public function test_validateDownlineSnapshot() {

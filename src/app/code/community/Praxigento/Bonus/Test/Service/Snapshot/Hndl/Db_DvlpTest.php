@@ -26,36 +26,17 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_DvlpTest
     }
 
     public function test_constructor() {
-        /**
-         * Create mocks (direct order).
-         */
-
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $this->assertNotNull($hndl);
     }
 
-    public function test_saveDownlineSnaps() {
-        /**
-         * Create input data.
-         */
-        $arrData = array();
-        $arrData[1] = 1;
-        for($i = 2; $i < 200; $i++) {
-            $rand = rand(1, ceil(($i - 1) / 4));
-            $arrData[ $i ] = $rand;
-        }
-
-        //        ini_set("memory_limit", "2G");
-
-        /** @var  $hndlDownline Praxigento_Bonus_Service_Snapshot_Hndl_Downline */
-        $hndlDownline = new Praxigento_Bonus_Service_Snapshot_Hndl_Downline();
-
-        $snapshot = $hndlDownline->transformIdsToSnapItems($arrData, '20150910');
-        $this->assertTrue(is_array($snapshot));
-
+    public function test_getDownlineSnapEntry() {
+        $CUST_ID = '3';
+        /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
-        $hndl->saveDownlineSnaps($snapshot);
+        $data = $hndl->getDownlineSnapEntry($CUST_ID);
+        $this->assertNotNull($hndl);
     }
 
 }

@@ -34,12 +34,12 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Downline {
                 $depth = $level;
                 if($ownId == $parentId) {
                     /* this is one of the root nodes */
-                    $path = Config::FORMAT_PATH_SEPARATOR;
+                    $path = Config::MPS;
                 } else {
                     /* this is not root */
                     if(in_array($parentId, $arrPrevLevelIds)) {
                         $parentItem = $result[ $parentId ];
-                        $path = $parentItem[ SnapDownline::ATTR_PATH ] . $parentId . Config::FORMAT_PATH_SEPARATOR;
+                        $path = $parentItem[ SnapDownline::ATTR_PATH ] . $parentId . Config::MPS;
                     } else {
                         /* skip low levels element */
                         continue;
