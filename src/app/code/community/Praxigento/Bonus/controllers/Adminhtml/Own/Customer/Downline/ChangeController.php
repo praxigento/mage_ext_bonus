@@ -16,6 +16,18 @@ class Praxigento_Bonus_Adminhtml_Own_Customer_Downline_ChangeController
     extends Mage_Adminhtml_Controller_Action {
 
     const BLOCK = 'prxgt_bonus_downline_change';
+    /**
+     * Customer for whom upline is changed.
+     *
+     * @var  Nmmlm_Core_Model_Customer_Customer
+     */
+    private $_customer;
+    /**
+     * New Upline to change.
+     *
+     * @var  Nmmlm_Core_Model_Customer_Customer
+     */
+    private $_customerUpline;
 
     /**
      * Compose information page before validation.
@@ -51,48 +63,52 @@ class Praxigento_Bonus_Adminhtml_Own_Customer_Downline_ChangeController
         $this->renderLayout();
     }
 
-    private function _validatePostedData($currentId, $newUplineId, BlockBase $block) {
+    private function _validatePostedData($customerMlmtId, $newUplineMlmId, BlockBase $block) {
+        /** @var  $hlp Praxigento_Bonus_Helper_Data */
+        $hlp = Config::get()->helper();
         /** @var  $hlpCore Nmmlm_Core_Helper_Data */
         $hlpCore = CoreConfig::get()->helper();
-        $block->setCurrentCustomerId($currentId);
-        $block->setNewUplineId($newUplineId);
+        $block->setCurrentCustomerId($customerMlmtId);
+        $block->setNewUplineId($newUplineMlmId);
         /* check posted data and populate current block with data from DB */
         $block->setIsFoundCurrentCustomer(false);
         $block->setIsFoundCurrentUpline(false);
         $block->setIsFoundNewUpline(false);
         $block->setIsErrorFound(false);
-        /* lookup for new upline */
-        /** @var  $newUpline Nmmlm_Core_Model_Customer_Customer */
-        //        $newUpline = Nmmlm_Core_Util::findCustomerByMlmId($newUplineId);
-        $newUpline = $hlpCore->getCustomerByMlmId($newUplineId, '*');
-        if(strlen($newUplineId) && ($newUpline->getNmmlmCoreMlmId() == $newUplineId)) {
-            $this->_customerUpline = $newUpline;
+        /* lookup for new upline by MLM ID */
+        $attrs = array( 'firstname', 'middlename', 'lastname' );
+        /** @var  $custUplineNew Nmmlm_Core_Model_Customer_Customer */
+        $custUplineNew = $hlpCore->getCustomerByMlmId($newUplineMlmId, $attrs);
+        if(strlen($newUplineMlmId) && ($custUplineNew->getNmmlmCoreMlmId() == $newUplineMlmId)) {
+            $this->_customerUpline = $custUplineNew;
             $block->setIsFoundNewUpline(true);
-            $block->setNewUplineName($newUpline->getName());
+            $block->setNewUplineName($custUplineNew->getName());
         }
-        /* lookup for current customer and current upline */
-        /** @var  $currentCustomer Nmmlm_Core_Model_Customer_Customer */
-        $currentCustomer = $hlpCore->getCustomerByMlmId($currentId);
-        if(strlen($currentId) && ($currentCustomer->getNmmlmCoreMlmId() == $currentId)) {
-            $this->_customerCurrent = $currentCustomer;
+        /* lookup for current customer by MLM ID */
+        /** @var  $custItself Nmmlm_Core_Model_Customer_Customer */
+        $custItself = $hlpCore->getCustomerByMlmId($customerMlmtId, $attrs);
+        if(strlen($customerMlmtId) && ($custItself->getNmmlmCoreMlmId() == $customerMlmtId)) {
+            $this->_customer = $custItself;
             $block->setIsFoundCurrentCustomer(true);
-            $block->setCurrentCustomerName($currentCustomer->getName());
-            $currentUplineId = $currentCustomer->getNmmlmCoreMlmUpline();
+            $block->setCurrentCustomerName($custItself->getName());
+            /* lookup for current upline customer in the downline snapshots */
+            $custUplineCurr = $hlp->getUplineForCustomer($custItself->getId(), Config::PERIOD_KEY_NOW, $attrs);
+            $currentUplineId = $custUplineCurr->getNmmlmCoreMlmId();
             $block->setCurrentUplineId($currentUplineId);
             /** @var  $currentUpline Nmmlm_Core_Model_Customer_Customer */
-            $currentUpline = $hlpCore->getCustomerByMlmId($currentUplineId);
+            $currentUpline = $hlpCore->getCustomerById($custUplineCurr->getId());
             if(strlen($currentUplineId) && ($currentUpline->getNmmlmCoreMlmId() == $currentUplineId)) {
                 $block->setCurrentUplineName($currentUpline->getName());
             }
             /* validate conditions for Upline change */
-            $newUplinePath = $newUpline->getNmmlmCoreMlmPath();
-            if($currentId == $newUplineId) {
+            $newUplinePath = $custUplineNew->getNmmlmCoreMlmPath();
+            if($customerMlmtId == $newUplineMlmId) {
                 $block->setIsErrorFound(true);
                 $block->setErrorMessage('Customer cannot be linked to itself.');
-            } else if($currentUplineId == $newUplineId) {
+            } else if($currentUplineId == $newUplineMlmId) {
                 $block->setIsErrorFound(true);
                 $block->setErrorMessage('Customer is already linked to the same upline.');
-            } else if(strstr($newUplinePath, Config::MPS . $currentId . Config::MPS)) {
+            } else if(strstr($newUplinePath, Config::MPS . $customerMlmtId . Config::MPS)) {
                 $block->setIsErrorFound(true);
                 $block->setErrorMessage('Customer cannot be linked to own downline.');
             }

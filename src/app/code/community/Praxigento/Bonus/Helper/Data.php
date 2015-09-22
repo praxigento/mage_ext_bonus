@@ -21,10 +21,13 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract {
      * @var Nmmlm_Core_Helper_Data
      */
     private $_helperCore;
-
+    /** @var  Varien_Db_Adapter_Interface */
+    private $conn;
 
     function __construct() {
         $this->_helperCore = Config::get()->helperCore();
+        $rsrc = Config::get()->singleton('core/resource');
+        $this->conn = $rsrc->getConnection('core_write');
     }
 
 
@@ -36,14 +39,26 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract {
     /**
      * Load upline customer model for the given customer.
      *
-     * @param Mage_Customer_Model_Customer $customer
+     * @param        $custId - Magento entity ID
+     * @param string $period - '20150601'
+     * @param string $attrs - EAV attributes to load (default - '*', use array() of attribute names)
      *
-     * @return Mage_Customer_Model_Customer
+     * @return Nmmlm_Core_Model_Customer_Customer
      */
-    public function getUplineForCustomer(Mage_Customer_Model_Customer $customer) {
-        $uplineMlmId = $customer->getData(ConfigCore::ATTR_CUST_MLM_UPLINE);
-        /** @var  $result Mage_Customer_Model_Customer */
-        $result = $this->_helperCore->findCustomerByMlmId($uplineMlmId);
+    public function getUplineForCustomer($custId, $period = Config::PERIOD_KEY_NOW, $attrs = '*') {
+        /* prepare table aliases and models */
+        $as = 'snap';
+        $eType = Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE;
+        $tblSnapDwnl = Config::get()->tableName($eType, $as);
+        /** @var  $query Varien_Db_Select */
+        $query = $this->conn->select();
+        $cols = array( SnapDownline::ATTR_PARENT_ID );
+        $query->from($tblSnapDwnl, $cols);
+        $query->where($as . '.' . SnapDownline::ATTR_CUSTOMER_ID . '=:custId');
+        $query->where($as . '.' . SnapDownline::ATTR_PERIOD . '=:period');
+        $sql = (string)$query;
+        $parentId = $this->conn->fetchOne($query, array( 'custId' => $custId, 'period' => $period ));
+        $result = $this->_helperCore->getCustomerById($parentId, $attrs);
         return $result;
     }
 
