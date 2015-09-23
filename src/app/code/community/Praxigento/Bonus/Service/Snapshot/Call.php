@@ -105,21 +105,25 @@ class Praxigento_Bonus_Service_Snapshot_Call
         /** @var  $result ChangeUplineResponse */
         $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
         $custId = $req->getCustomerId();
-        $parentId = $req->getNewUplineId();
-        if($custId == $parentId) {
+        $newParentId = $req->getNewUplineId();
+        $this->_log->debug("Change parent for the customer $custId (new parent: $newParentId).");
+        if($custId == $newParentId) {
             $result->setErrorCode(ChangeUplineResponse::ERR_PARENT_IS_THE_CUSTOMER);
+            $this->_log->error("Cannot change parent to itself.");
         } else {
             /* get customer current data from downline snapshot */
             $entryCust = $this->_hndlDb->getDownlineSnapEntry($custId);
-            if($entryCust->getParentId() == $parentId) {
+            if($entryCust->getParentId() == $newParentId) {
                 $result->setErrorCode(ChangeUplineResponse::ERR_PARENT_ALREADY_SET);
+                $this->_log->error("This parent is already set to the customer.");
             } else {
                 /* get parent current data from downline snapshot */
-                $entryParent = $this->_hndlDb->getDownlineSnapEntry($parentId);
-                $pathParent = $entryParent->getPath();
-                $pathIds = explode(Config::MPS, $pathParent);
+                $entryNewParent = $this->_hndlDb->getDownlineSnapEntry($newParentId);
+                $pathNewParent = $entryNewParent->getPath();
+                $pathIds = explode(Config::MPS, $pathNewParent);
                 if(in_array($custId, $pathIds)) {
                     $result->setErrorCode(ChangeUplineResponse::ERR_PARENT_IS_FROM_DOWNLINE);
+                    $this->_log->error("Cannot set parent from own downline (new parent path: $pathNewParent).");
                 } else {
                     /* validation is complete, do the job */
                     $conn = $cfg->connectionWrite();
@@ -129,16 +133,16 @@ class Praxigento_Bonus_Service_Snapshot_Call
                         $tblLogDwnl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
                         $bind = array(
                             LogDownline::ATTR_CUSTOMER_ID => $custId,
-                            LogDownline::ATTR_PARENT_ID   => $parentId
+                            LogDownline::ATTR_PARENT_ID   => $newParentId
                         );
                         $conn->insert($tblLogDwnl, $bind);
                         /* update parent for the customer */
-                        $pathNew = $pathParent . $parentId . Config::MPS;
-                        $depthNew = $entryParent->getDepth() + 1;
+                        $pathNew = $pathNewParent . $newParentId . Config::MPS;
+                        $depthNew = $entryNewParent->getDepth() + 1;
                         $this->_hndlDb->updateDownlineSnapParent(
                             $custId,
                             Config::PERIOD_KEY_NOW,
-                            $parentId,
+                            $newParentId,
                             $pathNew,
                             $depthNew
                         );

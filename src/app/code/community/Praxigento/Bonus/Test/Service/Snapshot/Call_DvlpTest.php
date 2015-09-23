@@ -24,7 +24,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_DvlpTest
     }
 
     public function test_composeDownlineSnapshot() {
-        $PERIOD = '201509';
+        $PERIOD = 'NOW';
         /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
         $call = Config::get()->serviceSnapshot();
         /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot */

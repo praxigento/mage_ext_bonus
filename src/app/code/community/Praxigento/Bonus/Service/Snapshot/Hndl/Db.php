@@ -166,7 +166,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
             SnapDownline::ATTR_DEPTH     => $depthNew
         );
         $whereCust = $conn->quoteInto(SnapDownline::ATTR_CUSTOMER_ID . '=?', $custId);
-        $wherePeriod = $conn->quoteInto(SnapDownline::ATTR_CUSTOMER_ID . '=?', $period);
+        $wherePeriod = $conn->quoteInto(SnapDownline::ATTR_PERIOD . '=?', $period);
         $where = "$whereCust AND $wherePeriod";
         $conn->update($tblSnapDwnl, $bind, $where);
     }
@@ -188,7 +188,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $query->from($tblSnapDwnl, $cols);
         $query->where(SnapDownline::ATTR_PATH . ' LIKE :path');
         $sql = (string)$query;
-        $all = $conn->fetchAll($query, array( 'path' => $pathOld ));
+        $all = $conn->fetchAll($query, array( 'path' => $pathOld . '%' ));
         foreach($all as $one) {
             $pathChildNew = str_replace($pathOld, $pathNew, $one[ SnapDownline::ATTR_PATH ]);
             $depthChildNew = $one[ SnapDownline::ATTR_DEPTH ] + $depthDelta;
