@@ -26,8 +26,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract {
 
     function __construct() {
         $this->_helperCore = Config::get()->helperCore();
-        $rsrc = Config::get()->singleton('core/resource');
-        $this->conn = $rsrc->getConnection('core_write');
+        $this->conn = Config::get()->connectionWrite();
     }
 
 

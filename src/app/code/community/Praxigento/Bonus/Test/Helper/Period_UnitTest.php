@@ -13,6 +13,11 @@ include_once('../phpunit_bootstrap.php');
  */
 class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_TestCase {
 
+    public function setUp() {
+        /* reset module's Config instance */
+        Config::set(null);
+    }
+
     public function test_calcPeriodCurrent() {
         /**
          * Create mocks.

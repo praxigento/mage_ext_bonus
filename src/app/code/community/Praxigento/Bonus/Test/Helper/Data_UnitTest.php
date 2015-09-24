@@ -47,27 +47,61 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
         /**
          * Mock config class and core helper.
          */
-        /* Found customer */
-        $mockCustomer = Mage::getModel('customer/customer');
-        $mockCustomer->setId($CUST_ID);
-        /* Core Helper */
-        $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Helper_Data');
-        $mockBuilder->setMethods(array( 'findCustomerByMlmId' ));
-        $mockHelperCore = $mockBuilder->getMock();
-        $mockHelperCore
-            ->expects($this->once())
-            ->method('findCustomerByMlmId')
-            ->will($this->equalTo($CUST_MLMID))
-            ->will($this->returnValue($mockCustomer));
-        /* Config */
-        $mockBuilder = $this
+        /**
+         * Create mocks (direct order).
+         */
+        /* Config:: */
+        $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'helperCore' ));
-        $mockCfg = $mockBuilder->getMock();
+            ->setMethods(array( 'tableName', 'connectionWrite', 'helperCore' ))
+            ->getMock();
+        /* constructor */
+        // $this->_helperCore = Config::get()->helperCore();
+        $mockHelperCore = $this
+            ->getMockBuilder('Nmmlm_Core_Helper_Data')
+            ->setMethods(array( 'getCustomerById' ))
+            ->getMock();
         $mockCfg
             ->expects($this->any())
             ->method('helperCore')
             ->will($this->returnValue($mockHelperCore));
+        // $this->conn = Config::get()->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'select', 'fetchOne' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        /* method */
+        // $tblSnapDwnl = Config::get()->tableName($eType, $as);
+        $mockCfg
+            ->expects($this->once())
+            ->method('tableName')
+            ->will($this->returnValue(array( 'snap' => 'prxgt_bonus_snap_downline' )));
+        // $query = $this->conn->select();
+        $mockQuery = $this
+            ->getMockBuilder('Varien_Db_Select')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockConn
+            ->expects($this->once())
+            ->method('select')
+            ->will($this->returnValue($mockQuery));
+        // $parentId = $this->conn->fetchOne($query, array( 'custId' => $custId, 'period' => $period ));
+        $mockConn
+            ->expects($this->once())
+            ->method('fetchOne')
+            ->will($this->returnValue($CUST_ID));
+        // $result = $this->_helperCore->getCustomerById($parentId, $attrs);
+        $mockCustomer = Mage::getModel('customer/customer');
+        $mockCustomer->setId($CUST_ID);
+        $mockHelperCore
+            ->expects($this->once())
+            ->method('getCustomerById')
+            ->will($this->returnValue($mockCustomer));
         /* setup Config */
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Data */
@@ -114,27 +148,31 @@ class Praxigento_Bonus_Test_Helper_Data_UnitTest extends PHPUnit_Framework_TestC
 
     public function test_getUplineFromSession() {
         $PROC_CLASS = 'nmmlm_core_model/own_referral_customer_processor';
-        $mockBuilder = $this->getMockBuilder('Nmmlm_Core_Model_Customer_Customer');
-        $mockCustomer = $mockBuilder->getMock();
+        /**
+         * Create mocks (direct order).
+         */
+        /* Config:: */
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton' ))
+            ->getMock();
         /* Processor */
-        $mockBuilder = $this
+        $mockProc = $this
             ->getMockBuilder('Nmmlm_Core_Model_Own_Referral_Customer_Processor')
-            ->setMethods(array( 'sessionGetUpline' ));
-        $mockProc = $mockBuilder->getMock();
+            ->setMethods(array( 'sessionGetUpline' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('singleton')
+            ->with($this->equalTo($PROC_CLASS))
+            ->will($this->returnValue($mockProc));
+        $mockCustomer = $this
+            ->getMockBuilder('Nmmlm_Core_Model_Customer_Customer')
+            ->getMock();
         $mockProc
             ->expects($this->once())
             ->method('sessionGetUpline')
             ->will($this->returnValue($mockCustomer));
-        /* Config */
-        $mockBuilder = $this
-            ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'singleton' ));
-        $mockCfg = $mockBuilder->getMock();
-        $mockCfg
-            ->expects($this->once())
-            ->method('singleton')
-            ->with($this->equalTo($PROC_CLASS))
-            ->will($this->returnValue($mockProc));
         /* setup Config */
         Config::set($mockCfg);
         /** @var  $hlp Praxigento_Bonus_Helper_Data */

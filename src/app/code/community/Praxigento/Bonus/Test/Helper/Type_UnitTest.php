@@ -31,6 +31,7 @@ class Praxigento_Bonus_Test_Helper_Type_UnitTest extends PHPUnit_Framework_TestC
     const TEST_NOTE = 'note';
 
     public function setUp() {
+        /* reset module's Config instance */
         Config::set(null);
     }
 

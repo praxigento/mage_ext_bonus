@@ -23,10 +23,9 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
      */
     public function isThereDownlinesSnapForPeriod($periodValue) {
         $result = null;
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $conn = $rsrc->getConnection('core_write');
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
+        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
         if($rs > 0) {
@@ -53,13 +52,12 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
      * @return null|string
      */
     public function getLatestDownlineSnapBeforePeriod($periodValue) {
-        /* convert period to the daily form (201506 => 20150630) */
+        $cfg = Config::get();
         $hlp = Config::get()->helperPeriod();
+        /* convert period to the daily form (201506 => 20150630) */
         $smallest = $hlp->calcPeriodSmallest($periodValue);
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $conn = $rsrc->getConnection('core_write');
+        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $conn = $cfg->connectionWrite();
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $sql = "SELECT MAX(period) FROM $tbl WHERE $colPeriod<:period AND $colPeriod!=:now";
         $result = $conn->fetchOne(
@@ -83,10 +81,9 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         /* convert period to the daily form (201506 => 20150630) */
         $hlp = Config::get()->helperPeriod();
         $smallest = $hlp->calcPeriodSmallest($periodValue);
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $conn = $rsrc->getConnection('core_write');
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
+        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $colPath = SnapDownline::ATTR_PATH;
         $ps = Config::FORMAT_PATH_SEPARATOR;
@@ -113,14 +110,12 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     public function getDownlineSnapEntry($custId, $periodValue = Config::PERIOD_KEY_NOW) {
         /** @var  $result Praxigento_Bonus_Model_Own_Snap_Downline */
         $result = Config::get()->modelSnapDownline();
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        /** @var  $conn Varien_Db_Adapter_Interface */
-        $conn = $rsrc->getConnection('core_write');
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
         /* prepare table aliases and models */
         $asSnap = 'snap';
         $eSnap = Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE;
-        $tblSnap = Config::get()->tableName($eSnap, $asSnap);
+        $tblSnap = $cfg->tableName($eSnap, $asSnap);
         /** @var  $query Varien_Db_Select */
         $query = $conn->select();
         $cols = '*';
@@ -207,28 +202,23 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     }
 
     public function saveDownlineSnaps($snapshot) {
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        /** @var  $conn Varien_Db_Adapter_Interface */
-        $conn = $rsrc->getConnection('core_write');
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
         $conn->beginTransaction();
         try {
-            $tblSnapDownline = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+            $tblSnapDownline = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
             $conn->insertMultiple($tblSnapDownline, $snapshot);
             $conn->commit();
         } catch(Exception $e) {
             $conn->rollBack();
             Mage::throwException($e->getMessage());
-
         }
     }
 
     public function getDownlineLogs($from, $to) {
-        $result = array();
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
-        $conn = $rsrc->getConnection('core_write');
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
+        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
         $colChanged = LogDownline::ATTR_DATE_CHANGED;
         $sql = "SELECT * FROM $tbl WHERE $colChanged>=:from AND $colChanged<=:to ORDER BY $colChanged";
         $result = $conn->fetchAll(

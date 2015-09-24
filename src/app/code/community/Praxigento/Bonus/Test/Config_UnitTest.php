@@ -28,8 +28,10 @@ class Praxigento_Bonus_Test_Config_UnitTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($cfg->collectionAccount() instanceof Praxigento_Bonus_Resource_Own_Account_Collection);
         $this->assertTrue($cfg->collectionBalance() instanceof Praxigento_Bonus_Resource_Own_Balance_Collection);
         $this->assertTrue($cfg->collectionLogCalc() instanceof Praxigento_Bonus_Resource_Own_Log_Calc_Collection);
+        $this->assertTrue($cfg->collectionLogDownline() instanceof Praxigento_Bonus_Resource_Own_Log_Downline_Collection);
         $this->assertTrue($cfg->collectionOperation() instanceof Praxigento_Bonus_Resource_Own_Operation_Collection);
         $this->assertTrue($cfg->collectionPeriod() instanceof Praxigento_Bonus_Resource_Own_Period_Collection);
+        $this->assertTrue($cfg->collectionSnapDownline() instanceof Praxigento_Bonus_Resource_Own_Snap_Downline_Collection);
         $this->assertTrue($cfg->collectionTransaction() instanceof Praxigento_Bonus_Resource_Own_Transaction_Collection);
         $this->assertTrue($cfg->collectionTypeAsset() instanceof Praxigento_Bonus_Resource_Own_Type_Asset_Collection);
         $this->assertTrue($cfg->collectionTypeCalc() instanceof Praxigento_Bonus_Resource_Own_Type_Calc_Collection);
@@ -55,6 +57,13 @@ class Praxigento_Bonus_Test_Config_UnitTest extends PHPUnit_Framework_TestCase {
     public function test_connectionWrite() {
         $cfg = Config::get();
         $this->assertTrue($cfg->connectionWrite() instanceof Magento_Db_Adapter_Pdo_Mysql);
+    }
+
+    public function test_url() {
+        $cfg = Config::get();
+        $url = $cfg->url('route/sub', array( 'param' => 321 ));
+        $this->assertTrue(is_string($url));
+        $this->assertTrue(strpos($url, '/route/sub/index/param/321/') !== false);
     }
 
     public function test_singleton() {

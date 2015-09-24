@@ -42,32 +42,23 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         /* Config:: */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'singleton' ))
+            ->setMethods(array( 'tableName', 'connectionWrite' ))
             ->getMock();
-        // $rsrc      = Config::get()->singleton('core/resource');
-        $mockRsrc = $this
-            ->getMockBuilder('Mage_Core_Model_Resource')
-            ->setMethods(array( 'getTableName', 'getConnection' ))
-            ->getMock();
-        $mockCfg
-            ->expects($this->once())
-            ->method('singleton')
-            ->will($this->returnValue($mockRsrc));
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getTableName')
-            ->will($this->returnValue('prxgt_bonus_snap_downline'));
-        // $conn      = $rsrc->getConnection('core_write');
+        // $conn = $cfg->connectionWrite();
         $mockConn = $this
             ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
             ->disableOriginalConstructor()
             ->setMethods(array( 'fetchOne' ))
             ->getMock();
-        $mockRsrc
+        $mockCfg
             ->expects($this->once())
-            ->method('getConnection')
+            ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
+        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $mockCfg
+            ->expects($this->once())
+            ->method('tableName')
+            ->will($this->returnValue('prxgt_bonus_snap_downline'));
         // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
         $mockConn
             ->expects($this->once())
@@ -85,28 +76,28 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
 
     public function test_isThereDownlinesSnapForPeriod_noData() {
         $PERIOD = '20150601';
-        $FOUND = "0";
         /**
          * Create mocks (direct order).
          */
         /* Config:: */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'singleton' ))
+            ->setMethods(array( 'tableName', 'connectionWrite' ))
             ->getMock();
-        // $rsrc      = Config::get()->singleton('core/resource');
-        $mockRsrc = $this
-            ->getMockBuilder('Mage_Core_Model_Resource')
-            ->setMethods(array( 'getTableName', 'getConnection' ))
+        // $conn = $cfg->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'fetchOne' ))
             ->getMock();
         $mockCfg
-            ->expects($this->once())
-            ->method('singleton')
-            ->will($this->returnValue($mockRsrc));
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
         // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $mockRsrc
+        $mockCfg
             ->expects($this->once())
-            ->method('getTableName')
+            ->method('tableName')
             ->will($this->returnValue('prxgt_bonus_snap_downline'));
         // $conn      = $rsrc->getConnection('core_write');
         $mockConn = $this
@@ -114,10 +105,6 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->disableOriginalConstructor()
             ->setMethods(array( 'fetchOne' ))
             ->getMock();
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getConnection')
-            ->will($this->returnValue($mockConn));
         // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
         $mockConn
             ->expects($this->any())
@@ -144,32 +131,23 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         /* Config:: */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'singleton' ))
+            ->setMethods(array( 'tableName', 'connectionWrite' ))
             ->getMock();
-        // $rsrc      = Config::get()->singleton('core/resource');
-        $mockRsrc = $this
-            ->getMockBuilder('Mage_Core_Model_Resource')
-            ->setMethods(array( 'getTableName', 'getConnection' ))
-            ->getMock();
-        $mockCfg
-            ->expects($this->once())
-            ->method('singleton')
-            ->will($this->returnValue($mockRsrc));
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getTableName')
-            ->will($this->returnValue('prxgt_bonus_snap_downline'));
-        // $conn      = $rsrc->getConnection('core_write');
+        // $conn = $cfg->connectionWrite();
         $mockConn = $this
             ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
             ->disableOriginalConstructor()
             ->setMethods(array( 'fetchOne' ))
             ->getMock();
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getConnection')
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
+        // $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $mockCfg
+            ->expects($this->once())
+            ->method('tableName')
+            ->will($this->returnValue('prxgt_bonus_snap_downline'));
         // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
         $mockConn
             ->expects($this->at(0))
@@ -199,21 +177,12 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         /* Config:: */
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'singleton' ))
+            ->setMethods(array( 'tableName', 'connectionWrite' ))
             ->getMock();
-        // $rsrc      = Config::get()->singleton('core/resource');
-        $mockRsrc = $this
-            ->getMockBuilder('Mage_Core_Model_Resource')
-            ->setMethods(array( 'getTableName', 'getConnection' ))
-            ->getMock();
+        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
-            ->method('singleton')
-            ->will($this->returnValue($mockRsrc));
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getTableName')
+            ->method('tableName')
             ->will($this->returnValue('prxgt_bonus_snap_downline'));
         // $conn      = $rsrc->getConnection('core_write');
         $mockConn = $this
@@ -221,9 +190,9 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->disableOriginalConstructor()
             ->setMethods(array( 'fetchOne' ))
             ->getMock();
-        $mockRsrc
-            ->expects($this->once())
-            ->method('getConnection')
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
         // $result    = $conn->fetchOne(...)
         $mockConn
