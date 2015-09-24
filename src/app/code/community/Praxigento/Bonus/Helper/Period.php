@@ -76,7 +76,8 @@ class Praxigento_Bonus_Helper_Period {
     }
 
     /**
-     * Return day period (20150630) for year period (2015) or for month period (201506).
+     * Return day period (20150630) for year period (2015) or for month period (201506). All other values (including
+     * NOW) are returned back without changes.
      *
      * @param $periodValue
      *

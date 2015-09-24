@@ -25,13 +25,15 @@ abstract class Praxigento_Bonus_Service_Base_Call {
     protected $_log;
 
     function __construct() {
-        $this->_log = Config::get()->logger(__CLASS__);
+        /** @var  $cfg Config */
+        $cfg = Config::get();
+        $this->_log = $cfg->logger(__CLASS__);
         /* helpers */
-        $this->_helper = Config::get()->helper();
-        $this->_helperAccount = Config::get()->helperAccount();
-        $this->_helperPeriod = Config::get()->helperPeriod();
-        $this->_helperType = Config::get()->helperType();
+        $this->_helper = $cfg->helper();
+        $this->_helperAccount = $cfg->helperAccount();
+        $this->_helperPeriod = $cfg->helperPeriod();
+        $this->_helperType = $cfg->helperType();
         /* Nmmlm_Core helper */
-        $this->_helperCore = Config::get()->helperCore();
+        $this->_helperCore = $cfg->helperCore();
     }
 }

@@ -15,7 +15,7 @@ use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
 
     /**
-     * Lookup existing snapshot period for given period (for example, given period '201506', existing - '20150630')
+     * Lookup existing snapshot period for given period (for example, given period '201506', existing - '20150630').
      *
      * @param $periodValue
      *
@@ -23,22 +23,17 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
      */
     public function isThereDownlinesSnapForPeriod($periodValue) {
         $result = null;
+        /** @var  $cfg Config */
         $cfg = Config::get();
+        /** @var  $hlpPeriod Praxigento_Bonus_Helper_Period */
+        $hlpPeriod = $cfg->helperPeriod();
+        $smallest = $hlpPeriod->calcPeriodSmallest($periodValue);
         $conn = $cfg->connectionWrite();
         $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
-        $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
+        $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $smallest ));
         if($rs > 0) {
-            $result = $periodValue;
-        } else {
-            /* we should look up for more detailed period */
-            /** @var  $hlp */
-            $hlp = Config::get()->helperPeriod();
-            $smallest = $hlp->calcPeriodSmallest($periodValue);
-            $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $smallest ));
-            if($rs > 0) {
-                $result = $smallest;
-            }
+            $result = $smallest;
         }
         return $result;
     }

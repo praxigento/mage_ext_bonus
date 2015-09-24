@@ -25,10 +25,6 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
     }
 
     public function test_constructor() {
-        /**
-         * Create mocks (direct order).
-         */
-
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $this->assertNotNull($hndl);
@@ -38,7 +34,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         /**
          * Create mocks (direct order).
          */
-        /* Config:: */
+        // $cfg = Config::get();
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
             ->setMethods(array( 'tableName', 'connectionWrite' ))
@@ -308,57 +304,34 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         $this->assertEquals($FOUND, $result);
     }
 
-    public function test_isThereDownlinesSnapForPeriod_exactEquality() {
-        $PERIOD = '20150601';
-        $FOUND = "21";
-        /**
-         * Create mocks (direct order).
-         */
-        /* Config:: */
-        $mockCfg = $this
-            ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'tableName', 'connectionWrite' ))
-            ->getMock();
-        // $conn = $cfg->connectionWrite();
-        $mockConn = $this
-            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
-            ->disableOriginalConstructor()
-            ->setMethods(array( 'fetchOne' ))
-            ->getMock();
-        $mockCfg
-            ->expects($this->once())
-            ->method('connectionWrite')
-            ->will($this->returnValue($mockConn));
-        // $tbl       = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
-        $mockCfg
-            ->expects($this->once())
-            ->method('tableName')
-            ->will($this->returnValue('prxgt_bonus_snap_downline'));
-        // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
-        $mockConn
-            ->expects($this->once())
-            ->method('fetchOne')
-            ->will($this->returnValue($FOUND));
-        /**
-         * Setup config and perform call.
-         */
-        Config::set($mockCfg);
-        /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
-        $result = $hndl->isThereDownlinesSnapForPeriod($PERIOD);
-        $this->assertEquals($PERIOD, $result);
-    }
 
     public function test_isThereDownlinesSnapForPeriod_noData() {
-        $PERIOD = '20150601';
+        $PERIOD = '201506';
+        $PERIOD_EXPECTED = '20150630';
+        $NOT_FOUND = "0";
         /**
          * Create mocks (direct order).
          */
-        /* Config:: */
+        // $cfg = Config::get();
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'tableName', 'connectionWrite' ))
+            ->setMethods(array( 'helperPeriod', 'connectionWrite', 'tableName' ))
             ->getMock();
+        // $hlpPeriod = $cfg->helperPeriod();
+        $mockHlpPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Period')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'calcPeriodSmallest' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperPeriod')
+            ->will($this->returnValue($mockHlpPeriod));
+        // $smallest = $hlpPeriod->calcPeriodSmallest($periodValue);
+        $mockHlpPeriod
+            ->expects($this->any())
+            ->method('calcPeriodSmallest')
+            ->will($this->returnValue($PERIOD_EXPECTED));
         // $conn = $cfg->connectionWrite();
         $mockConn = $this
             ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
@@ -369,22 +342,16 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->expects($this->any())
             ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
-        // $tbl       = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
+        // $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
             ->method('tableName')
             ->will($this->returnValue('prxgt_bonus_snap_downline'));
-        // $conn      = $rsrc->getConnection('core_write');
-        $mockConn = $this
-            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
-            ->disableOriginalConstructor()
-            ->setMethods(array( 'fetchOne' ))
-            ->getMock();
-        // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
+        // $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $smallest ));
         $mockConn
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('fetchOne')
-            ->will($this->returnValue(0));
+            ->will($this->returnValue($NOT_FOUND));
         /**
          * Setup config and perform call.
          */
@@ -436,19 +403,33 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         $this->assertEquals($INSERTED, $result);
     }
 
-    public function test_isThereDownlinesSnapForPeriod_smallestEquality() {
+    public function test_isThereDownlinesSnapForPeriod_exists() {
         $PERIOD = '201506';
         $PERIOD_EXPECTED = '20150630';
-        $NOT_FOUND = "0";
         $FOUND = "1";
         /**
          * Create mocks (direct order).
          */
-        /* Config:: */
+        // $cfg = Config::get();
         $mockCfg = $this
             ->getMockBuilder('Praxigento_Bonus_Config')
-            ->setMethods(array( 'tableName', 'connectionWrite' ))
+            ->setMethods(array( 'helperPeriod', 'connectionWrite', 'tableName' ))
             ->getMock();
+        // $hlpPeriod = $cfg->helperPeriod();
+        $mockHlpPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Period')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'calcPeriodSmallest' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperPeriod')
+            ->will($this->returnValue($mockHlpPeriod));
+        // $smallest = $hlpPeriod->calcPeriodSmallest($periodValue);
+        $mockHlpPeriod
+            ->expects($this->any())
+            ->method('calcPeriodSmallest')
+            ->will($this->returnValue($PERIOD_EXPECTED));
         // $conn = $cfg->connectionWrite();
         $mockConn = $this
             ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
@@ -464,14 +445,9 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->expects($this->once())
             ->method('tableName')
             ->will($this->returnValue('prxgt_bonus_snap_downline'));
-        // $rs        = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
+        // $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $smallest ));
         $mockConn
-            ->expects($this->at(0))
-            ->method('fetchOne')
-            ->will($this->returnValue($NOT_FOUND));
-        // $rs       = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $smallest ));
-        $mockConn
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('fetchOne')
             ->will($this->returnValue($FOUND));
         /**

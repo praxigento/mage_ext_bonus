@@ -24,19 +24,6 @@ use Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot as Valid
 class Praxigento_Bonus_Service_Snapshot_Call
     extends Praxigento_Bonus_Service_Base_Call {
 
-    /** @var Praxigento_Bonus_Service_Snapshot_Hndl_Db */
-    private $_hndlDb;
-    /** @var Praxigento_Bonus_Service_Snapshot_Hndl_Downline */
-    private $_hndlDownline;
-
-    /**
-     * Praxigento_Bonus_Service_Snapshot_Call constructor.
-     */
-    public function __construct() {
-        parent::__construct();
-        $this->_hndlDb = Config::get()->model(Config::CFG_SERVICE . '/snapshot_hndl_db');
-        $this->_hndlDownline = Config::get()->model(Config::CFG_SERVICE . '/snapshot_hndl_downline');
-    }
 
     /**
      * @param Praxigento_Bonus_Service_Snapshot_Request_ComposeDownlineSnapshot $req
@@ -44,41 +31,50 @@ class Praxigento_Bonus_Service_Snapshot_Call
      * @return Praxigento_Bonus_Service_Snapshot_Response_ComposeDownlineSnapshot
      */
     public function composeDownlineSnapshot(ComposeDownlineSnapshotRequest $req) {
+        /** @var  $cfg Config */
+        $cfg = Config::get();
+        /** @var  $hlpPeriod Praxigento_Bonus_Helper_Period */
+        $hlpPeriod = $cfg->helperPeriod();
+        /** @var  $hndlDb  Praxigento_Bonus_Service_Snapshot_Hndl_Db */
+        $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        /** @var  $hndlDownline Praxigento_Bonus_Service_Snapshot_Hndl_Downline */
+        $hndlDownline = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_downline');
         /** @var  $result ComposeDownlineSnapshotResponse */
-        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_composeDownlineSnapshot');
+        $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_composeDownlineSnapshot');
+        /* parse request parameters and calculate exact period value (daily basis)*/
         $periodValue = $req->getPeriodValue();
-        $periodValueDaily = $this->_helperPeriod->calcPeriodSmallest($periodValue);
+        $periodValueDaily = $hlpPeriod->calcPeriodSmallest($periodValue);
         /* check if there is data for given period in downline snapshots*/
-        $periodExists = $this->_hndlDb->isThereDownlinesSnapForPeriod($periodValueDaily);
+        $periodExists = $hndlDb->isThereDownlinesSnapForPeriod($periodValueDaily);
         if(is_null($periodExists)) {
             $this->_log->debug("There is no downline snapshot data for period '$periodValue/$periodValueDaily'");
-            $maxExistingPeriod = $this->_hndlDb->getLatestDownlineSnapBeforePeriod($periodValueDaily);
+            $maxExistingPeriod = $hndlDb->getLatestDownlineSnapBeforePeriod($periodValueDaily);
             /* array of the aggregated previous snap & log data */
             $arrAggregated = array();
             $from = null;
-            $to = $this->_helperPeriod->calcPeriodTsTo($periodValueDaily, Config::PERIOD_DAY);
+            $to = $hlpPeriod->calcPeriodTsTo($periodValueDaily, Config::PERIOD_DAY);
             if(is_null($maxExistingPeriod)) {
                 $this->_log->debug("There is no downline snapshot data for periods before '$periodValue/$periodValueDaily'. Getting up date for the first downline log record.");
-                $from = $this->_hndlDb->getFirstDownlineLogBeforePeriod($periodValue);
+                $from = $hndlDb->getFirstDownlineLogBeforePeriod($periodValue);
                 $this->_log->debug("First downline log record is at '$from'");
             } else {
                 /* load snapshot for existing period */
-                $latestSnap = $this->_hndlDb->getDownlineSnapForPeriod($maxExistingPeriod);
+                $latestSnap = $hndlDb->getDownlineSnapForPeriod($maxExistingPeriod);
                 foreach($latestSnap as $one) {
                     $arrAggregated[ $one[ SnapDownline::ATTR_CUSTOMER_ID ] ] = $one[ SnapDownline::ATTR_PARENT_ID ];
                 }
-                $from = $this->_helperPeriod->calcPeriodTsNextFrom($maxExistingPeriod, Config::PERIOD_DAY);
+                $from = $hlpPeriod->calcPeriodTsNextFrom($maxExistingPeriod, Config::PERIOD_DAY);
             }
             /* load logs from the latest snapshot (or from beginning) and process it to get final state for period */
-            $logs = $this->_hndlDb->getDownlineLogs($from, $to);
+            $logs = $hndlDb->getDownlineLogs($from, $to);
             foreach($logs as $one) {
                 $ownId = $one[ LogDownline::ATTR_CUSTOMER_ID ];
                 $parentId = $one[ LogDownline::ATTR_PARENT_ID ];
                 $arrAggregated[ $ownId ] = $parentId;
             }
             try {
-                $snapshot = $this->_hndlDownline->transformIdsToSnapItems($arrAggregated, $periodValueDaily);
-                $this->_hndlDb->saveDownlineSnaps($snapshot);
+                $snapshot = $hndlDownline->transformIdsToSnapItems($arrAggregated, $periodValueDaily);
+                $hndlDb->saveDownlineSnaps($snapshot);
                 $result->setPeriodValue($periodValue);
                 $result->setErrorCode(ComposeDownlineSnapshotResponse::ERR_NO_ERROR);
             } catch(Exception $e) {
@@ -102,6 +98,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
     public function changeUpline(ChangeUplineRequest $req) {
         /** @var  $cfg Config */
         $cfg = Config::get();
+        $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
         /** @var  $result ChangeUplineResponse */
         $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
         $custId = $req->getCustomerId();
@@ -112,13 +109,13 @@ class Praxigento_Bonus_Service_Snapshot_Call
             $this->_log->error("Cannot change parent to itself.");
         } else {
             /* get customer current data from downline snapshot */
-            $entryCust = $this->_hndlDb->getDownlineSnapEntry($custId);
+            $entryCust = $hndlDb->getDownlineSnapEntry($custId);
             if($entryCust->getParentId() == $newParentId) {
                 $result->setErrorCode(ChangeUplineResponse::ERR_PARENT_ALREADY_SET);
                 $this->_log->error("This parent is already set to the customer.");
             } else {
                 /* get parent current data from downline snapshot */
-                $entryNewParent = $this->_hndlDb->getDownlineSnapEntry($newParentId);
+                $entryNewParent = $hndlDb->getDownlineSnapEntry($newParentId);
                 $pathNewParent = $entryNewParent->getPath();
                 $pathIds = explode(Config::MPS, $pathNewParent);
                 if(in_array($custId, $pathIds)) {
@@ -139,7 +136,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                         /* update parent for the customer */
                         $pathNew = $pathNewParent . $newParentId . Config::MPS;
                         $depthNew = $entryNewParent->getDepth() + 1;
-                        $this->_hndlDb->updateDownlineSnapParent(
+                        $hndlDb->updateDownlineSnapParent(
                             $custId,
                             Config::PERIOD_KEY_NOW,
                             $newParentId,
@@ -150,7 +147,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                         $pathChildKey = $entryCust->getPath() . $entryCust->getCustomerId() . Config::MPS;
                         $pathChildReplace = $pathNew . $custId . Config::MPS;
                         $depthChildDelta = $depthNew - $entryCust->getDepth();
-                        $this->_hndlDb->updateDownlineSnapChildren(
+                        $hndlDb->updateDownlineSnapChildren(
                             $pathChildKey,
                             $pathChildReplace,
                             $depthChildDelta,
@@ -173,11 +170,14 @@ class Praxigento_Bonus_Service_Snapshot_Call
      * @return Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry
      */
     public function getDownlineSnapshotEntry(GetDownlineSnapshotEntryRequest $req) {
+        /** @var  $cfg Config */
+        $cfg = Config::get();
+        $hlpPeriod = $cfg->helperPeriod();
         /** @var  $result GetDownlineSnapshotEntryResponse */
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
         $custId = $req->getCustomerId();
         $periodValue = $req->getPeriodValue();
-        $periodExact = $this->_helperPeriod->calcPeriodSmallest($periodValue);
+        $periodExact = $hlpPeriod->calcPeriodSmallest($periodValue);
         /** @var  $rsrc Mage_Core_Model_Resource */
         $rsrc = Config::get()->singleton('core/resource');
         /** @var  $conn Varien_Db_Adapter_Interface */
@@ -226,11 +226,15 @@ class Praxigento_Bonus_Service_Snapshot_Call
      * @return Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot
      */
     public function validateDownlineSnapshot(ValidateDownlineSnapshotRequest $req) {
+        /** @var  $cfg Config */
+        $cfg = Config::get();
+        $hlpPeriod = $cfg->helperPeriod();
+        $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
         /** @var  $result ValidateDownlineSnapshotResponse */
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
 
-        $periodValue = $this->_helperPeriod->calcPeriodSmallest($req->getPeriodValue());
-        $entries = $this->_hndlDb->getDownlineSnapForPeriod($periodValue);
+        $periodValue = $hlpPeriod->calcPeriodSmallest($req->getPeriodValue());
+        $entries = $hndlDb->getDownlineSnapForPeriod($periodValue);
         $allByCustomerId = array();
         $allOrphans = array();
         $allWrongPaths = array();
