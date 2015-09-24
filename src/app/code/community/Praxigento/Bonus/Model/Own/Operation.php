@@ -22,6 +22,6 @@ class Praxigento_Bonus_Model_Own_Operation
     const ATTR_TYPE_ID = 'type_id';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
+        $this->_init(Config::ENTITY_OPERATION);
     }
 }

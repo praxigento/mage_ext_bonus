@@ -33,7 +33,7 @@ class Praxigento_Bonus_Model_Own_Snap_Downline extends Mage_Core_Model_Abstract 
     const ATTR_PERIOD = 'period';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $this->_init(Config::ENTITY_SNAP_DOWNLINE);
     }
 
 }

@@ -100,7 +100,7 @@ class Praxigento_Bonus_Service_Period_Call
                 /* get transaction with minimal date_applied and operation type = ORDR_PV or PV_INT */
                 $collection = Config::get()->collectionTransaction();
                 $asOper = 'o';
-                $table = array( $asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION );
+                $table = array( $asOper => Config::ENTITY_OPERATION );
                 $cond = 'main_table.' . Transaction::ATTR_OPERATION_ID . '='
                         . $asOper . '.' . Operation::ATTR_ID;
                 $collection->join($table, $cond);
@@ -133,7 +133,7 @@ class Praxigento_Bonus_Service_Period_Call
 
     private function  _getCalcPeriodsCollection($as) {
         $result = Config::get()->collectionPeriod();
-        $table = array( $as => Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC );
+        $table = array( $as => Config::ENTITY_LOG_CALC );
         $cond = 'main_table.' . Period::ATTR_ID . '='
                 . $as . '.' . LogCalc::ATTR_PERIOD_ID;
         $cols = array(

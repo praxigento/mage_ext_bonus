@@ -14,6 +14,6 @@ class Praxigento_Bonus_Resource_Own_Snap_Downline_Collection
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $this->_init(Config::ENTITY_SNAP_DOWNLINE);
     }
 }

@@ -6,6 +6,7 @@
 
 /**
  * User: Alex Gusev <alex@flancer64.com>
+ * @codeCoverageIgnore
  */
 class Praxigento_Bonus_Model_Own_Backend_Connector
     extends Nmmlm_Core_Datasource_Backend_Connector_Base {

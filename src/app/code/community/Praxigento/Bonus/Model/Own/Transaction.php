@@ -32,6 +32,6 @@ class Praxigento_Bonus_Model_Own_Transaction
     const ATTR_VALUE = 'value';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $this->_init(Config::ENTITY_TRANSACTION);
     }
 }

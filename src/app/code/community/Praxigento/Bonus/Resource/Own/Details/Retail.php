@@ -14,7 +14,7 @@ class Praxigento_Bonus_Resource_Own_Details_Retail extends Mage_Core_Model_Mysql
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_DETAIL_RETAIL, Model::ATTR_ID);
+        $this->_init(Config::ENTITY_DETAIL_RETAIL, Model::ATTR_ID);
     }
 
 }

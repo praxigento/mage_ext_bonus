@@ -14,6 +14,6 @@ class Praxigento_Bonus_Resource_Own_Cfg_Personal_Collection
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
+        $this->_init(Config::ENTITY_CFG_PERSONAL);
     }
 }

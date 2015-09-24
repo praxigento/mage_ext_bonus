@@ -23,7 +23,7 @@ class Praxigento_Bonus_Model_Own_Cfg_Personal extends Mage_Core_Model_Abstract {
     const ATTR_PERCENT = 'percent';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
+        $this->_init(Config::ENTITY_CFG_PERSONAL);
     }
 
 }

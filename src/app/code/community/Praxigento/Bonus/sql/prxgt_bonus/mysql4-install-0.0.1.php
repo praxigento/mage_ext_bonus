@@ -44,24 +44,24 @@ $conn = $this->getConnection();
 /**
  * Own tables names.
  */
-$tblAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
-$tblBalance = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_BALANCE);
-$tblCfgPersonal = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL);
-$tblDetailsRetail = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_DETAILS_RETAIL);
-$tblLogAccount = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ACCOUNT);
-$tblLogCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
-$tblLogDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
-$tblLogOrder = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
-$tblLogPayout = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_PAYOUT);
-$tblOperation = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION);
-$tblPeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_PERIOD);
-$tblSnapBonus = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
-$tblSnapDownline = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
-$tblTransaction = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
-$tblTypeAsset = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
-$tblTypeCalc = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_CALC);
-$tblTypeOper = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER);
-$tblTypePeriod = $this->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
+$tblAccount = $this->getTable(Config::ENTITY_ACCOUNT);
+$tblBalance = $this->getTable(Config::ENTITY_BALANCE);
+$tblCfgPersonal = $this->getTable(Config::ENTITY_CFG_PERSONAL);
+$tblDetailsRetail = $this->getTable(Config::ENTITY_DETAILS_RETAIL);
+$tblLogAccount = $this->getTable(Config::ENTITY_LOG_ACCOUNT);
+$tblLogCalc = $this->getTable(Config::ENTITY_LOG_CALC);
+$tblLogDownline = $this->getTable(Config::ENTITY_LOG_DOWNLINE);
+$tblLogOrder = $this->getTable(Config::ENTITY_LOG_ORDER);
+$tblLogPayout = $this->getTable(Config::ENTITY_LOG_PAYOUT);
+$tblOperation = $this->getTable(Config::ENTITY_OPERATION);
+$tblPeriod = $this->getTable(Config::ENTITY_PERIOD);
+$tblSnapBonus = $this->getTable(Config::ENTITY_SNAP_BONUS);
+$tblSnapDownline = $this->getTable(Config::ENTITY_SNAP_DOWNLINE);
+$tblTransaction = $this->getTable(Config::ENTITY_TRANSACTION);
+$tblTypeAsset = $this->getTable(Config::ENTITY_TYPE_ASSET);
+$tblTypeCalc = $this->getTable(Config::ENTITY_TYPE_CALC);
+$tblTypeOper = $this->getTable(Config::ENTITY_TYPE_OPER);
+$tblTypePeriod = $this->getTable(Config::ENTITY_TYPE_PERIOD);
 /**
  * Mage tables names.
  */

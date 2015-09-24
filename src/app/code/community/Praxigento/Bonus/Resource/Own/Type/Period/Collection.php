@@ -14,6 +14,6 @@ class Praxigento_Bonus_Resource_Own_Type_Period_Collection
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_PERIOD);
+        $this->_init(Config::ENTITY_TYPE_PERIOD);
     }
 }

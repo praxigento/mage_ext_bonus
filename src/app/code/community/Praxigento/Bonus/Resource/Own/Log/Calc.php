@@ -14,7 +14,7 @@ class Praxigento_Bonus_Resource_Own_Log_Calc extends Mage_Core_Model_Mysql4_Abst
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC, Model::ATTR_ID);
+        $this->_init(Config::ENTITY_LOG_CALC, Model::ATTR_ID);
     }
 
 }

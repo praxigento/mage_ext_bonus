@@ -57,36 +57,32 @@ class Praxigento_Bonus_Config {
      * Entities in config.xml:/config/global/models/prxgt_bonus_resource/entities
      */
 
-    const ENTITY_ACCOUNT = 'account';
-    const ENTITY_BALANCE = 'balance';
-    const ENTITY_CFG_PERSONAL = 'cfg_personal';
-    const ENTITY_CORE_TYPE = 'core_type';
-    const ENTITY_DETAILS_RETAIL = 'details_retail';
-    const ENTITY_LOG_ACCOUNT = 'log_account';
-    const ENTITY_LOG_CALC = 'log_calc';
-    const ENTITY_LOG_DOWNLINE = 'log_downline';
-    const ENTITY_LOG_ORDER = 'log_order';
-    const ENTITY_LOG_PAYOUT = 'log_payout';
-    const ENTITY_OPERATION = 'operation';
-    const ENTITY_PERIOD = 'period';
-    const ENTITY_SNAP_BONUS = 'snap_bonus';
-    const ENTITY_SNAP_DOWNLINE = 'snap_downline';
-    const ENTITY_TRANSACTION = 'transaction';
-    const ENTITY_TYPE_ASSET = 'type_asset';
-    const ENTITY_TYPE_CALC = 'type_calc';
-    const ENTITY_TYPE_OPER = 'type_oper';
-    const ENTITY_TYPE_PERIOD = 'type_period';
-
+    const ENTITY_ACCOUNT = 'prxgt_bonus_model/account';
+    const ENTITY_BALANCE = 'prxgt_bonus_model/balance';
+    const ENTITY_CFG_PERSONAL = 'prxgt_bonus_model/cfg_personal';
+    const ENTITY_CORE_TYPE = 'prxgt_bonus_model/core_type';
+    const ENTITY_DETAILS_RETAIL = 'prxgt_bonus_model/details_retail';
+    const ENTITY_LOG_ACCOUNT = 'prxgt_bonus_model/log_account';
+    const ENTITY_LOG_CALC = 'prxgt_bonus_model/log_calc';
+    const ENTITY_LOG_DOWNLINE = 'prxgt_bonus_model/log_downline';
+    const ENTITY_LOG_ORDER = 'prxgt_bonus_model/log_order';
+    const ENTITY_LOG_PAYOUT = 'prxgt_bonus_model/log_payout';
+    const ENTITY_OPERATION = 'prxgt_bonus_model/operation';
+    const ENTITY_PERIOD = 'prxgt_bonus_model/period';
+    const ENTITY_SNAP_BONUS = 'prxgt_bonus_model/snap_bonus';
+    const ENTITY_SNAP_DOWNLINE = 'prxgt_bonus_model/snap_downline';
+    const ENTITY_TRANSACTION = 'prxgt_bonus_model/transaction';
+    const ENTITY_TYPE_ASSET = 'prxgt_bonus_model/type_asset';
+    const ENTITY_TYPE_CALC = 'prxgt_bonus_model/type_calc';
+    const ENTITY_TYPE_OPER = 'prxgt_bonus_model/type_oper';
+    const ENTITY_TYPE_PERIOD = 'prxgt_bonus_model/type_period';
     /**
      * Formats
      */
 
     const FORMAT_DATETIME_SQL = 'Y-m-d H:i:s';
     const FORMAT_PATH_SEPARATOR = Nmmlm_Core_Config::FORMAT_MPS;
-
-    /* Path separator in the downline tree  */
     const MPS = CoreConfig::FORMAT_MPS;
-
     /**
      * Available operations codes.
      */
@@ -94,13 +90,14 @@ class Praxigento_Bonus_Config {
     const OPER_BONUS_PV = 'BON_PV';
     const OPER_ORDER_PV = 'ORDR_PV';
     const OPER_ORDER_RETAIL = 'ORDR_RETAIL';
+
+    /* Path separator in the downline tree  */
     const OPER_PV_FWRD = 'PV_FWRD';
     const OPER_PV_INT = 'PV_INT';
     const OPER_PV_WRITE_OFF = 'PV_WRITE_OFF';
     const OPER_TRANS_EXT_IN = 'TRANS_EXT_IN';
     const OPER_TRANS_EXT_OUT = 'TRANS_EXT_OUT';
     const OPER_TRANS_INT = 'TRANS_INT';
-
     /**
      * Available bonus calculation periods.
      */
@@ -110,7 +107,6 @@ class Praxigento_Bonus_Config {
     const PERIOD_MONTH = 'MONTH';
     const PERIOD_WEEK = 'WEEK';
     const PERIOD_YEAR = 'YEAR';
-
     /**
      * Available states for bonus calculation periods.
      */

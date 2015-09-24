@@ -70,7 +70,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Customer_Bonus_Accounting_Transaction
         $collection->addFieldToSelect(Transaction::ATTR_VALUE, self::AS_VALUE);
         /* LEFT JOIN prxgt_bonus_operation oper ON trnx.operation_id = oper.id */
         $asOper = 'oper';
-        $tbl = array( $asOper => Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION );
+        $tbl = array( $asOper => Config::ENTITY_OPERATION );
         $cond = $asTrnx . '.' . Transaction::ATTR_OPERATION_ID . '=' . $asOper . '.' . Operation::ATTR_ID;
         $cols = array(
             self::AS_OPER_ID        => Operation::ATTR_ID,
@@ -79,13 +79,13 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Customer_Bonus_Accounting_Transaction
         $collection->join($tbl, $cond, $cols);
         /* LEFT JOIN prxgt_bonus_account credit ON trnx.credit_acc_id = credit.id */
         $asCredit = 'credit';
-        $tbl = array( $asCredit => Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT );
+        $tbl = array( $asCredit => Config::ENTITY_ACCOUNT );
         $cond = $asTrnx . '.' . Transaction::ATTR_CREDIT_ACC_ID . '=' . $asCredit . '.' . Account::ATTR_ID;
         $cols = array();
         $collection->join($tbl, $cond, $cols);
         /* LEFT JOIN prxgt_bonus_account debit ON trnx.debit_acc_id = debit.id */
         $asDebit = 'debit';
-        $tbl = array( $asDebit => Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT );
+        $tbl = array( $asDebit => Config::ENTITY_ACCOUNT );
         $cond = $asTrnx . '.' . Transaction::ATTR_DEBIT_ACC_ID . '=' . $asDebit . '.' . Account::ATTR_ID;
         $cols = array();
         $collection->join($tbl, $cond, $cols);
@@ -103,13 +103,13 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Customer_Bonus_Accounting_Transaction
         $collection->join($tbl, $cond, $cols);
         /* LEFT JOIN prxgt_bonus_type_asset asset ON credit.asset_id = asset.id */
         $asAsset = 'asset';
-        $tbl = array( $asAsset => Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET );
+        $tbl = array( $asAsset => Config::ENTITY_TYPE_ASSET );
         $cond = $asCredit . '.' . Account::ATTR_ASSET_ID . '=' . $asAsset . '.' . TypeAsset::ATTR_ID;
         $cols = array( self::AS_ASSET_CODE => TypeAsset::ATTR_CODE );
         $collection->join($tbl, $cond, $cols);
         /* LEFT JOIN prxgt_bonus_type_oper operType ON oper.type_id = operType.id */
         $asOperType = 'operType';
-        $tbl = array( $asOperType => Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_OPER );
+        $tbl = array( $asOperType => Config::ENTITY_TYPE_OPER );
         $cond = $asOper . '.' . Operation::ATTR_TYPE_ID . '=' . $asOperType . '.' . TypeOper::ATTR_ID;
         $cols = array( self::AS_OPER_CODE => TypeOper::ATTR_CODE );
         $collection->join($tbl, $cond, $cols);

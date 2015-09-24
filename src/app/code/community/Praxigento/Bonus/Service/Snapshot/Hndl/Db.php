@@ -25,7 +25,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $result = null;
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
-        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $rs = $conn->fetchOne("SELECT COUNT(*) FROM $tbl WHERE $colPeriod=:period", array( 'period' => $periodValue ));
         if($rs > 0) {
@@ -56,7 +56,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $hlp = Config::get()->helperPeriod();
         /* convert period to the daily form (201506 => 20150630) */
         $smallest = $hlp->calcPeriodSmallest($periodValue);
-        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $conn = $cfg->connectionWrite();
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $sql = "SELECT MAX(period) FROM $tbl WHERE $colPeriod<:period AND $colPeriod!=:now";
@@ -83,7 +83,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $smallest = $hlp->calcPeriodSmallest($periodValue);
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
-        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $colPath = SnapDownline::ATTR_PATH;
         $ps = Config::FORMAT_PATH_SEPARATOR;
@@ -114,7 +114,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $conn = $cfg->connectionWrite();
         /* prepare table aliases and models */
         $asSnap = 'snap';
-        $eSnap = Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE;
+        $eSnap = Config::ENTITY_SNAP_DOWNLINE;
         $tblSnap = $cfg->tableName($eSnap, $asSnap);
         /** @var  $query Varien_Db_Select */
         $query = $conn->select();
@@ -141,7 +141,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $periodDaily = $hlp->calcPeriodSmallest($periodValue);
         $hlpPeriod = $cfg->helperPeriod();
         $to = $hlpPeriod->calcPeriodTsTo($periodDaily, Config::PERIOD_DAY);
-        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+        $tbl = $cfg->tableName(Config::ENTITY_LOG_DOWNLINE);
         $conn = $cfg->connectionWrite();
         $colChanged = LogDownline::ATTR_DATE_CHANGED;
         $sql = "SELECT MIN(date_changed) FROM $tbl WHERE $colChanged<=:changed";
@@ -154,7 +154,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
 
     public function updateDownlineSnapParent($custId, $period, $parentIdNew, $pathNew, $depthNew) {
         $conn = Config::get()->connectionWrite();
-        $tblSnapDwnl = Config::get()->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tblSnapDwnl = Config::get()->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $bind = array(
             SnapDownline::ATTR_PARENT_ID => $parentIdNew,
             SnapDownline::ATTR_PATH      => $pathNew,
@@ -179,7 +179,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $conn = $cfg->connectionWrite();
         $query = $conn->select();
         $cols = '*';
-        $tblSnapDwnl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tblSnapDwnl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $query->from($tblSnapDwnl, $cols);
         $query->where(SnapDownline::ATTR_PATH . ' LIKE :path');
         $sql = (string)$query;
@@ -206,7 +206,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $conn = $cfg->connectionWrite();
         $conn->beginTransaction();
         try {
-            $tblSnapDownline = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+            $tblSnapDownline = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
             $conn->insertMultiple($tblSnapDownline, $snapshot);
             $conn->commit();
         } catch(Exception $e) {
@@ -215,10 +215,18 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         }
     }
 
+    /**
+     * Return downline logs for period [$from $to].
+     *
+     * @param $from
+     * @param $to
+     *
+     * @return array
+     */
     public function getDownlineLogs($from, $to) {
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
-        $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+        $tbl = $cfg->tableName(Config::TABLE_LOG_DOWNLINE);
         $colChanged = LogDownline::ATTR_DATE_CHANGED;
         $sql = "SELECT * FROM $tbl WHERE $colChanged>=:from AND $colChanged<=:to ORDER BY $colChanged";
         $result = $conn->fetchAll(

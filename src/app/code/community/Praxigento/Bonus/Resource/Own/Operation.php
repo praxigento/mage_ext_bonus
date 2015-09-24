@@ -15,6 +15,6 @@ class Praxigento_Bonus_Resource_Own_Operation
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_OPERATION, Model::ATTR_ID);
+        $this->_init(Config::ENTITY_OPERATION, Model::ATTR_ID);
     }
 }

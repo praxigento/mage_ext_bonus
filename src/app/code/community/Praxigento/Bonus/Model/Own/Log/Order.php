@@ -28,7 +28,7 @@ class Praxigento_Bonus_Model_Own_Log_Order extends Mage_Core_Model_Abstract {
     const ATTR_VALUE = 'value';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_ORDER);
+        $this->_init(Config::ENTITY_LOG_ORDER);
     }
 
 }

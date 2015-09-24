@@ -65,7 +65,7 @@ class Praxigento_Bonus_Service_Operations_Call
         }
         $collection->addFieldToFilter($fields, $values);
         $as = 'trnx';
-        $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $tableTrnx = $collection->getTable(Config::ENTITY_TRANSACTION);
         $collection->getSelect()->joinLeft(
             array( $as => $tableTrnx ),
             "main_table.id = $as.operation_id",

@@ -14,6 +14,6 @@ class Praxigento_Bonus_Resource_Own_Log_Downline_Collection
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+        $this->_init(Config::ENTITY_LOG_DOWNLINE);
     }
 }

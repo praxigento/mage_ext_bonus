@@ -47,7 +47,7 @@ class Praxigento_Bonus_Helper_Data extends Mage_Core_Helper_Abstract {
     public function getUplineForCustomer($custId, $period = Config::PERIOD_KEY_NOW, $attrs = '*') {
         /* prepare table aliases and models */
         $as = 'snap';
-        $eType = Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE;
+        $eType = Config::ENTITY_SNAP_DOWNLINE;
         $tblSnapDwnl = Config::get()->tableName($eType, $as);
         /** @var  $query Varien_Db_Select */
         $query = $this->conn->select();

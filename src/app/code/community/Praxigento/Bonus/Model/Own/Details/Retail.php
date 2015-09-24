@@ -39,7 +39,7 @@ class Praxigento_Bonus_Model_Own_Details_Retail extends Mage_Core_Model_Abstract
     const ATTR_ORDER_ID = 'order_id';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_DETAIL_ORDER);
+        $this->_init(Config::ENTITY_DETAIL_ORDER);
     }
 
 }

@@ -49,6 +49,12 @@ class Praxigento_Bonus_Test_Config_UnitTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($cfg->helperType() instanceof Praxigento_Bonus_Helper_Type);
     }
 
+    public function test_tableName() {
+        /** @var  $cfg COnfig */
+        $cfg = Config::get();
+        $this->assertEquals('customer_entity', $cfg->tableName('customer/entity'));
+    }
+
     public function test_service() {
         $cfg = Config::get();
         $this->assertTrue($cfg->service('operations_call') instanceof Praxigento_Bonus_Service_Operations_Call);

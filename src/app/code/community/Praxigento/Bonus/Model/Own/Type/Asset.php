@@ -14,7 +14,7 @@ class Praxigento_Bonus_Model_Own_Type_Asset
     extends Praxigento_Bonus_Model_Own_Type_Base {
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET);
+        $this->_init(Config::ENTITY_TYPE_ASSET);
     }
 
 }

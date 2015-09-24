@@ -21,6 +21,6 @@ class Praxigento_Bonus_Model_Own_Account extends Mage_Core_Model_Abstract {
     const ATTR_ID = 'id';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_ACCOUNT);
+        $this->_init(Config::ENTITY_ACCOUNT);
     }
 }

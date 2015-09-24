@@ -54,7 +54,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->expects($this->once())
             ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        // $tbl       = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
             ->method('tableName')
@@ -94,7 +94,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->expects($this->any())
             ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        // $tbl       = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
             ->method('tableName')
@@ -120,6 +120,33 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
         $this->assertNull($result);
     }
 
+    public function test_getDownlineLogs() {
+        /**
+         * Create mocks (direct order).
+         */
+        /* Config:: */
+//        $mockCfg = $this
+//            ->getMockBuilder('Praxigento_Bonus_Config')
+//            ->setMethods(array( 'tableName', 'connectionWrite' ))
+//            ->getMock();
+//        // $conn = $cfg->connectionWrite();
+//        $mockConn = $this
+//            ->getMockBuilder('Magento_Db_Adapter_Pdo_Mysql')
+//            ->disableOriginalConstructor()
+//            ->setMethods(array( 'fetchOne' ))
+//            ->getMock();
+//        $mockCfg
+//            ->expects($this->any())
+//            ->method('connectionWrite')
+//            ->will($this->returnValue($mockConn));
+//        // $tbl = $cfg->tableName(Config::TABLE_LOG_DOWNLINE);
+//        $mockCfg
+//            ->expects($this->once())
+//            ->method('tableName')
+//            ->with(Config::ENTITY_LOG_DOWNLINE)
+//            ->will($this->returnValue('prxgt_bonus_log_downline'));
+    }
+
     public function test_isThereDownlinesSnapForPeriod_smallestEquality() {
         $PERIOD = '201506';
         $PERIOD_EXPECTED = '20150630';
@@ -143,7 +170,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->expects($this->any())
             ->method('connectionWrite')
             ->will($this->returnValue($mockConn));
-        // $tbl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        // $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
             ->method('tableName')
@@ -179,7 +206,7 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_UnitTest
             ->getMockBuilder('Praxigento_Bonus_Config')
             ->setMethods(array( 'tableName', 'connectionWrite' ))
             ->getMock();
-        // $tbl       = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        // $tbl       = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
         $mockCfg
             ->expects($this->once())
             ->method('tableName')

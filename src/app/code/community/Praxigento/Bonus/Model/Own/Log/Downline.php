@@ -25,7 +25,7 @@ class Praxigento_Bonus_Model_Own_Log_Downline extends Mage_Core_Model_Abstract {
     const ATTR_PARENT_ID = 'parent_id';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+        $this->_init(Config::ENTITY_LOG_DOWNLINE);
     }
 
 }

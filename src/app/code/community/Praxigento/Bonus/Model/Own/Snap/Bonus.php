@@ -27,7 +27,7 @@ class Praxigento_Bonus_Model_Own_Snap_Bonus extends Mage_Core_Model_Abstract {
     const ATTR_VALUE = 'value';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_BONUS);
+        $this->_init(Config::ENTITY_SNAP_BONUS);
     }
 
 }

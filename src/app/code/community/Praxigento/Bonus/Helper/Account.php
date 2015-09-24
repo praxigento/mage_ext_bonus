@@ -70,7 +70,7 @@ class Praxigento_Bonus_Helper_Account {
         $all->addFieldToFilter(Account::ATTR_CUSTOMER_ID, $custId);
         /* join assets to get codes */
         $asAsset = 'a';
-        $table = array( $asAsset => Config::CFG_MODEL . '/' . Config::ENTITY_TYPE_ASSET );
+        $table = array( $asAsset => Config::ENTITY_TYPE_ASSET );
         $cond = 'main_table.' . Account::ATTR_ASSET_ID . '='
                 . $asAsset . '.' . TypeAsset::ATTR_ID;
         $cols = array( TypeAsset::ATTR_CODE );

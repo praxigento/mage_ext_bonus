@@ -27,7 +27,7 @@ class Praxigento_Bonus_Block_Adminhtml_Own_Customer_Downline_Validation_Index
         if(is_null($this->_periodsAvailable)) {
             /** @var  $rsrc Mage_Core_Model_Resource */
             $rsrc = Config::get()->singleton('core/resource');
-            $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+            $tbl = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
             $conn = $rsrc->getConnection('core_write');
             $col = SnapDownline::ATTR_PERIOD;
             $sql = "SELECT $col FROM $tbl GROUP BY $col ORDER BY $col DESC";

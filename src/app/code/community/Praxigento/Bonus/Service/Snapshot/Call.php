@@ -130,7 +130,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                     $conn->beginTransaction();
                     try {
                         /* insert new entry to the log */
-                        $tblLogDwnl = $cfg->tableName(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+                        $tblLogDwnl = $cfg->tableName(Config::ENTITY_LOG_DOWNLINE);
                         $bind = array(
                             LogDownline::ATTR_CUSTOMER_ID => $custId,
                             LogDownline::ATTR_PARENT_ID   => $newParentId
@@ -177,7 +177,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $rsrc = Config::get()->singleton('core/resource');
         /** @var  $conn Varien_Db_Adapter_Interface */
         $conn = $rsrc->getConnection('core_write');
-        $tbl = $rsrc->getTableName(Config::CFG_MODEL . '/' . Config::ENTITY_SNAP_DOWNLINE);
+        $tbl = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
         $colCustId = SnapDownline::ATTR_CUSTOMER_ID;
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $bind = array(

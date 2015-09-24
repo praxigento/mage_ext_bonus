@@ -25,6 +25,6 @@ class Praxigento_Bonus_Model_Own_Period
     const ATTR_VALUE = 'value';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_PERIOD);
+        $this->_init(Config::ENTITY_PERIOD);
     }
 }

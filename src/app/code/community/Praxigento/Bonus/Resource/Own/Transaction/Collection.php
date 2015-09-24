@@ -14,6 +14,6 @@ class Praxigento_Bonus_Resource_Own_Transaction_Collection
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $this->_init(Config::ENTITY_TRANSACTION);
     }
 }

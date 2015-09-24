@@ -14,7 +14,7 @@ class Praxigento_Bonus_Resource_Own_Cfg_Personal extends Mage_Core_Model_Mysql4_
      * Resource initialization
      */
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_CFG_PERSONAL, Model::ATTR_ID);
+        $this->_init(Config::ENTITY_CFG_PERSONAL, Model::ATTR_ID);
     }
 
 }

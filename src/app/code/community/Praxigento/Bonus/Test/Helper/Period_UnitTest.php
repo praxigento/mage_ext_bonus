@@ -91,6 +91,10 @@ class Praxigento_Bonus_Test_Helper_Period_UnitTest extends PHPUnit_Framework_Tes
         /* tests nextFrom & prevTo */
         $this->assertEquals('2014-12-29 07:00:00', $hlp->calcPeriodTsNextFrom('20141228', Config::PERIOD_WEEK));
         $this->assertEquals('2015-01-05 06:59:59', $hlp->calcPeriodTsPrevTo('20150105', Config::PERIOD_WEEK));
+        /* test period 'NOW'*/
+        $val = $hlp->calcPeriodTsPrevTo('NOW', Config::PERIOD_WEEK);
+        $this->assertTrue(is_string($val));
+        $this->assertTrue(strlen($val) == 19);
     }
 
     public function test_getPreviousWeekDay() {

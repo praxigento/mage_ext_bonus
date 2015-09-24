@@ -25,7 +25,7 @@ class Praxigento_Bonus_Model_Own_Log_Calc extends Mage_Core_Model_Abstract {
     const ATTR_STATE = 'state';
 
     protected function _construct() {
-        $this->_init(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_CALC);
+        $this->_init(Config::ENTITY_LOG_CALC);
     }
 
 }
