@@ -150,7 +150,12 @@ class Praxigento_Bonus_Service_Snapshot_Call
                         $pathChildKey = $entryCust->getPath() . $entryCust->getCustomerId() . Config::MPS;
                         $pathChildReplace = $pathNew . $custId . Config::MPS;
                         $depthChildDelta = $depthNew - $entryCust->getDepth();
-                        $this->_hndlDb->updateDownlineSnapChildren($pathChildKey, $pathChildReplace, $depthChildDelta);
+                        $this->_hndlDb->updateDownlineSnapChildren(
+                            $pathChildKey,
+                            $pathChildReplace,
+                            $depthChildDelta,
+                            Config::PERIOD_KEY_NOW
+                        );
                         $conn->commit();
                         $result->setErrorCode(ChangeUplineResponse::ERR_NO_ERROR);
                     } catch(Exception $e) {
@@ -225,7 +230,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
 
         $periodValue = $this->_helperPeriod->calcPeriodSmallest($req->getPeriodValue());
-        $entries = $this->_hndlDb->getDownlineSnapForPeriod($periodValue, true, $asDepth = 'depth');
+        $entries = $this->_hndlDb->getDownlineSnapForPeriod($periodValue);
         $allByCustomerId = array();
         $allOrphans = array();
         $allWrongPaths = array();
@@ -255,7 +260,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 }
             }
             /* save max depth */
-            $max = (int)$one[ $asDepth ];
+            $max = (int)$one[ SnapDownline::ATTR_DEPTH ];
             if($max > $maxDepth) {
                 $maxDepth = $max;
             }

@@ -68,30 +68,22 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     }
 
     /**
-     * Return downline snap data for the given $periodValue and sort it by path depth (if $sortByDepth is 'true',
-     * $asDepth is used as alias for the computed value depth).
+     * Return downline snapshot data for the given $periodValue and sort it by path depth (ascending).
      *
-     * @param            $periodValue
-     * @param bool|false $sortByDepth
-     * @param string     $asDepth
+     * @param           $periodValue
      *
-     * @return array
+     * @return array    array of the found entries sorted by depth (asc)
      */
-    public function getDownlineSnapForPeriod($periodValue, $sortByDepth = false, $asDepth = 'depth') {
-        /* convert period to the daily form (201506 => 20150630) */
-        $hlp = Config::get()->helperPeriod();
-        $smallest = $hlp->calcPeriodSmallest($periodValue);
+    public function getDownlineSnapForPeriod($periodValue) {
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
+        $hlp = $cfg->helperPeriod();
+        /* convert period to the daily form (201506 => 20150630) */
+        $smallest = $hlp->calcPeriodSmallest($periodValue);
         $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $colPeriod = SnapDownline::ATTR_PERIOD;
-        $colPath = SnapDownline::ATTR_PATH;
-        $ps = Config::FORMAT_PATH_SEPARATOR;
-        $sql = "SELECT * FROM $tbl WHERE $colPeriod=:period";
-        if($sortByDepth) {
-            $sql = "SELECT *, (LENGTH($colPath) - LENGTH(REPLACE($colPath, \"$ps\", \"\"))) as $asDepth" .
-                   "  FROM $tbl WHERE $colPeriod=:period ORDER BY $asDepth ASC";
-        }
+        $colDepth = SnapDownline::ATTR_DEPTH;
+        $sql = "SELECT * FROM $tbl WHERE $colPeriod=:period ORDER BY $colDepth ASC";
         $result = $conn->fetchAll(
             $sql,
             array( 'period' => $smallest )
@@ -108,10 +100,10 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
      * @return Praxigento_Bonus_Model_Own_Snap_Downline
      */
     public function getDownlineSnapEntry($custId, $periodValue = Config::PERIOD_KEY_NOW) {
-        /** @var  $result Praxigento_Bonus_Model_Own_Snap_Downline */
-        $result = Config::get()->modelSnapDownline();
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
+        /** @var  $result Praxigento_Bonus_Model_Own_Snap_Downline */
+        $result = $cfg->modelSnapDownline();
         /* prepare table aliases and models */
         $asSnap = 'snap';
         $eSnap = Config::ENTITY_SNAP_DOWNLINE;
@@ -124,11 +116,16 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         $query->where($asSnap . '.' . SnapDownline::ATTR_PERIOD . '=:period');
         $sql = (string)$query;
         $data = $conn->fetchRow($query, array( 'id' => $custId, 'period' => $periodValue ));
-        $result->setData($data);
+        if($data) {
+            $result->setData($data);
+        }
         return $result;
     }
 
     /**
+     * Return the first downline log record before $periodValue (used if there are no data in the snapshot table
+     * and we need to create new snapshot from the beginning).
+     *
      * @param $periodValue
      *
      * @return string|null
@@ -136,15 +133,14 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     public function getFirstDownlineLogBeforePeriod($periodValue) {
         /** @var  $cfg Config */
         $cfg = Config::get();
-        /* convert period to the daily form (201506 => 20150630) */
-        $hlp = $cfg->helperPeriod();
-        $periodDaily = $hlp->calcPeriodSmallest($periodValue);
+        $conn = $cfg->connectionWrite();
         $hlpPeriod = $cfg->helperPeriod();
+        /* convert period to the daily form (201506 => 20150630) */
+        $periodDaily = $hlpPeriod->calcPeriodSmallest($periodValue);
         $to = $hlpPeriod->calcPeriodTsTo($periodDaily, Config::PERIOD_DAY);
         $tbl = $cfg->tableName(Config::ENTITY_LOG_DOWNLINE);
-        $conn = $cfg->connectionWrite();
         $colChanged = LogDownline::ATTR_DATE_CHANGED;
-        $sql = "SELECT MIN(date_changed) FROM $tbl WHERE $colChanged<=:changed";
+        $sql = "SELECT MIN($colChanged) FROM $tbl WHERE $colChanged<=:changed";
         $result = $conn->fetchOne(
             $sql,
             array( 'changed' => $to )
@@ -152,38 +148,32 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
         return $result;
     }
 
-    public function updateDownlineSnapParent($custId, $period, $parentIdNew, $pathNew, $depthNew) {
-        $conn = Config::get()->connectionWrite();
-        $tblSnapDwnl = Config::get()->tableName(Config::ENTITY_SNAP_DOWNLINE);
-        $bind = array(
-            SnapDownline::ATTR_PARENT_ID => $parentIdNew,
-            SnapDownline::ATTR_PATH      => $pathNew,
-            SnapDownline::ATTR_DEPTH     => $depthNew
-        );
-        $whereCust = $conn->quoteInto(SnapDownline::ATTR_CUSTOMER_ID . '=?', $custId);
-        $wherePeriod = $conn->quoteInto(SnapDownline::ATTR_PERIOD . '=?', $period);
-        $where = "$whereCust AND $wherePeriod";
-        $conn->update($tblSnapDwnl, $bind, $where);
-    }
-
     /**
-     * Update paths for all children in downline when customer parent is changed.
+     * Update paths for all children in the customer downline when customer's parent is changed.
      *
      * @param $pathOld
      * @param $pathNew
-     * @param $depthDelta
+     * @param $depthDelta int Value to change current depth of the items in downline (customer itself depth change).
+     * @param $periodValue
+     *
+     * @return int Total number of updated rows
      */
-    public function updateDownlineSnapChildren($pathOld, $pathNew, $depthDelta) {
+    public function updateDownlineSnapChildren($pathOld, $pathNew, $depthDelta, $periodValue = Config::PERIOD_KEY_NOW) {
+        $result = 0;
         /** @var  $cfg Config */
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
+        /* select all downline customers by path */
+        /** @var  $query 'Varien_Db_Select' */
         $query = $conn->select();
         $cols = '*';
         $tblSnapDwnl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $query->from($tblSnapDwnl, $cols);
         $query->where(SnapDownline::ATTR_PATH . ' LIKE :path');
+        $query->where(SnapDownline::ATTR_PERIOD . ' = :period');
+        /* SELECT `prxgt_bonus_snap_downline`.* FROM `prxgt_bonus_snap_downline` WHERE (path LIKE :path) AND (period = :period)*/
         $sql = (string)$query;
-        $all = $conn->fetchAll($query, array( 'path' => $pathOld . '%' ));
+        $all = $conn->fetchAll($query, array( 'path' => $pathOld . '%', 'period' => $periodValue ));
         foreach($all as $one) {
             $pathChildNew = str_replace($pathOld, $pathNew, $one[ SnapDownline::ATTR_PATH ]);
             $depthChildNew = $one[ SnapDownline::ATTR_DEPTH ] + $depthDelta;
@@ -197,22 +187,60 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
             $whereCust = $conn->quoteInto(SnapDownline::ATTR_CUSTOMER_ID . '=?', $custId);
             $wherePeriod = $conn->quoteInto(SnapDownline::ATTR_PERIOD . '=?', $period);
             $where = "$whereCust AND $wherePeriod";
-            $conn->update($tblSnapDwnl, $bind, $where);
+            $updated = $conn->update($tblSnapDwnl, $bind, $where);
+            $result += $updated;
         }
+        return $result;
     }
 
+    /**
+     * Update parent customer ID, path and depth in downline snapshots table.
+     *
+     * @param $custId
+     * @param $period
+     * @param $parentIdNew
+     * @param $pathNew
+     * @param $depthNew
+     *
+     * @return int
+     */
+    public function updateDownlineSnapParent($custId, $period, $parentIdNew, $pathNew, $depthNew) {
+        /** @var  $cfg Config */
+        $cfg = Config::get();
+        $conn = $cfg->connectionWrite();
+        $tblSnapDwnl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
+        $bind = array(
+            SnapDownline::ATTR_PARENT_ID => $parentIdNew,
+            SnapDownline::ATTR_PATH      => $pathNew,
+            SnapDownline::ATTR_DEPTH     => $depthNew
+        );
+        $whereCust = $conn->quoteInto(SnapDownline::ATTR_CUSTOMER_ID . '=?', $custId);
+        $wherePeriod = $conn->quoteInto(SnapDownline::ATTR_PERIOD . '=?', $period);
+        $where = "$whereCust AND $wherePeriod";
+        $result = $conn->update($tblSnapDwnl, $bind, $where);
+        return $result;
+    }
+
+    /**
+     *Save array of downline snapshot entries to DB:
+     * $snap_entry= array(
+     *  SnapDownline::ATTR_CUSTOMER_ID => $ownId,
+     *  SnapDownline::ATTR_PARENT_ID   => $parentId,
+     *  SnapDownline::ATTR_PERIOD      => $periodValue,
+     *  SnapDownline::ATTR_PATH        => $path,
+     *  SnapDownline::ATTR_DEPTH       => $depth
+     * );
+     *
+     * @param $snapshot
+     *
+     * @return int The number of affected rows.
+     */
     public function saveDownlineSnaps($snapshot) {
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
-        $conn->beginTransaction();
-        try {
-            $tblSnapDownline = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
-            $conn->insertMultiple($tblSnapDownline, $snapshot);
-            $conn->commit();
-        } catch(Exception $e) {
-            $conn->rollBack();
-            Mage::throwException($e->getMessage());
-        }
+        $tblSnapDownline = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
+        $result = $conn->insertMultiple($tblSnapDownline, $snapshot);
+        return $result;
     }
 
     /**
@@ -226,7 +254,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
     public function getDownlineLogs($from, $to) {
         $cfg = Config::get();
         $conn = $cfg->connectionWrite();
-        $tbl = $cfg->tableName(Config::TABLE_LOG_DOWNLINE);
+        $tbl = $cfg->tableName(Config::ENTITY_LOG_DOWNLINE);
         $colChanged = LogDownline::ATTR_DATE_CHANGED;
         $sql = "SELECT * FROM $tbl WHERE $colChanged>=:from AND $colChanged<=:to ORDER BY $colChanged";
         $result = $conn->fetchAll(

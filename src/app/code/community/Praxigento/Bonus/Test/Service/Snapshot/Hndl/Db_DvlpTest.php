@@ -36,7 +36,21 @@ class Praxigento_Bonus_Test_Service_Snapshot_Hndl_Db_DvlpTest
         /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
         $data = $hndl->getDownlineSnapEntry($CUST_ID);
-        $this->assertNotNull($hndl);
+        $this->assertNotNull($data);
+    }
+
+    public function test_getDownlineSnapForPeriod() {
+        /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $data = $hndl->getDownlineSnapForPeriod(Config::PERIOD_KEY_NOW);
+        $this->assertNotNull($data);
+    }
+
+    public function test_updateDownlineSnapChildren() {
+        /** @var  $hndl Praxigento_Bonus_Service_Snapshot_Hndl_Db */
+        $hndl = new Praxigento_Bonus_Service_Snapshot_Hndl_Db();
+        $result = $hndl->updateDownlineSnapChildren('/some/old/path/', '/some/new/path/', 2);
+        $this->assertNull($result);
     }
 
 }
