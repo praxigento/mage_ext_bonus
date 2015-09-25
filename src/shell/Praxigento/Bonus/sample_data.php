@@ -215,7 +215,7 @@ USAGE;
             $values[] = $one;
         }
         $collection->addFieldToFilter($fields, $values);
-        $tableTrnx = $collection->getTable(Config::CFG_MODEL . '/' . Config::ENTITY_TRANSACTION);
+        $tableTrnx = $collection->getTable(Config::ENTITY_TRANSACTION);
         $collection->getSelect()->joinLeft(
             array( 'trnx' => $tableTrnx ),
             'main_table.id = trnx.operation_id',
@@ -357,7 +357,7 @@ USAGE;
                     $map[ $one[ CoreConfig::ATTR_CUST_MLM_ID ] ] = $one;
                 }
                 /* cleanup downline snapshots */
-                $this->_dbTruncate(Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+                $this->_dbTruncate(Config::ENTITY_LOG_DOWNLINE);
                 /* set up Upline and MLM Path */
                 $logDownline = array();
                 foreach($records as $one) {
@@ -376,7 +376,7 @@ USAGE;
                         LogDownline::ATTR_DATE_CHANGED => $date
                     );
                 }
-                $this->_dbInsertRecords($logDownline, Config::CFG_MODEL . '/' . Config::ENTITY_LOG_DOWNLINE);
+                $this->_dbInsertRecords($logDownline, Config::ENTITY_LOG_DOWNLINE);
                 /* create downline snapshots for imported data */
                 $call = Config::get()->serviceSnapshot();
                 $req = $call->requestComposeDownlineSnapshot();
