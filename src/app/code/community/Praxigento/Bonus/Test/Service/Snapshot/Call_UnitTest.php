@@ -706,6 +706,9 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
 
     public function test_getDownlineSnapshotEntry_foundByPK() {
         $CUST_ID = 1024;
+        $DEPTH = 32;
+        $PARENT_ID = 256;
+        $PATH = '/1/2/3';
         $PERIOD_VALUE = '201506';
         $PERIOD_EXACT = '20150630';
         // $cfg = Config::get();
@@ -748,10 +751,10 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
             ->method('fetchAll')
             ->will($this->returnValue(array(
                 array(
-                    SnapDownline::ATTR_CUSTOMER_ID => 1,
-                    SnapDownline::ATTR_DEPTH       => 2,
-                    SnapDownline::ATTR_PARENT_ID   => 3,
-                    SnapDownline::ATTR_PATH        => '/1/2/3',
+                    SnapDownline::ATTR_CUSTOMER_ID => $CUST_ID,
+                    SnapDownline::ATTR_DEPTH       => $DEPTH,
+                    SnapDownline::ATTR_PARENT_ID   => $PARENT_ID,
+                    SnapDownline::ATTR_PATH        => $PATH,
                     SnapDownline::ATTR_PERIOD      => $PERIOD_EXACT,
                 )
             )));
@@ -768,6 +771,103 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
         $resp = $call->getDownlineSnapshotEntry($req);
         $this->assertNotNull($resp);
         $this->assertTrue($resp->isSucceed());
+        $this->assertEquals($CUST_ID, $resp->getCustomerId());
+        $this->assertEquals($DEPTH, $resp->getDepth());
+        $this->assertEquals($PARENT_ID, $resp->getParentId());
+        $this->assertEquals($PATH, $resp->getPath());
         $this->assertEquals($PERIOD_EXACT, $resp->getPeriodExact());
+        $this->assertEquals($PERIOD_VALUE, $resp->getPeriodRequested());
+    }
+
+    public function test_validateDownlineSnapshot() {
+        $PERIOD_VALUE = '201506';
+        $PERIOD_EXACT = '20150630';
+        $C1_ID = 1;
+        $C1_PARENT = 1;
+        $C1_PATH = '/';
+        $C1_DEPTH = 1;
+        $C2_ID = 2;
+        $C2_PARENT = 1;
+        $C2_PATH = '/3/';
+        $C2_DEPTH = 2;
+        /* orphan */
+        $C3_ID = 3;
+        $C3_PARENT = 10;
+        $C3_PATH = '/10/';
+        $C3_DEPTH = 20;
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'helperPeriod', 'model', 'singleton' ))
+            ->getMock();
+        // $hlpPeriod = $cfg->helperPeriod();
+        $mockHlpPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Period')
+            ->setMethods(array( 'calcPeriodSmallest' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperPeriod')
+            ->will($this->returnValue($mockHlpPeriod));
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapForPeriod' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
+        $mockCfg
+            ->expects($this->at(3))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ValidateDownlineSnapshot()));
+        // $periodExact = $hlpPeriod->calcPeriodSmallest($req->getPeriodValue());
+        $mockHlpPeriod
+            ->expects($this->once())
+            ->method('calcPeriodSmallest')
+            ->will($this->returnValue($PERIOD_EXACT));
+        // $entries = $hndlDb->getDownlineSnapForPeriod($periodExact);
+        $mockHndlDb
+            ->expects($this->once())
+            ->method('getDownlineSnapForPeriod')
+            ->will($this->returnValue(array(
+                array(
+                    SnapDownline::ATTR_CUSTOMER_ID => $C1_ID,
+                    SnapDownline::ATTR_PARENT_ID   => $C1_PARENT,
+                    SnapDownline::ATTR_DEPTH       => $C1_DEPTH,
+                    SnapDownline::ATTR_PATH        => $C1_PATH
+                ), array(
+                    SnapDownline::ATTR_CUSTOMER_ID => $C2_ID,
+                    SnapDownline::ATTR_PARENT_ID   => $C2_PARENT,
+                    SnapDownline::ATTR_DEPTH       => $C2_DEPTH,
+                    SnapDownline::ATTR_PATH        => $C2_PATH
+                ), array(
+                    SnapDownline::ATTR_CUSTOMER_ID => $C3_ID,
+                    SnapDownline::ATTR_PARENT_ID   => $C3_PARENT,
+                    SnapDownline::ATTR_DEPTH       => $C3_DEPTH,
+                    SnapDownline::ATTR_PATH        => $C3_PATH
+                )
+            )));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ValidateDownlineSnapshot();
+        $req->setPeriodValue($PERIOD_VALUE);
+        $resp = $call->validateDownlineSnapshot($req);
+        $this->assertNotNull($resp);
+        $this->assertTrue($resp->isSucceed());
+        $this->assertEquals(20, $resp->getMaxDepth());
+        $this->assertEquals(3, $resp->getTotalCustomers());
+        $this->assertEquals(1, $resp->getTotalOrphans());
+        $this->assertEquals(1, $resp->getTotalRoots());
+        $this->assertEquals(1, $resp->getTotalWrongPaths());
+        $this->assertTrue(is_array($resp->getAllWrongPaths()));
+        $this->assertTrue(is_array($resp->getAllOrphans()));
     }
 }

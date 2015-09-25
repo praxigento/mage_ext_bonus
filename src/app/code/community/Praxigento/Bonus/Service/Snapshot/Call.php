@@ -239,12 +239,14 @@ class Praxigento_Bonus_Service_Snapshot_Call
     public function validateDownlineSnapshot(ValidateDownlineSnapshotRequest $req) {
         /** @var  $cfg Config */
         $cfg = Config::get();
+        /** @var  $hlpPeriod Praxigento_Bonus_Helper_Period */
         $hlpPeriod = $cfg->helperPeriod();
+        /** @var  $hndlDb Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
         /** @var  $result ValidateDownlineSnapshotResponse */
         $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
-        $periodValue = $hlpPeriod->calcPeriodSmallest($req->getPeriodValue());
-        $entries = $hndlDb->getDownlineSnapForPeriod($periodValue);
+        $periodExact = $hlpPeriod->calcPeriodSmallest($req->getPeriodValue());
+        $entries = $hndlDb->getDownlineSnapForPeriod($periodExact);
         $allByCustomerId = array();
         $allOrphans = array();
         $allWrongPaths = array();
@@ -268,7 +270,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                     $parent = $allByCustomerId[ $parentId ];
                     $pathParent = $parent[ SnapDownline::ATTR_PATH ];
                     /* validate paths and save customers with wrong paths */
-                    if($path != $pathParent . $parentId . Config::FORMAT_PATH_SEPARATOR) {
+                    if($path != $pathParent . $parentId . Config::MPS) {
                         $allWrongPaths[ $custId ] = $one;
                     }
                 }
