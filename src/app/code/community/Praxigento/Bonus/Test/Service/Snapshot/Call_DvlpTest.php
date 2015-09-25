@@ -35,8 +35,8 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_DvlpTest
     }
 
     public function test_getDownlineSnapshotEntry() {
-        $PERIOD = '201505';
-        $CUST_ID = '2506';
+        $PERIOD = '20150630';
+        $CUST_ID = '140';
         /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
         $call = Config::get()->serviceSnapshot();
         /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry */

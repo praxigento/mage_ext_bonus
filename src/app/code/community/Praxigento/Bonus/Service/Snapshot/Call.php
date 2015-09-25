@@ -182,38 +182,39 @@ class Praxigento_Bonus_Service_Snapshot_Call
     public function getDownlineSnapshotEntry(GetDownlineSnapshotEntryRequest $req) {
         /** @var  $cfg Config */
         $cfg = Config::get();
+        /** @var  $hlpPeriod Praxigento_Bonus_Helper_Period */
         $hlpPeriod = $cfg->helperPeriod();
         /** @var  $result GetDownlineSnapshotEntryResponse */
-        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
+        $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
         $custId = $req->getCustomerId();
         $periodValue = $req->getPeriodValue();
         $periodExact = $hlpPeriod->calcPeriodSmallest($periodValue);
-        /** @var  $rsrc Mage_Core_Model_Resource */
-        $rsrc = Config::get()->singleton('core/resource');
-        /** @var  $conn Varien_Db_Adapter_Interface */
-        $conn = $rsrc->getConnection('core_write');
-        $tbl = $rsrc->getTableName(Config::ENTITY_SNAP_DOWNLINE);
+        /** @var  $conn Varien_Db_Adapter_Pdo_Mysql */
+        $conn = $cfg->connectionWrite();
+        $tbl = $cfg->tableName(Config::ENTITY_SNAP_DOWNLINE);
         $colCustId = SnapDownline::ATTR_CUSTOMER_ID;
         $colPeriod = SnapDownline::ATTR_PERIOD;
         $bind = array(
             'cust_id' => $custId,
             'period'  => $periodExact
         );
+        /* TODO: read by PK repo func */
         /* exact match */
         $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod=:period";
         $entry = $conn->fetchAll($sql, $bind);
-        if(!is_array($entry) || !count($entry)) {
+        if(!(is_array($entry) && isset($entry[0]))) {
+            /* no exact match, search the closest before given */
             $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod<:period ORDER BY $colPeriod DESC";
             $entry = $conn->fetchRow($sql, $bind);
             if(!is_array($entry) || !count($entry)) {
+                /* no periods before given, search first period at all */
                 $sql = "SELECT * FROM $tbl WHERE $colCustId=:cust_id AND $colPeriod>:period ORDER BY $colPeriod ASC";
                 $entry = $conn->fetchRow($sql, $bind);
             }
+        } else {
+            $entry = $entry[0];
         }
         if(is_array($entry)) { // fetchAll
-            if(isset($entry[0])) { // fetchRow
-                $entry = reset($entry);
-            }
             $result->setCustomerId($entry[ SnapDownline::ATTR_CUSTOMER_ID ]);
             $result->setDepth($entry[ SnapDownline::ATTR_DEPTH ]);
             $result->setParentId($entry[ SnapDownline::ATTR_PARENT_ID ]);
@@ -241,8 +242,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $hlpPeriod = $cfg->helperPeriod();
         $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
         /** @var  $result ValidateDownlineSnapshotResponse */
-        $result = Config::get()->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
-
+        $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_validateDownlineSnapshot');
         $periodValue = $hlpPeriod->calcPeriodSmallest($req->getPeriodValue());
         $entries = $hndlDb->getDownlineSnapForPeriod($periodValue);
         $allByCustomerId = array();

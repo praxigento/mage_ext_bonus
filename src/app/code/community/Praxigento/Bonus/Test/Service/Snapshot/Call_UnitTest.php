@@ -7,6 +7,7 @@ use Praxigento_Bonus_Config as Config;
 use Praxigento_Bonus_Model_Own_Log_Calc as LogCalc;
 use Praxigento_Bonus_Model_Own_Log_Downline as LogDownline;
 use Praxigento_Bonus_Model_Own_Period as Period;
+use Praxigento_Bonus_Model_Own_Snap_Downline as SnapDownline;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonus;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriodForPvWriteOff;
@@ -648,4 +649,125 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
         $this->assertFalse($resp->isSucceed());
     }
 
+    public function test_getDownlineSnapshotEntry_notFound() {
+        $CUST_ID = 1024;
+        $PERIOD_VALUE = '201506';
+        $PERIOD_EXACT = '20150630';
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'helperPeriod', 'model', 'singleton', 'connectionWrite', 'tableName' ))
+            ->getMock();
+        // $hlpPeriod = $cfg->helperPeriod();
+        $mockHlpPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Period')
+            ->setMethods(array( 'calcPeriodSmallest' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperPeriod')
+            ->will($this->returnValue($mockHlpPeriod));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
+        $mockCfg
+            ->expects($this->at(3))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry()));
+        // $periodExact = $hlpPeriod->calcPeriodSmallest($periodValue);
+        $mockHlpPeriod
+            ->expects($this->any())
+            ->method('calcPeriodSmallest')
+            ->will($this->returnValue($PERIOD_EXACT));
+        // $conn = $cfg->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'fetchAll', 'fetchRow' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry();
+        $req->setCustomerId($CUST_ID);
+        $req->setPeriodValue($PERIOD_VALUE);
+        $resp = $call->getDownlineSnapshotEntry($req);
+        $this->assertNotNull($resp);
+        $this->assertFalse($resp->isSucceed());
+        $this->assertEquals($resp::ERR_SNAP_IS_NOT_FOUND, $resp->getErrorCode());
+    }
+
+    public function test_getDownlineSnapshotEntry_foundByPK() {
+        $CUST_ID = 1024;
+        $PERIOD_VALUE = '201506';
+        $PERIOD_EXACT = '20150630';
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'helperPeriod', 'model', 'singleton', 'connectionWrite', 'tableName' ))
+            ->getMock();
+        // $hlpPeriod = $cfg->helperPeriod();
+        $mockHlpPeriod = $this
+            ->getMockBuilder('Praxigento_Bonus_Helper_Period')
+            ->setMethods(array( 'calcPeriodSmallest' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('helperPeriod')
+            ->will($this->returnValue($mockHlpPeriod));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_getDownlineSnapshotEntry');
+        $mockCfg
+            ->expects($this->at(3))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_GetDownlineSnapshotEntry()));
+        // $periodExact = $hlpPeriod->calcPeriodSmallest($periodValue);
+        $mockHlpPeriod
+            ->expects($this->any())
+            ->method('calcPeriodSmallest')
+            ->will($this->returnValue($PERIOD_EXACT));
+        // $conn = $cfg->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'fetchAll', 'fetchRow' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        // $entry = $conn->fetchAll($sql, $bind);
+        $mockConn
+            ->expects($this->any())
+            ->method('fetchAll')
+            ->will($this->returnValue(array(
+                array(
+                    SnapDownline::ATTR_CUSTOMER_ID => 1,
+                    SnapDownline::ATTR_DEPTH       => 2,
+                    SnapDownline::ATTR_PARENT_ID   => 3,
+                    SnapDownline::ATTR_PATH        => '/1/2/3',
+                    SnapDownline::ATTR_PERIOD      => $PERIOD_EXACT,
+                )
+            )));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_GetDownlineSnapshotEntry();
+        $req->setCustomerId($CUST_ID);
+        $req->setPeriodValue($PERIOD_VALUE);
+        $resp = $call->getDownlineSnapshotEntry($req);
+        $this->assertNotNull($resp);
+        $this->assertTrue($resp->isSucceed());
+        $this->assertEquals($PERIOD_EXACT, $resp->getPeriodExact());
+    }
 }
