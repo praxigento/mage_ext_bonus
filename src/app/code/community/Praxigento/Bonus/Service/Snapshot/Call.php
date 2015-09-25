@@ -102,6 +102,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
     public function changeUpline(ChangeUplineRequest $req) {
         /** @var  $cfg Config */
         $cfg = Config::get();
+        /** @var  $hndlDb Praxigento_Bonus_Service_Snapshot_Hndl_Db */
         $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
         /** @var  $result ChangeUplineResponse */
         $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
@@ -127,6 +128,7 @@ class Praxigento_Bonus_Service_Snapshot_Call
                     $this->_log->error("Cannot set parent from own downline (new parent path: $pathNewParent).");
                 } else {
                     /* validation is complete, do the job */
+                    /** @var  $conn Varien_Db_Adapter_Pdo_Mysql */
                     $conn = $cfg->connectionWrite();
                     $conn->beginTransaction();
                     try {
@@ -161,6 +163,10 @@ class Praxigento_Bonus_Service_Snapshot_Call
                         $result->setErrorCode(ChangeUplineResponse::ERR_NO_ERROR);
                     } catch(Exception $e) {
                         $conn->rollBack();
+                        $msg = "Cannot change upline to '$newParentId' for customer '$custId'. Reason: "
+                               . $e->getMessage();
+                        $this->_log->debug($msg);
+                        $result->setErrorMessage($msg);
                     }
                 }
             }

@@ -10,6 +10,7 @@ use Praxigento_Bonus_Model_Own_Period as Period;
 use Praxigento_Bonus_Model_Own_Transaction as Transaction;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPersonalBonus as GetPeriodForPersonalBonus;
 use Praxigento_Bonus_Service_Period_Response_GetPeriodForPvWriteOff as GetPeriodForPvWriteOff;
+use Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline as ChangeUplineResponse;
 
 include_once('../../phpunit_bootstrap.php');
 
@@ -363,5 +364,288 @@ class Praxigento_Bonus_Test_Service_Snapshot_Call_UnitTest
         $this->assertFalse($resp->isSucceed());
     }
 
+    public function test_changeUpline_isTheCustomer() {
+        $CUST_ID = 1024;
+        $PARENT_ID = 1024;
+        /**
+         * Create mocks (direct order).
+         */
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton', 'model' ))
+            ->getMock();
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapEntry' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline()));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($PARENT_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertNotNull($resp);
+        $this->assertFalse($resp->isSucceed());
+        $this->assertEquals(ChangeUplineResponse::ERR_PARENT_IS_THE_CUSTOMER, $resp->getErrorCode());
+    }
+
+    public function test_changeUpline_parentAlreadySet() {
+        $CUST_ID = 1024;
+        $PARENT_NEW_ID = 2048;
+        $PARENT_OLD_ID = 2048;
+        /**
+         * Create mocks (direct order).
+         */
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton', 'model' ))
+            ->getMock();
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapEntry' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline()));
+        // $entryCust = $hndlDb->getDownlineSnapEntry($custId);
+        $mockEntryCust = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockEntryCust->setParentId($PARENT_OLD_ID);
+        $mockHndlDb
+            ->expects($this->once())
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockEntryCust));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($PARENT_NEW_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertNotNull($resp);
+        $this->assertFalse($resp->isSucceed());
+        $this->assertEquals(ChangeUplineResponse::ERR_PARENT_ALREADY_SET, $resp->getErrorCode());
+    }
+
+    public function test_changeUpline_parentIsInDownline() {
+        $CUST_ID = 1024;
+        $PARENT_NEW_ID = 4096;
+        $PARENT_NEW_PATH = '1/1024/3';
+        $PARENT_OLD_ID = 2048;
+        /**
+         * Create mocks (direct order).
+         */
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton', 'model' ))
+            ->getMock();
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapEntry' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(0))
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline()));
+        // $entryCust = $hndlDb->getDownlineSnapEntry($custId);
+        $mockEntryCust = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockEntryCust->setParentId($PARENT_OLD_ID);
+        $mockHndlDb
+            ->expects($this->at(0))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockEntryCust));
+        // $entryNewParent = $hndlDb->getDownlineSnapEntry($newParentId);
+        $mockNewParent = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockNewParent->setPath($PARENT_NEW_PATH);
+        $mockHndlDb
+            ->expects($this->at(1))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockNewParent));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($PARENT_NEW_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertNotNull($resp);
+        $this->assertFalse($resp->isSucceed());
+        $this->assertEquals(ChangeUplineResponse::ERR_PARENT_IS_FROM_DOWNLINE, $resp->getErrorCode());
+    }
+
+    public function test_changeUpline_validated_success() {
+        $CUST_ID = 1024;
+        $PARENT_NEW_ID = 4096;
+        $PARENT_NEW_PATH = '1/2/3';
+        $PARENT_OLD_ID = 2048;
+        /**
+         * Create mocks (direct order).
+         */
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton', 'model', 'connectionWrite' ))
+            ->getMock();
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapEntry', 'updateDownlineSnapParent', 'updateDownlineSnapChildren' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
+        $mockCfg
+            ->expects($this->at(2))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline()));
+        // $entryCust = $hndlDb->getDownlineSnapEntry($custId);
+        $mockEntryCust = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockEntryCust->setParentId($PARENT_OLD_ID);
+        $mockHndlDb
+            ->expects($this->at(0))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockEntryCust));
+        // $entryNewParent = $hndlDb->getDownlineSnapEntry($newParentId);
+        $mockNewParent = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockNewParent->setPath($PARENT_NEW_PATH);
+        $mockHndlDb
+            ->expects($this->at(1))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockNewParent));
+        // $conn = $cfg->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit', 'rollBack', 'insert' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($PARENT_NEW_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertNotNull($resp);
+        $this->assertTrue($resp->isSucceed());
+    }
+
+    public function test_changeUpline_validated_exception() {
+        $CUST_ID = 1024;
+        $PARENT_NEW_ID = 4096;
+        $PARENT_NEW_PATH = '1/2/3';
+        $PARENT_OLD_ID = 2048;
+        /**
+         * Create mocks (direct order).
+         */
+        // $cfg = Config::get();
+        $mockCfg = $this
+            ->getMockBuilder('Praxigento_Bonus_Config')
+            ->setMethods(array( 'singleton', 'model', 'connectionWrite' ))
+            ->getMock();
+        // $hndlDb = $cfg->singleton(Config::CFG_SERVICE . '/snapshot_hndl_db');
+        $mockHndlDb = $this
+            ->getMockBuilder('Praxigento_Bonus_Service_Snapshot_Hndl_Db')
+            ->setMethods(array( 'getDownlineSnapEntry', 'updateDownlineSnapParent', 'updateDownlineSnapChildren' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->at(1))
+            ->method('singleton')
+            ->will($this->returnValue($mockHndlDb));
+        // $result = $cfg->model(Config::CFG_SERVICE . '/snapshot_response_changeUpline');
+        $mockCfg
+            ->expects($this->at(2))
+            ->method('model')
+            ->will($this->returnValue(new Praxigento_Bonus_Service_Snapshot_Response_ChangeUpline()));
+        // $entryCust = $hndlDb->getDownlineSnapEntry($custId);
+        $mockEntryCust = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockEntryCust->setParentId($PARENT_OLD_ID);
+        $mockHndlDb
+            ->expects($this->at(0))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockEntryCust));
+        // $entryNewParent = $hndlDb->getDownlineSnapEntry($newParentId);
+        $mockNewParent = new Praxigento_Bonus_Model_Own_Snap_Downline();
+        $mockNewParent->setPath($PARENT_NEW_PATH);
+        $mockHndlDb
+            ->expects($this->at(1))
+            ->method('getDownlineSnapEntry')
+            ->will($this->returnValue($mockNewParent));
+        // $conn = $cfg->connectionWrite();
+        $mockConn = $this
+            ->getMockBuilder('Varien_Db_Adapter_Pdo_Mysql')
+            ->disableOriginalConstructor()
+            ->setMethods(array( 'beginTransaction', 'commit', 'rollBack', 'insert' ))
+            ->getMock();
+        $mockCfg
+            ->expects($this->any())
+            ->method('connectionWrite')
+            ->will($this->returnValue($mockConn));
+        // $conn->insert($tblLogDwnl, $bind);
+        $mockConn
+            ->expects($this->any())
+            ->method('insert')
+            ->will($this->throwException(new Exception));
+        /**
+         * Setup config and perform call.
+         */
+        Config::set($mockCfg);
+        /** @var  $call Praxigento_Bonus_Service_Snapshot_Call */
+        $call = new Praxigento_Bonus_Service_Snapshot_Call();
+        /** @var  $req Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline */
+        $req = new Praxigento_Bonus_Service_Snapshot_Request_ChangeUpline();
+        $req->setCustomerId($CUST_ID);
+        $req->setNewUplineId($PARENT_NEW_ID);
+        $resp = $call->changeUpline($req);
+        $this->assertNotNull($resp);
+        $this->assertFalse($resp->isSucceed());
+    }
 
 }

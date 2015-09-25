@@ -241,7 +241,7 @@ class Praxigento_Bonus_Config {
     }
 
     /**
-     * @return Varien_Db_Adapter_Interface
+     * @return Varien_Db_Adapter_Pdo_Mysql
      */
     public function connectionWrite() {
         $result = CoreConfig::get()->connectionWrite();
