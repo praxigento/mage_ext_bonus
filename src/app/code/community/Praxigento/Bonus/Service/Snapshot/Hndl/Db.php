@@ -44,7 +44,7 @@ class Praxigento_Bonus_Service_Snapshot_Hndl_Db {
      *
      * @param $periodValue daily period (20150601)
      *
-     * @return null|string
+     * @return null|string '20150601'
      */
     public function getLatestDownlineSnapBeforePeriod($periodValue) {
         $cfg = Config::get();

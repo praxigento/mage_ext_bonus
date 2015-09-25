@@ -48,16 +48,18 @@ class Praxigento_Bonus_Service_Snapshot_Call
         $periodExists = $hndlDb->isThereDownlinesSnapForPeriod($periodValueDaily);
         if(is_null($periodExists)) {
             $this->_log->debug("There is no downline snapshot data for period '$periodValue/$periodValueDaily'");
-            $maxExistingPeriod = $hndlDb->getLatestDownlineSnapBeforePeriod($periodValueDaily);
             /* array of the aggregated previous snap & log data */
             $arrAggregated = array();
             $from = null;
             $to = $hlpPeriod->calcPeriodTsTo($periodValueDaily, Config::PERIOD_DAY);
+            $maxExistingPeriod = $hndlDb->getLatestDownlineSnapBeforePeriod($periodValueDaily);
             if(is_null($maxExistingPeriod)) {
+                /* scenario: noPeriod_noSnap_ */
                 $this->_log->debug("There is no downline snapshot data for periods before '$periodValue/$periodValueDaily'. Getting up date for the first downline log record.");
-                $from = $hndlDb->getFirstDownlineLogBeforePeriod($periodValue);
+                $from = $hndlDb->getFirstDownlineLogBeforePeriod($periodValueDaily);
                 $this->_log->debug("First downline log record is at '$from'");
             } else {
+                /* scenario: noPeriod_isSnap_ */
                 /* load snapshot for existing period */
                 $latestSnap = $hndlDb->getDownlineSnapForPeriod($maxExistingPeriod);
                 foreach($latestSnap as $one) {
@@ -81,8 +83,10 @@ class Praxigento_Bonus_Service_Snapshot_Call
                 $msg = "Cannot save snapshot data for period '$periodValue/$periodValueDaily'. Reason: "
                        . $e->getMessage();
                 $this->_log->debug($msg);
+                $result->setErrorMessage($msg);
             }
         } else {
+            /* scenario: periodExists */
             $this->_log->debug("There is downline snapshot data for period '$periodValue/$periodExists'.");
             $result->setPeriodValue($periodExists);
             $result->setErrorCode(ComposeDownlineSnapshotResponse::ERR_NO_ERROR);
